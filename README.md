@@ -9,10 +9,16 @@ npm install
 npm run dev
 ```
 
-## 构建（OpenNext Cloudflare）
+## Next.js 构建
 
 ```bash
 npm run build
+```
+
+## Cloudflare 构建（OpenNext）
+
+```bash
+npm run build:cf
 ```
 
 ## 本地预览 Worker
@@ -34,6 +40,6 @@ npm run deploy
 
 ## 关键点
 
-- 使用 `@opennextjs/cloudflare` 生成 `.open-next/worker.js`
-- `wrangler.jsonc` 直接发布 OpenNext 产物（Worker + assets）
-- 适合优先利用 Cloudflare 免费能力
+- `npm run build` 只执行 `next build`
+- `npm run build:cf` 执行 `opennextjs-cloudflare build`
+- 避免 `opennextjs-cloudflare build` 递归调用自身导致构建卡住
