@@ -1,26 +1,24 @@
 {
   "name": "frame-nest",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "tsc --noEmit",
-    "deploy": "npm run build && wrangler deploy"
+    "dev": "next dev",
+    "build": "opennextjs-cloudflare build",
+    "start": "next start",
+    "preview": "opennextjs-cloudflare build && wrangler dev",
+    "deploy": "opennextjs-cloudflare build && wrangler deploy",
+    "check": "tsc --noEmit"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "next": "15.3.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260405.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
+    "@opennextjs/cloudflare": "^1.6.0",
     "typescript": "^5.9.3",
-    "vite": "^7.1.10",
     "wrangler": "^4.12.0"
   }
 }

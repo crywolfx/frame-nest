@@ -1,11 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "frame-nest",
-  "main": "src/worker.ts",
+  "main": ".open-next/worker.js",
   "compatibility_date": "2026-04-20",
-  "workers_dev": true,
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
-    "directory": "./dist"
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
   },
   "observability": {
     "enabled": true

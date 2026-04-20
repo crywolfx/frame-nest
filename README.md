@@ -1,36 +1,39 @@
 # frame-nest
 
-这是一个部署到 **Cloudflare Workers** 的 React 全栈起步模板：
+Next.js（App Router）+ Cloudflare Workers 的全栈模板，已完成 CF 适配。
 
-- 前端：React + Vite
-- 后端：Cloudflare Worker API (`/api/hello`)
-- 静态资源：Workers Assets（`dist`）
-
-## 本地开发
+## 开发
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 生产部署（Cloudflare 免费能力优先）
+## 构建（OpenNext Cloudflare）
+
+```bash
+npm run build
+```
+
+## 本地预览 Worker
+
+```bash
+npm run preview
+```
+
+## 部署到 Cloudflare
 
 ```bash
 npm run deploy
 ```
 
-上面的脚本会先 `vite build`，再由 `wrangler deploy` 部署 Worker + 静态资源。
-
 ## 路由
 
-- `/`：React 页面
-- `/api/hello`：Worker JSON API
+- `/`：Next.js 页面
+- `/api/hello`：Edge API Route
 
-## 关于是否直接上 Next.js
+## 关键点
 
-你这个诉求是“全栈 + Cloudflare 免费能力优先”，我建议：
-
-1. 先用当前 React + Worker 模板把业务跑通（更轻、更省配额）
-2. 当你确实需要 SSR / RSC / 复杂路由时，再迁移到 Next.js + `@opennextjs/cloudflare`
-
-这样不会过早引入框架复杂度，但保留了后续演进空间。
+- 使用 `@opennextjs/cloudflare` 生成 `.open-next/worker.js`
+- `wrangler.jsonc` 直接发布 OpenNext 产物（Worker + assets）
+- 适合优先利用 Cloudflare 免费能力
