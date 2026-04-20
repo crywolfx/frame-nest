@@ -20,6 +20,9 @@
     "@cloudflare/workers-types": "^4.20260405.0",
     "@opennextjs/cloudflare": "^1.6.0",
     "typescript": "^5.9.3",
-    "wrangler": "^4.12.0"
+    "wrangler": "^4.12.0",
+    "@types/node": "^22.15.17",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2"
   }
 }
