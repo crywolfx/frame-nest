@@ -137,6 +137,10 @@ p {
   padding: 5rem 0 4rem;
 }
 
+.home-shell .hero-section {
+  padding-bottom: 3rem;
+}
+
 .hero-copy {
   display: grid;
   gap: 1.35rem;
@@ -191,8 +195,8 @@ p {
   overflow: hidden;
   isolation: isolate;
   background:
-    linear-gradient(rgba(22, 33, 29, 0.12), rgba(22, 33, 29, 0.08)),
-    url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82") center / cover;
+    linear-gradient(rgba(22, 33, 29, 0.10), rgba(22, 33, 29, 0.08)),
+    url("https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=82") center / cover;
   box-shadow: 0 34px 90px rgba(22, 33, 29, 0.22);
   animation: visual-enter 1000ms 220ms ease both;
 }
@@ -231,12 +235,12 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
-.card-travel {
+.card-memory {
   left: 8%;
   top: 13%;
 }
 
-.card-api {
+.card-plan {
   right: 8%;
   bottom: 13%;
   animation-delay: 800ms;
@@ -300,8 +304,24 @@ p {
   transform: translateY(-4px);
 }
 
-.feature-panel-muted {
+.home-story {
+  display: grid;
+  gap: 1rem;
+  max-width: 820px;
+  margin-bottom: 1.4rem;
+  animation: fade-rise 760ms 160ms ease both;
+}
+
+.home-story h2 {
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
+  line-height: 1.08;
+}
+
+.home-story p:not(.eyebrow) {
+  max-width: 720px;
   color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.8;
 }
 
 .panel-index,
