@@ -23,6 +23,9 @@ const days = [
     date: "4/28 周二",
     title: "杭州 → 香港 → 澳门",
     theme: "顺利转场 + 氹仔/路氹夜景 + 轻松吃",
+    accent: "lotus",
+    image: "image-macau-night",
+    place: "氹仔旧城 / 路氹夜景",
     route: ["12:55 抵达香港机场", "14:25 金巴前往澳门", "16:15 入住澳门瑞吉", "19:30 官也街与路氹夜景慢拍"],
     food: "晚餐首选 António；想省时间就在官也街边逛边吃。"
   },
@@ -31,6 +34,9 @@ const days = [
     date: "4/29 周三",
     title: "澳门整天",
     theme: "更推荐 B 方案：半岛经典街区 citywalk",
+    accent: "stone",
+    image: "image-ruins",
+    place: "议事亭前地 / 大三巴",
     route: ["09:15 议事亭前地", "10:30 恋爱巷", "11:15 大三巴牌坊", "13:15 大炮台 / 澳门博物馆", "20:00 路氹夜景补拍"],
     food: "午餐黄枝记更顺路；想认真吃葡国菜可选 A Lorcha。"
   },
@@ -39,6 +45,9 @@ const days = [
     date: "4/30 周四",
     title: "澳门 → 香港",
     theme: "平稳换城 + 西九 / M+ / 尖沙咀夜景",
+    accent: "harbor",
+    image: "image-harbor",
+    place: "西九海滨 / 维港",
     route: ["10:30 氹仔码头坐船", "12:20 到酒店寄存 / 入住", "14:30 M+", "17:00 西九海滨", "19:15 尖沙咀海滨夜景"],
     food: "午餐一乐烧鹅；晚餐尖沙咀鼎泰丰最顺。"
   },
@@ -47,6 +56,9 @@ const days = [
     date: "5/1 周五",
     title: "香港整天",
     theme: "山顶避峰 + 中环 citywalk + 油麻地夜晚",
+    accent: "peak",
+    image: "image-peak",
+    place: "山顶 / 中环 / 油麻地",
     route: ["08:35 天星小轮到中环", "09:10 山顶缆车", "13:40 中环 / 半山扶梯 / 上环", "19:20 旧油麻地警署", "20:00 庙街 / 佐敦散步"],
     food: "午餐一乐烧鹅；晚餐美都餐室，想更快就麦文记。"
   },
@@ -55,6 +67,9 @@ const days = [
     date: "5/2 周六",
     title: "香港 → 杭州",
     theme: "轻松收尾，不冒误机风险",
+    accent: "ferry",
+    image: "image-ferry",
+    place: "尖沙咀 / 尖东海滨",
     route: ["08:00 早餐与整理行李", "09:00 尖沙咀 / 尖东海滨慢走", "10:20 前往香港机场", "13:55 起飞返杭"],
     food: "早餐酒店、Bakehouse 或海滨轻 brunch。"
   }
@@ -78,7 +93,7 @@ export default function HongKongGuidePage() {
         </div>
       </nav>
 
-      <section className="itinerary-hero" aria-labelledby="hong-kong-title">
+      <section className="itinerary-hero apple-itinerary-hero" aria-labelledby="hong-kong-title">
         <div className="itinerary-hero-copy">
           <p className="eyebrow">Hong Kong & Macau</p>
           <h1 id="hong-kong-title">香港澳门 5 日旅行攻略</h1>
@@ -91,9 +106,13 @@ export default function HongKongGuidePage() {
             <span>千禧新世界香港 2 晚</span>
           </div>
         </div>
-        <div className="itinerary-photo-stack" aria-hidden="true">
-          <div className="itinerary-photo photo-hong-kong" />
-          <div className="itinerary-photo photo-macau" />
+        <div className="apple-hero-device" aria-hidden="true">
+          <div className="apple-hero-screen">
+            <div className="apple-hero-glass">
+              <span>04.28 - 05.02</span>
+              <strong>少折返，多拍照。</strong>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -121,20 +140,26 @@ export default function HongKongGuidePage() {
         </div>
 
         <div className="day-timeline">
-          {days.map((day) => (
-            <article className="day-card" key={day.day}>
+          {days.map((day, index) => (
+            <article className={`day-card apple-day-card day-${day.accent}`} key={day.day}>
+              <div className={`day-image ${day.image}`} aria-hidden="true">
+                <span>{day.place}</span>
+              </div>
               <div className="day-card-head">
                 <span>{day.day}</span>
                 <p>{day.date}</p>
               </div>
-              <h3>{day.title}</h3>
-              <p className="day-theme">{day.theme}</p>
-              <ol>
-                {day.route.map((route) => (
-                  <li key={route}>{route}</li>
-                ))}
-              </ol>
-              <p className="food-note">{day.food}</p>
+              <div className="day-copy">
+                <p className="day-count">{String(index + 1).padStart(2, "0")}</p>
+                <h3>{day.title}</h3>
+                <p className="day-theme">{day.theme}</p>
+                <ol>
+                  {day.route.map((route) => (
+                    <li key={route}>{route}</li>
+                  ))}
+                </ol>
+                <p className="food-note">{day.food}</p>
+              </div>
             </article>
           ))}
         </div>
