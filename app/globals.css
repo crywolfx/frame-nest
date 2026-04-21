@@ -184,20 +184,20 @@ p {
   transform: translateY(-2px);
 }
 
-.hero-visual {
+.hub-visual {
   position: relative;
   min-height: 520px;
   border-radius: 28px;
   overflow: hidden;
   isolation: isolate;
   background:
-    linear-gradient(rgba(22, 33, 29, 0.18), rgba(22, 33, 29, 0.08)),
-    url("https://images.unsplash.com/photo-1536599018102-9f803c140fc1?auto=format&fit=crop&w=1200&q=82") center / cover;
+    linear-gradient(rgba(22, 33, 29, 0.12), rgba(22, 33, 29, 0.08)),
+    url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82") center / cover;
   box-shadow: 0 34px 90px rgba(22, 33, 29, 0.22);
   animation: visual-enter 1000ms 220ms ease both;
 }
 
-.hero-visual::after {
+.hub-visual::after {
   content: "";
   position: absolute;
   inset: auto 0 0;
@@ -206,7 +206,7 @@ p {
   z-index: -1;
 }
 
-.travel-card {
+.hub-card {
   position: absolute;
   display: grid;
   gap: 0.3rem;
@@ -221,28 +221,28 @@ p {
   animation: float-card 5200ms ease-in-out infinite;
 }
 
-.travel-card span {
+.hub-card span {
   color: rgba(255, 255, 255, 0.78);
   font-size: 0.8rem;
 }
 
-.travel-card strong {
+.hub-card strong {
   font-size: 1.8rem;
   font-variant-numeric: tabular-nums;
 }
 
-.card-peak {
+.card-travel {
   left: 8%;
   top: 13%;
 }
 
-.card-harbor {
+.card-api {
   right: 8%;
   bottom: 13%;
   animation-delay: 800ms;
 }
 
-.route-line {
+.hub-line {
   position: absolute;
   left: 18%;
   right: 18%;
@@ -298,6 +298,10 @@ p {
   background: rgba(255, 255, 255, 0.74);
   border-color: rgba(31, 111, 84, 0.34);
   transform: translateY(-4px);
+}
+
+.feature-panel-muted {
+  color: var(--muted);
 }
 
 .panel-index,
@@ -447,7 +451,7 @@ p {
     padding: 3rem 0;
   }
 
-  .hero-visual {
+  .hub-visual {
     min-height: 380px;
     border-radius: 20px;
   }
