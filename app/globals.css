@@ -389,6 +389,39 @@ p {
   min-height: 100vh;
 }
 
+.travel-overview-hero {
+  min-height: 68vh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(320px, 1.14fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  padding: 5rem 0 3rem;
+}
+
+.travel-overview-hero h1 {
+  max-width: 760px;
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 0.92;
+}
+
+.travel-overview-hero p:not(.eyebrow) {
+  max-width: 640px;
+  margin-top: 1.2rem;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 2vw, 1.24rem);
+  line-height: 1.8;
+}
+
+.overview-photo {
+  min-height: 460px;
+  border-radius: 28px;
+  background:
+    linear-gradient(rgba(22, 33, 29, 0.04), rgba(22, 33, 29, 0.28)),
+    url("https://upload.wikimedia.org/wikipedia/commons/a/a4/Hong_Kong_Skyline_from_Victoria_Harbour_%2854750093251%29.jpg") center / cover;
+  box-shadow: 0 34px 90px rgba(22, 33, 29, 0.20);
+  animation: visual-enter 1000ms 180ms ease both;
+}
+
 .guide-list {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -400,8 +433,275 @@ p {
     linear-gradient(120deg, rgba(239, 111, 94, 0.14), rgba(141, 183, 201, 0.20));
 }
 
+.guide-card-featured {
+  position: relative;
+  overflow: hidden;
+}
+
+.guide-card-featured::after {
+  content: "";
+  position: absolute;
+  inset: auto 1rem 1rem auto;
+  width: 9rem;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(217, 164, 65, 0.36), transparent 68%);
+  pointer-events: none;
+}
+
 .destination-heading {
   max-width: 900px;
+}
+
+.itinerary-shell {
+  width: min(1240px, calc(100% - 32px));
+}
+
+.itinerary-hero {
+  min-height: 78vh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(340px, 1.08fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+  padding: 5rem 0 3rem;
+}
+
+.itinerary-hero-copy {
+  display: grid;
+  gap: 1.25rem;
+  animation: fade-rise 850ms 100ms ease both;
+}
+
+.itinerary-hero h1 {
+  max-width: 840px;
+  font-size: clamp(3rem, 8vw, 7.2rem);
+  line-height: 0.92;
+}
+
+.itinerary-hero p:not(.eyebrow) {
+  max-width: 680px;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 2vw, 1.22rem);
+  line-height: 1.8;
+}
+
+.trip-facts,
+.principle-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.trip-facts span,
+.principle-strip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.52);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.itinerary-photo-stack {
+  position: relative;
+  min-height: 580px;
+  animation: visual-enter 1000ms 200ms ease both;
+}
+
+.itinerary-photo {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 28px;
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 34px 90px rgba(22, 33, 29, 0.24);
+}
+
+.itinerary-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(22, 33, 29, 0.04), rgba(22, 33, 29, 0.36));
+}
+
+.photo-hong-kong {
+  inset: 0 11% 20% 0;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/a/a4/Hong_Kong_Skyline_from_Victoria_Harbour_%2854750093251%29.jpg");
+}
+
+.photo-macau {
+  inset: 42% 0 0 34%;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/b/bf/The_Ruins_of_St._Pauls%2C_Macau_%286847680308%29.jpg");
+  animation: float-card 6200ms 500ms ease-in-out infinite;
+}
+
+.principle-strip {
+  margin: 0 0 1.2rem;
+  animation: fade-rise 700ms 180ms ease both;
+}
+
+.transport-grid,
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.transport-card,
+.checklist-card,
+.choice-panel {
+  min-width: 0;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.56);
+  box-shadow: 0 20px 55px rgba(22, 33, 29, 0.08);
+}
+
+.transport-card {
+  display: grid;
+  gap: 0.75rem;
+  animation: fade-rise 760ms ease both;
+}
+
+.transport-card:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.transport-card span,
+.day-card-head span {
+  color: var(--coral);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.transport-card h2,
+.choice-panel h2,
+.checklist-card h2 {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+}
+
+.transport-card p,
+.choice-panel p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.transport-card strong {
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.daily-plan {
+  display: grid;
+  gap: 1.2rem;
+  padding: 5rem 0 1rem;
+  scroll-margin-top: 24px;
+}
+
+.section-heading {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.section-heading h2 {
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+}
+
+.day-timeline {
+  display: grid;
+  gap: 1rem;
+}
+
+.day-card {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.24fr) minmax(0, 0.72fr) minmax(260px, 1.04fr);
+  gap: 1rem;
+  align-items: start;
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.54);
+  box-shadow: 0 20px 55px rgba(22, 33, 29, 0.07);
+  animation: fade-rise 700ms ease both;
+}
+
+.day-card:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.day-card:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.day-card:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+.day-card:nth-child(5) {
+  animation-delay: 280ms;
+}
+
+.day-card-head {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.day-card-head p,
+.day-theme,
+.food-note {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.day-card h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  text-wrap: balance;
+}
+
+.day-card ol,
+.checklist-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+.day-card li,
+.checklist-card li {
+  padding-left: 0.2rem;
+}
+
+.food-note {
+  grid-column: 2 / -1;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+}
+
+.choice-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 1rem;
+  align-items: start;
+  margin: 2rem 0 1rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)),
+    linear-gradient(120deg, rgba(31, 111, 84, 0.16), rgba(217, 164, 65, 0.18));
+}
+
+.checklist-grid {
+  padding-top: 1rem;
+  scroll-margin-top: 24px;
+}
+
+.checklist-card {
+  display: grid;
+  gap: 1rem;
 }
 
 .section-map {
@@ -510,8 +810,42 @@ p {
   .feature-grid,
   .guide-list,
   .section-map,
-  .recent-section {
+  .recent-section,
+  .travel-overview-hero,
+  .itinerary-hero,
+  .transport-grid,
+  .checklist-grid,
+  .choice-panel {
     grid-template-columns: 1fr;
+  }
+
+  .overview-photo {
+    min-height: 340px;
+    border-radius: 20px;
+  }
+
+  .itinerary-photo-stack {
+    min-height: 440px;
+  }
+
+  .itinerary-photo {
+    border-radius: 20px;
+  }
+
+  .photo-hong-kong {
+    inset: 0 0 22% 0;
+  }
+
+  .photo-macau {
+    inset: 52% 8% 0 20%;
+  }
+
+  .day-card {
+    grid-template-columns: 1fr;
+  }
+
+  .food-note {
+    grid-column: 1;
   }
 
   .page-heading {
