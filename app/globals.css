@@ -262,7 +262,7 @@ p {
 .guide-list,
 .section-map {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -304,26 +304,6 @@ p {
   transform: translateY(-4px);
 }
 
-.home-story {
-  display: grid;
-  gap: 1rem;
-  max-width: 820px;
-  margin-bottom: 1.4rem;
-  animation: fade-rise 760ms 160ms ease both;
-}
-
-.home-story h2 {
-  font-size: clamp(1.8rem, 4vw, 3.4rem);
-  line-height: 1.08;
-}
-
-.home-story p:not(.eyebrow) {
-  max-width: 720px;
-  color: var(--muted);
-  font-size: 1.08rem;
-  line-height: 1.8;
-}
-
 .panel-index,
 .guide-card span,
 .section-tile span {
@@ -342,6 +322,57 @@ p {
 .feature-panel p,
 .guide-card p,
 .section-tile p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.recent-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(280px, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  padding-top: 1rem;
+  margin-top: 1.4rem;
+  scroll-margin-top: 24px;
+}
+
+.recent-section h2 {
+  margin-top: 0.45rem;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+}
+
+.recent-link {
+  min-width: 0;
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow: 0 20px 55px rgba(22, 33, 29, 0.08);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.recent-link:hover {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(31, 111, 84, 0.34);
+  transform: translateY(-4px);
+}
+
+.recent-link span {
+  color: var(--coral);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.recent-link strong {
+  font-size: 1.4rem;
+}
+
+.recent-link p {
   color: var(--muted);
   line-height: 1.65;
 }
@@ -478,7 +509,8 @@ p {
 
   .feature-grid,
   .guide-list,
-  .section-map {
+  .section-map,
+  .recent-section {
     grid-template-columns: 1fr;
   }
 
