@@ -1723,6 +1723,7 @@ p {
 }
 
 .treasure-map-frame,
+.treasure-sight-frame,
 .treasure-food-frame {
   position: relative;
   overflow: hidden;
@@ -1738,17 +1739,24 @@ p {
   min-height: 48svh;
 }
 
+.treasure-sight-frame {
+  position: relative;
+  min-height: 32svh;
+}
+
 .treasure-food-frame {
   min-height: 28svh;
 }
 
 .treasure-map-art,
+.treasure-sight-art,
 .treasure-food-art {
   object-fit: cover;
   filter: saturate(0.9) contrast(1.02);
 }
 
 .treasure-map-overlay,
+.treasure-sight-overlay,
 .treasure-food-overlay {
   position: absolute;
   inset: 0;
@@ -1779,6 +1787,7 @@ p {
 }
 
 .treasure-map-note,
+.treasure-sight-tag,
 .treasure-food-tag {
   position: absolute;
   display: grid;
@@ -1796,6 +1805,7 @@ p {
 }
 
 .treasure-map-note::before,
+.treasure-sight-tag::before,
 .treasure-food-tag::before {
   content: "";
   position: absolute;
@@ -1807,6 +1817,7 @@ p {
 }
 
 .treasure-map-note strong,
+.treasure-sight-tag strong,
 .treasure-food-tag strong {
   font-size: 0.74rem;
   font-weight: 900;
@@ -1815,6 +1826,7 @@ p {
 }
 
 .treasure-map-note span,
+.treasure-sight-tag span,
 .treasure-food-tag span {
   color: var(--treasure-soft);
   font-size: 0.8rem;
@@ -1827,6 +1839,13 @@ p {
   transform: translate(-50%, -50%) rotate(1.2deg);
 }
 
+.treasure-sight-tag {
+  max-width: 11.4rem;
+  background: rgba(242, 224, 191, 0.84);
+  transform: translate(-50%, -50%) rotate(-0.8deg);
+}
+
+.treasure-sight-caption,
 .treasure-food-caption {
   position: absolute;
   left: 1rem;
@@ -1846,6 +1865,7 @@ p {
   backdrop-filter: blur(10px);
 }
 
+.treasure-sight-caption strong,
 .treasure-food-caption strong {
   font-size: 0.78rem;
   font-weight: 900;
@@ -1853,6 +1873,7 @@ p {
   text-transform: uppercase;
 }
 
+.treasure-sight-caption p,
 .treasure-food-caption p {
   margin: 0;
   color: var(--treasure-soft);
@@ -1966,7 +1987,14 @@ p {
   gap: 0.8rem;
 }
 
+.treasure-highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
 .treasure-step-card,
+.treasure-highlight-card,
 .treasure-meal-card {
   display: grid;
   gap: 0.4rem;
@@ -1986,8 +2014,15 @@ p {
 }
 
 .treasure-step-card strong,
+.treasure-highlight-card strong,
 .treasure-meal-card strong {
   font-size: 1.08rem;
+}
+
+.treasure-highlight-card p {
+  margin: 0;
+  color: var(--treasure-soft);
+  line-height: 1.6;
 }
 
 .treasure-detail-grid {
@@ -2075,6 +2110,7 @@ p {
   .treasure-day-layout,
   .treasure-day-section,
   .treasure-route-grid,
+  .treasure-highlight-grid,
   .treasure-detail-grid,
   .treasure-meal-list,
   .treasure-tip-strip,
@@ -2147,6 +2183,10 @@ p {
     min-height: 42svh;
   }
 
+  .treasure-sight-frame {
+    min-height: 28svh;
+  }
+
   .treasure-food-frame {
     min-height: 26svh;
   }
@@ -2165,22 +2205,26 @@ p {
   }
 
   .treasure-map-note,
+  .treasure-sight-tag,
   .treasure-food-tag {
     max-width: 9rem;
     padding: 0.5rem 0.58rem;
   }
 
   .treasure-map-note strong,
+  .treasure-sight-tag strong,
   .treasure-food-tag strong {
     font-size: 0.68rem;
   }
 
   .treasure-map-note span,
+  .treasure-sight-tag span,
   .treasure-food-tag span {
     font-size: 0.72rem;
     line-height: 1.35;
   }
 
+  .treasure-sight-caption,
   .treasure-food-caption {
     left: 0.7rem;
     right: 0.7rem;
@@ -2188,10 +2232,12 @@ p {
     padding: 0.68rem 0.72rem;
   }
 
+  .treasure-sight-caption strong,
   .treasure-food-caption strong {
     font-size: 0.68rem;
   }
 
+  .treasure-sight-caption p,
   .treasure-food-caption p {
     font-size: 0.76rem;
     line-height: 1.38;

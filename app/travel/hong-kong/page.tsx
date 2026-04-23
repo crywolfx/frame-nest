@@ -38,6 +38,11 @@ type OverlayTrail = {
   y2: string;
 };
 
+type DetailCard = {
+  title: string;
+  body: string;
+};
+
 type DayVariant = {
   id: string;
   label: string;
@@ -46,10 +51,13 @@ type DayVariant = {
   mapAlt: string;
   image: string;
   imageAlt: string;
+  spotlightImage: string;
+  spotlightAlt: string;
   color: string;
   place: string;
   metrics: string[];
   route: RouteStep[];
+  highlights: DetailCard[];
   meals: Meal[];
   tips: string[];
   transport: string[];
@@ -57,6 +65,8 @@ type DayVariant = {
   stops: Stop[];
   mapNotes: OverlayNote[];
   mapTrail: OverlayTrail[];
+  spotlightNotes: OverlayNote[];
+  spotlightCaption: string;
   foodNotes: OverlayNote[];
   foodCaption: string;
 };
@@ -110,7 +120,11 @@ const sources = [
   { label: "M+ 开放时间", href: "https://www.mplus.org.hk/en/plan-your-visit/" },
   { label: "Cotai Water Jet", href: "https://www.cotaiwaterjet.com/ferry-schedule/hongkong-macau-taipa" },
   { label: "山顶缆车票价", href: "https://www.thepeak.com.hk/en/getting-to-the-peak/peak-tram" },
-  { label: "天星小轮", href: "https://www.starferry.com.hk/en/service" }
+  { label: "天星小轮", href: "https://www.starferry.com.hk/en/service" },
+  { label: "澳门旅游局", href: "https://www.macaotourism.gov.mo/" },
+  { label: "香港旅游发展局", href: "https://www.discoverhongkong.com/" },
+  { label: "澳门瑞吉酒店", href: "https://www.marriott.com/en-us/hotels/mfmxr-the-st-regis-macao/overview/" },
+  { label: "千禧新世界香港酒店", href: "https://www.newworldmillenniumhotel.com/" }
 ];
 
 const heroMapNotes: OverlayNote[] = [
@@ -118,7 +132,9 @@ const heroMapNotes: OverlayNote[] = [
   { label: "Day 2 岔路", note: "澳门半岛 A / B 双线切换", x: "66%", y: "32%" },
   { label: "Day 3 换城", note: "氹仔码头坐船到上环", x: "56%", y: "55%" },
   { label: "Day 4 登高", note: "天星小轮 + 山顶 + 庙街", x: "35%", y: "66%" },
-  { label: "Day 5 归岸", note: "海滨散步后从容去机场", x: "73%", y: "74%" }
+  { label: "Day 5 归岸", note: "海滨散步后从容去机场", x: "73%", y: "74%" },
+  { label: "澳门瑞吉酒店", note: "4/28-4/30 的落脚点", x: "77%", y: "60%" },
+  { label: "千禧新世界香港酒店", note: "4/30-5/2 的九龙落脚点", x: "42%", y: "82%" }
 ];
 
 const days: DayEntry[] = [
@@ -139,6 +155,8 @@ const days: DayEntry[] = [
         mapAlt: "港澳第一天卷轴地图",
         image: "/treasure/day1-food.png",
         imageAlt: "澳门葡国菜与甜点卷轴插画",
+        spotlightImage: "/treasure/spots/day1-sight.png",
+        spotlightAlt: "澳门第一天景点卷轴插画",
         color: "#b85f38",
         place: "香港机场 → 港珠澳大桥 → 澳门瑞吉 → 官也街",
         metrics: ["跨境", "夜景", "葡国菜"],
@@ -161,7 +179,7 @@ const days: DayEntry[] = [
           {
             time: "16:15",
             title: "入住澳门瑞吉",
-            detail: "进房后先整理相机、电量和夜拍背包，今天不追求塞满行程。"
+            detail: "澳门瑞吉位于路氹核心，离官也街和酒店群夜景都不远，先把房卡、证件和夜拍小包整理好。"
           },
           {
             time: "18:00",
@@ -172,6 +190,20 @@ const days: DayEntry[] = [
             time: "19:30",
             title: "路氹夜景慢拍",
             detail: "威尼斯人、巴黎人、伦敦人外立面都适合夜里补拍，走一段就好，不硬刷。"
+          }
+        ],
+        highlights: [
+          {
+            title: "澳门瑞吉酒店怎么用",
+            body: "酒店在路氹城核心，适合作为第一晚的节奏缓冲点。入住后先轻装出门，晚上回房再整理次日拍摄设备。"
+          },
+          {
+            title: "官也街为什么适合第一晚",
+            body: "官也街是澳门最稳妥的入门街区，吃喝密度高、路程短、氛围轻松，不需要做复杂决策就能进入旅行状态。"
+          },
+          {
+            title: "路氹夜景怎么拍更高级",
+            body: "不要把几家酒店全部刷完，选两到三个立面停留即可。巴黎人铁塔和威尼斯人水面反光更适合夜里拍层次。"
           }
         ],
         meals: [
@@ -213,13 +245,21 @@ const days: DayEntry[] = [
           { label: "香港机场", note: "12:55 抵达后先取行李", x: "22%", y: "22%" },
           { label: "香港口岸", note: "14:00 去坐金巴", x: "52%", y: "24%" },
           { label: "澳门口岸", note: "过关后接驳去酒店", x: "74%", y: "48%" },
+          { label: "澳门瑞吉酒店", note: "先入住再轻装出门", x: "72%", y: "64%" },
           { label: "官也街", note: "傍晚边吃边逛", x: "60%", y: "72%" }
         ],
         mapTrail: [
           { x1: "22%", y1: "22%", x2: "52%", y2: "24%" },
           { x1: "52%", y1: "24%", x2: "74%", y2: "48%" },
-          { x1: "74%", y1: "48%", x2: "60%", y2: "72%" }
+          { x1: "74%", y1: "48%", x2: "72%", y2: "64%" },
+          { x1: "72%", y1: "64%", x2: "60%", y2: "72%" }
         ],
+        spotlightNotes: [
+          { label: "官也街", note: "从黄昏开始最有烟火感", x: "24%", y: "26%" },
+          { label: "氹仔旧城", note: "葡式建筑和窄巷好拍", x: "66%", y: "30%" },
+          { label: "澳门瑞吉酒店", note: "住在路氹，夜景收尾更轻松", x: "48%", y: "74%" }
+        ],
+        spotlightCaption: "第一晚的景点重点不是数量，而是从落地、入住到夜景和老街，顺滑地进入澳门的节奏。",
         foodNotes: [
           { label: "António", note: "第一晚认真吃葡国菜", x: "24%", y: "30%" },
           { label: "官也街小食", note: "猪扒包 / 牛杂 / 饮品", x: "62%", y: "44%" },
@@ -246,6 +286,8 @@ const days: DayEntry[] = [
         mapAlt: "澳门 A 方案卷轴地图",
         image: "/treasure/day2-food.png",
         imageAlt: "澳门半岛街头小食卷轴插画",
+        spotlightImage: "/treasure/spots/day2a-sight.png",
+        spotlightAlt: "澳门 Day 2 A 方案景点卷轴插画",
         color: "#9b6b36",
         place: "亚婆井前地 / 议事亭前地 / 恋爱巷 / 大三巴",
         metrics: ["电影感", "旧墙坡道", "安静街景"],
@@ -263,7 +305,7 @@ const days: DayEntry[] = [
           {
             time: "09:05",
             title: "亚婆井前地",
-            detail: "坡道、老墙面、旧街角都很有电影感，适合你们慢拍而不是急着打卡。"
+            detail: "亚婆井前地是澳门半岛里最适合拍旧澳门气质的点之一，坡道、老墙和街角都有《放逐》式的旧城电影感。"
           },
           {
             time: "10:20",
@@ -278,12 +320,26 @@ const days: DayEntry[] = [
           {
             time: "13:15",
             title: "大三巴与大炮台",
-            detail: "牌坊打卡后就上大炮台，城市层次比一直停在牌坊正面更好看。"
+            detail: "大三巴不用停太久，拍完正面就往大炮台上走，制高点能把老城屋顶和街区关系看得更清楚。"
           },
           {
             time: "20:00",
             title: "回路氹补拍夜景",
             detail: "晚上再回酒店区，轻轻收一个路氹夜景。"
+          }
+        ],
+        highlights: [
+          {
+            title: "亚婆井前地看什么",
+            body: "这里不是地标式景点，而是旧澳门街区氛围最完整的一块。重点看坡道、窗台、旧门牌和光影，而不是单一打卡位。"
+          },
+          {
+            title: "议事亭前地与恋爱巷怎么走",
+            body: "议事亭前地适合看黑白石板路和城市中心的密度，恋爱巷则是短暂停留的彩色透视小巷，两者一起走最顺。"
+          },
+          {
+            title: "大三巴之后为什么要去大炮台",
+            body: "大三巴本身更像一个符号，大炮台才是真正把城市层次、老城尺度和游客密度拉开观察的位置。"
           }
         ],
         meals: [
@@ -311,16 +367,24 @@ const days: DayEntry[] = [
           { name: "路氹酒店区", coords: [22.146, 113.564] }
         ],
         mapNotes: [
+          { label: "澳门瑞吉酒店", note: "从路氹出发最省脑", x: "18%", y: "20%" },
           { label: "亚婆井", note: "09:05 开始慢拍旧墙坡道", x: "22%", y: "34%" },
           { label: "议事亭", note: "石板路和街口层次最好", x: "54%", y: "30%" },
           { label: "恋爱巷", note: "彩色立面只停留短一点", x: "72%", y: "44%" },
           { label: "大三巴 / 大炮台", note: "中午前后走完最完整", x: "56%", y: "72%" }
         ],
         mapTrail: [
+          { x1: "18%", y1: "20%", x2: "22%", y2: "34%" },
           { x1: "22%", y1: "34%", x2: "54%", y2: "30%" },
           { x1: "54%", y1: "30%", x2: "72%", y2: "44%" },
           { x1: "72%", y1: "44%", x2: "56%", y2: "72%" }
         ],
+        spotlightNotes: [
+          { label: "亚婆井前地", note: "电影感来自坡道和旧墙", x: "22%", y: "24%" },
+          { label: "议事亭前地", note: "石板路是构图主轴", x: "62%", y: "40%" },
+          { label: "大三巴", note: "只拍正面不如连街区一起拍", x: "52%", y: "74%" }
+        ],
+        spotlightCaption: "A 线更偏旧澳门质感，适合把时间花在街巷、坡道和气氛，而不是追求一次性刷掉所有地标。",
         foodNotes: [
           { label: "A Lorcha", note: "海鲜饭和葡式鸡", x: "26%", y: "36%" },
           { label: "António", note: "晚餐延续葡国菜线", x: "64%", y: "50%" },
@@ -336,6 +400,8 @@ const days: DayEntry[] = [
         mapAlt: "澳门 B 方案卷轴地图",
         image: "/treasure/day2-food.png",
         imageAlt: "澳门半岛街头小食卷轴插画",
+        spotlightImage: "/treasure/spots/day2b-sight.png",
+        spotlightAlt: "澳门 Day 2 B 方案景点卷轴插画",
         color: "#b3834c",
         place: "议事亭前地 / 恋爱巷 / 大三巴 / 大炮台",
         metrics: ["最顺路", "街区体验", "轻松省脑"],
@@ -376,6 +442,20 @@ const days: DayEntry[] = [
             detail: "晚上再回到你们熟悉的酒店区收尾。"
           }
         ],
+        highlights: [
+          {
+            title: "B 线为什么更推荐",
+            body: "它几乎没有多余折返，从议事亭前地到恋爱巷、大三巴和大炮台是一条非常自然的上升线，适合稳定 citywalk。"
+          },
+          {
+            title: "大三巴怎么逛不挤",
+            body: "把到达时间放在午餐前后最合适。拍完牌坊正面后立刻转进侧边街巷或直接上大炮台，体验会比原地逗留更好。"
+          },
+          {
+            title: "澳门博物馆什么时候进",
+            body: "当天如果天气热、体力掉得快，澳门博物馆是最好的室内缓冲点；如果天气舒服，可以把时间留给更多街区停留。"
+          }
+        ],
         meals: [
           { slot: "早餐", name: "酒店附近解决", note: "最省脑，早点出门最好。" },
           { slot: "午餐", name: "黄枝记", note: "虾子捞面、云吞面，很适合最顺路线。" },
@@ -401,16 +481,24 @@ const days: DayEntry[] = [
           { name: "路氹酒店区", coords: [22.146, 113.564] }
         ],
         mapNotes: [
+          { label: "澳门瑞吉酒店", note: "早上从路氹直出", x: "18%", y: "18%" },
           { label: "议事亭", note: "09:15 进入最经典步行区", x: "26%", y: "30%" },
           { label: "恋爱巷", note: "短巷快拍即可", x: "66%", y: "32%" },
           { label: "大三巴", note: "到此一拍再往旁边走", x: "70%", y: "58%" },
           { label: "大炮台", note: "晴天看城市层次", x: "38%", y: "74%" }
         ],
         mapTrail: [
+          { x1: "18%", y1: "18%", x2: "26%", y2: "30%" },
           { x1: "26%", y1: "30%", x2: "66%", y2: "32%" },
           { x1: "66%", y1: "32%", x2: "70%", y2: "58%" },
           { x1: "70%", y1: "58%", x2: "38%", y2: "74%" }
         ],
+        spotlightNotes: [
+          { label: "议事亭前地", note: "从这里进入最舒服", x: "22%", y: "26%" },
+          { label: "恋爱巷", note: "短暂停留就够", x: "68%", y: "34%" },
+          { label: "大炮台", note: "真正值得长停的制高点", x: "50%", y: "76%" }
+        ],
+        spotlightCaption: "B 线把澳门半岛最经典的一段压缩成一条顺路主线，很适合公共交通 + citywalk 的节奏。",
         foodNotes: [
           { label: "黄枝记", note: "虾子捞面最顺路", x: "30%", y: "32%" },
           { label: "茶咖休息", note: "下午留给慢一点", x: "68%", y: "52%" },
@@ -437,6 +525,8 @@ const days: DayEntry[] = [
         mapAlt: "澳门到香港卷轴地图",
         image: "/treasure/day3-food.png",
         imageAlt: "香港换城日美食卷轴插画",
+        spotlightImage: "/treasure/spots/day3-sight.png",
+        spotlightAlt: "港澳 Day 3 换城景点卷轴插画",
         color: "#4f8eaa",
         place: "氹仔码头 / 上环 / M+ / 维港",
         metrics: ["坐船换城", "M+", "夜景"],
@@ -448,6 +538,20 @@ const days: DayEntry[] = [
           { time: "14:30", title: "M+", detail: "先在 M+ 看展和建筑，再去海边，不要倒回来。" },
           { time: "17:00", title: "西九海滨", detail: "拍海边和天际线，等傍晚光线慢慢变软。" },
           { time: "19:15", title: "尖沙咀海滨", detail: "把维港夜景放在这一天收下最合适。" }
+        ],
+        highlights: [
+          {
+            title: "Cotai Water Jet 怎么坐更稳",
+            body: "氹仔码头建议至少提前 30 分钟到，带大箱子时更要预留取票和找登船口时间。上船后把随身证件和香港酒店信息放在外侧口袋。"
+          },
+          {
+            title: "M+ 为什么值得留半天",
+            body: "M+ 不只是展览馆，也是西九建筑和海边视角的核心节点。馆内看展，馆外看海和城市线条，这样半天才完整。"
+          },
+          {
+            title: "换城日夜景怎么安排",
+            body: "西九海滨适合看傍晚光线变化，真正的维港夜景则留给尖沙咀海滨。两段都做，但不要再额外加远点。"
+          }
         ],
         meals: [
           { slot: "午餐", name: "一乐烧鹅", note: "烧鹅饭 / 烧鹅面，换城后第一顿香港味。" },
@@ -473,14 +577,22 @@ const days: DayEntry[] = [
         mapNotes: [
           { label: "氹仔码头", note: "提早 30-45 分钟到", x: "20%", y: "30%" },
           { label: "上环", note: "先寄存行李再进城", x: "54%", y: "28%" },
+          { label: "千禧新世界香港酒店", note: "先寄存再出发更稳", x: "78%", y: "34%" },
           { label: "M+", note: "14:30 进馆看展", x: "70%", y: "48%" },
           { label: "维港夜景", note: "尖沙咀收下换城句号", x: "52%", y: "76%" }
         ],
         mapTrail: [
           { x1: "20%", y1: "30%", x2: "54%", y2: "28%" },
-          { x1: "54%", y1: "28%", x2: "70%", y2: "48%" },
+          { x1: "54%", y1: "28%", x2: "78%", y2: "34%" },
+          { x1: "78%", y1: "34%", x2: "70%", y2: "48%" },
           { x1: "70%", y1: "48%", x2: "52%", y2: "76%" }
         ],
+        spotlightNotes: [
+          { label: "氹仔码头", note: "今天从海上换城", x: "24%", y: "24%" },
+          { label: "M+", note: "建筑和展览都值得拍", x: "64%", y: "38%" },
+          { label: "千禧新世界香港酒店", note: "住在尖东，夜景回程很舒服", x: "52%", y: "76%" }
+        ],
+        spotlightCaption: "这一天的高级感来自换城的稳定感，码头、寄存、M+、海滨和夜景像一条完整镜头一路推进。",
         foodNotes: [
           { label: "一乐烧鹅", note: "换城后第一顿香港味", x: "24%", y: "30%" },
           { label: "Bakehouse", note: "M+ 前后最好补给", x: "66%", y: "46%" },
@@ -507,6 +619,8 @@ const days: DayEntry[] = [
         mapAlt: "香港第四天卷轴地图",
         image: "/treasure/day4-food.png",
         imageAlt: "香港茶餐厅与夜市美食卷轴插画",
+        spotlightImage: "/treasure/spots/day4-sight.png",
+        spotlightAlt: "香港 Day 4 景点卷轴插画",
         color: "#476b58",
         place: "天星小轮 / 山顶 / 中环 / 庙街",
         metrics: ["山顶", "老香港", "夜市"],
@@ -519,6 +633,20 @@ const days: DayEntry[] = [
           { time: "15:30", title: "叮叮车一小段", detail: "留一段短短的叮叮车体验，让节奏从高强度转成慢行。" },
           { time: "19:20", title: "旧油麻地警署", detail: "夜色刚起时最有质感，之后接庙街和佐敦正好。" },
           { time: "20:00", title: "庙街 / 佐敦", detail: "夜市、茶餐厅和街口灯牌，是这一天最好的句号。" }
+        ],
+        highlights: [
+          {
+            title: "天星小轮和山顶为什么放一起",
+            body: "先坐天星小轮横跨维港，再上山顶看城市层次，是把‘海面视角’和‘高处视角’放在同一天完成的最佳组合。"
+          },
+          {
+            title: "中环 / 半山扶梯怎么走才不累",
+            body: "山顶下来后从中环切入半山扶梯，再慢慢往上环或叮叮车一小段移动，节奏会比来回折返更轻松。"
+          },
+          {
+            title: "旧油麻地警署和庙街看什么",
+            body: "旧油麻地警署是非常强的港片视觉符号，庙街则负责烟火气和街头灯色。两者连起来就是夜里的老香港。"
+          }
         ],
         meals: [
           { slot: "早餐", name: "尖沙咀茶餐厅", note: "奶茶、多士、通粉 / 面，早点出门比精致早餐重要。" },
@@ -544,16 +672,24 @@ const days: DayEntry[] = [
           { name: "庙街", coords: [22.3074, 114.1694] }
         ],
         mapNotes: [
+          { label: "千禧新世界香港酒店", note: "住在尖东，步行去码头", x: "16%", y: "18%" },
           { label: "天星小轮", note: "08:35 从尖沙咀去中环", x: "24%", y: "28%" },
           { label: "山顶缆车", note: "早到才能避开假日人流", x: "68%", y: "24%" },
           { label: "半山扶梯", note: "下午切进上环生活感", x: "58%", y: "54%" },
           { label: "庙街", note: "夜晚回到九龙电影感", x: "34%", y: "78%" }
         ],
         mapTrail: [
+          { x1: "16%", y1: "18%", x2: "24%", y2: "28%" },
           { x1: "24%", y1: "28%", x2: "68%", y2: "24%" },
           { x1: "68%", y1: "24%", x2: "58%", y2: "54%" },
           { x1: "58%", y1: "54%", x2: "34%", y2: "78%" }
         ],
+        spotlightNotes: [
+          { label: "天星小轮", note: "维港最轻盈的开场", x: "22%", y: "24%" },
+          { label: "太平山顶", note: "城市和海面层次最完整", x: "66%", y: "28%" },
+          { label: "庙街", note: "把夜晚的烟火气收回来", x: "52%", y: "76%" }
+        ],
+        spotlightCaption: "这一天从维港海面到山顶高处，再落回庙街夜色，是香港最完整也最有电影感的一天。",
         foodNotes: [
           { label: "茶餐厅早餐", note: "奶茶多士先开场", x: "26%", y: "30%" },
           { label: "中环烧味", note: "山顶下来最顺", x: "64%", y: "48%" },
@@ -580,6 +716,8 @@ const days: DayEntry[] = [
         mapAlt: "返程卷轴地图",
         image: "/treasure/day5-food.png",
         imageAlt: "返程早餐卷轴插画",
+        spotlightImage: "/treasure/spots/day5-sight.png",
+        spotlightAlt: "香港返程日景点卷轴插画",
         color: "#5d5751",
         place: "尖沙咀海滨 / 香港机场",
         metrics: ["收尾", "轻早餐", "误机风险最低"],
@@ -589,6 +727,20 @@ const days: DayEntry[] = [
           { time: "10:00", title: "回酒店取行李", detail: "预留电梯、退房和短暂停顿时间。" },
           { time: "10:20", title: "前往香港机场", detail: "港铁或车去机场都行，重点是稳定。" },
           { time: "11:10", title: "机场值机", detail: "13:55 起飞，今天宁可早，也不要紧。" }
+        ],
+        highlights: [
+          {
+            title: "返程日为什么不再加景点",
+            body: "最后一天最容易因为‘还想再去一个地方’打乱节奏。把时间交给海滨散步和从容去机场，整趟旅程的收尾会更漂亮。"
+          },
+          {
+            title: "千禧新世界香港酒店的优势",
+            body: "住在尖东，早晨步行去海滨非常方便。拍完最后一段海边，再回酒店取箱子，线路天然顺。"
+          },
+          {
+            title: "去机场怎么准备最稳",
+            body: "前一晚先整理液体、充电器和退税小票，上午只做核对。到机场后把吃饭放在值机之后，风险最低。"
+          }
         ],
         meals: [
           { slot: "最稳妥", name: "酒店早餐", note: "不用拖着行李找地方，最适合返程日。" },
@@ -607,7 +759,7 @@ const days: DayEntry[] = [
           { name: "香港机场", coords: [22.308, 113.9185] }
         ],
         mapNotes: [
-          { label: "酒店", note: "早餐后核对所有证件", x: "22%", y: "32%" },
+          { label: "千禧新世界香港酒店", note: "早餐后核对所有证件", x: "22%", y: "32%" },
           { label: "海滨", note: "最后只散步不加点", x: "56%", y: "44%" },
           { label: "香港机场", note: "11:10 前后开始值机", x: "72%", y: "74%" }
         ],
@@ -615,6 +767,12 @@ const days: DayEntry[] = [
           { x1: "22%", y1: "32%", x2: "56%", y2: "44%" },
           { x1: "56%", y1: "44%", x2: "72%", y2: "74%" }
         ],
+        spotlightNotes: [
+          { label: "千禧新世界香港酒店", note: "最后一晚住这里最稳", x: "24%", y: "28%" },
+          { label: "尖沙咀海滨", note: "只留给散步和最后几张照片", x: "66%", y: "42%" },
+          { label: "香港国际机场", note: "把从容放在最后", x: "48%", y: "76%" }
+        ],
+        spotlightCaption: "返程日不追求再多看一个点，而是把城市的最后一阵海风和从容节奏完整留下来。",
         foodNotes: [
           { label: "酒店早餐", note: "返程日最稳妥", x: "30%", y: "30%" },
           { label: "Bakehouse", note: "想轻一点就买外带", x: "62%", y: "46%" },
@@ -693,6 +851,23 @@ function TreasureDaySection({
               <div className="treasure-map-glow" />
             </div>
           </Tilt>
+          <Tilt glareEnable glareMaxOpacity={0.12} perspective={1350} scale={1.015} tiltMaxAngleX={8} tiltMaxAngleY={8}>
+            <div className="treasure-sight-frame">
+              <Image alt={activeVariant.spotlightAlt} className="treasure-sight-art" fill sizes="(max-width: 860px) 100vw, 38vw" src={activeVariant.spotlightImage} />
+              <div className="treasure-sight-overlay" aria-hidden="true">
+                {activeVariant.spotlightNotes.map((note) => (
+                  <article className="treasure-sight-tag" key={`${activeVariant.id}-spot-${note.label}`} style={{ left: note.x, top: note.y }}>
+                    <strong>{note.label}</strong>
+                    {note.note ? <span>{note.note}</span> : null}
+                  </article>
+                ))}
+              </div>
+              <div className="treasure-sight-caption">
+                <strong>今日景点重点</strong>
+                <p>{activeVariant.spotlightCaption}</p>
+              </div>
+            </div>
+          </Tilt>
           <motion.div style={{ y: foodY }}>
             <Tilt glareEnable glareMaxOpacity={0.14} perspective={1300} scale={1.015} tiltMaxAngleX={10} tiltMaxAngleY={10}>
               <div className="treasure-food-frame">
@@ -762,6 +937,15 @@ function TreasureDaySection({
                       <strong>{step.title}</strong>
                       <p>{step.detail}</p>
                     </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="treasure-highlight-grid">
+                {activeVariant.highlights.map((item) => (
+                  <article className="treasure-highlight-card" key={`${activeVariant.id}-${item.title}`}>
+                    <strong>{item.title}</strong>
+                    <p>{item.body}</p>
                   </article>
                 ))}
               </div>
