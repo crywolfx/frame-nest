@@ -31,6 +31,13 @@ type OverlayNote = {
   y: string;
 };
 
+type OverlayTrail = {
+  x1: string;
+  y1: string;
+  x2: string;
+  y2: string;
+};
+
 type DayVariant = {
   id: string;
   label: string;
@@ -49,7 +56,9 @@ type DayVariant = {
   prep: string[];
   stops: Stop[];
   mapNotes: OverlayNote[];
+  mapTrail: OverlayTrail[];
   foodNotes: OverlayNote[];
+  foodCaption: string;
 };
 
 type DayEntry = {
@@ -206,11 +215,17 @@ const days: DayEntry[] = [
           { label: "澳门口岸", note: "过关后接驳去酒店", x: "74%", y: "48%" },
           { label: "官也街", note: "傍晚边吃边逛", x: "60%", y: "72%" }
         ],
+        mapTrail: [
+          { x1: "22%", y1: "22%", x2: "52%", y2: "24%" },
+          { x1: "52%", y1: "24%", x2: "74%", y2: "48%" },
+          { x1: "74%", y1: "48%", x2: "60%", y2: "72%" }
+        ],
         foodNotes: [
           { label: "António", note: "第一晚认真吃葡国菜", x: "24%", y: "30%" },
           { label: "官也街小食", note: "猪扒包 / 牛杂 / 饮品", x: "62%", y: "44%" },
           { label: "Lord Stow's", note: "葡挞和咖啡收尾", x: "44%", y: "76%" }
-        ]
+        ],
+        foodCaption: "第一晚不追求塞满景点，把跨境、入住、夜景和葡国菜收得稳稳当当。"
       }
     ]
   },
@@ -301,11 +316,17 @@ const days: DayEntry[] = [
           { label: "恋爱巷", note: "彩色立面只停留短一点", x: "72%", y: "44%" },
           { label: "大三巴 / 大炮台", note: "中午前后走完最完整", x: "56%", y: "72%" }
         ],
+        mapTrail: [
+          { x1: "22%", y1: "34%", x2: "54%", y2: "30%" },
+          { x1: "54%", y1: "30%", x2: "72%", y2: "44%" },
+          { x1: "72%", y1: "44%", x2: "56%", y2: "72%" }
+        ],
         foodNotes: [
           { label: "A Lorcha", note: "海鲜饭和葡式鸡", x: "26%", y: "36%" },
           { label: "António", note: "晚餐延续葡国菜线", x: "64%", y: "50%" },
           { label: "咖啡小歇", note: "下午补水不赶路", x: "42%", y: "76%" }
-        ]
+        ],
+        foodCaption: "A 线更像一部旧澳门电影，从坡道、老墙面、葡式午餐一路走到夜里的路氹灯海。"
       },
       {
         id: "b",
@@ -385,11 +406,17 @@ const days: DayEntry[] = [
           { label: "大三巴", note: "到此一拍再往旁边走", x: "70%", y: "58%" },
           { label: "大炮台", note: "晴天看城市层次", x: "38%", y: "74%" }
         ],
+        mapTrail: [
+          { x1: "26%", y1: "30%", x2: "66%", y2: "32%" },
+          { x1: "66%", y1: "32%", x2: "70%", y2: "58%" },
+          { x1: "70%", y1: "58%", x2: "38%", y2: "74%" }
+        ],
         foodNotes: [
           { label: "黄枝记", note: "虾子捞面最顺路", x: "30%", y: "32%" },
           { label: "茶咖休息", note: "下午留给慢一点", x: "68%", y: "52%" },
           { label: "晚餐回路氹", note: "按体力决定", x: "46%", y: "78%" }
-        ]
+        ],
+        foodCaption: "B 线是最省脑的默认选法，路线紧凑，吃得轻松，留足时间给整段街区的呼吸感。"
       }
     ]
   },
@@ -449,11 +476,17 @@ const days: DayEntry[] = [
           { label: "M+", note: "14:30 进馆看展", x: "70%", y: "48%" },
           { label: "维港夜景", note: "尖沙咀收下换城句号", x: "52%", y: "76%" }
         ],
+        mapTrail: [
+          { x1: "20%", y1: "30%", x2: "54%", y2: "28%" },
+          { x1: "54%", y1: "28%", x2: "70%", y2: "48%" },
+          { x1: "70%", y1: "48%", x2: "52%", y2: "76%" }
+        ],
         foodNotes: [
           { label: "一乐烧鹅", note: "换城后第一顿香港味", x: "24%", y: "30%" },
           { label: "Bakehouse", note: "M+ 前后最好补给", x: "66%", y: "46%" },
           { label: "鼎泰丰", note: "夜景前后都很稳", x: "40%", y: "76%" }
-        ]
+        ],
+        foodCaption: "这一天的重点不是赶，而是把坐船、寄存、进馆、海边和夜景串成一条干净的线。"
       }
     ]
   },
@@ -516,11 +549,17 @@ const days: DayEntry[] = [
           { label: "半山扶梯", note: "下午切进上环生活感", x: "58%", y: "54%" },
           { label: "庙街", note: "夜晚回到九龙电影感", x: "34%", y: "78%" }
         ],
+        mapTrail: [
+          { x1: "24%", y1: "28%", x2: "68%", y2: "24%" },
+          { x1: "68%", y1: "24%", x2: "58%", y2: "54%" },
+          { x1: "58%", y1: "54%", x2: "34%", y2: "78%" }
+        ],
         foodNotes: [
           { label: "茶餐厅早餐", note: "奶茶多士先开场", x: "26%", y: "30%" },
           { label: "中环烧味", note: "山顶下来最顺", x: "64%", y: "48%" },
           { label: "美都 / 麦文记", note: "晚餐在油麻地收尾", x: "44%", y: "76%" }
-        ]
+        ],
+        foodCaption: "高处、坡道、叮叮车和夜市全都在这一天里，但节奏要像电影推镜头一样慢慢推进。"
       }
     ]
   },
@@ -572,11 +611,16 @@ const days: DayEntry[] = [
           { label: "海滨", note: "最后只散步不加点", x: "56%", y: "44%" },
           { label: "香港机场", note: "11:10 前后开始值机", x: "72%", y: "74%" }
         ],
+        mapTrail: [
+          { x1: "22%", y1: "32%", x2: "56%", y2: "44%" },
+          { x1: "56%", y1: "44%", x2: "72%", y2: "74%" }
+        ],
         foodNotes: [
           { label: "酒店早餐", note: "返程日最稳妥", x: "30%", y: "30%" },
           { label: "Bakehouse", note: "想轻一点就买外带", x: "62%", y: "46%" },
           { label: "机场简餐", note: "市区时间紧就直接吃", x: "42%", y: "76%" }
-        ]
+        ],
+        foodCaption: "返程日的高级感只来自从容，吃得轻一点，走得稳一点，把最后的海风留在心里。"
       }
     ]
   }
@@ -627,6 +671,17 @@ function TreasureDaySection({
           <Tilt glareEnable glareMaxOpacity={0.16} perspective={1400} scale={1.02} tiltMaxAngleX={8} tiltMaxAngleY={8}>
             <div className="treasure-map-frame">
               <Image alt={activeVariant.mapAlt} className="treasure-map-art" fill priority={index < 2} sizes="(max-width: 860px) 100vw, 42vw" src={activeVariant.mapImage} />
+              <svg aria-hidden="true" className="treasure-map-trail" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {activeVariant.mapTrail.map((trail, trailIndex) => (
+                  <line
+                    key={`${activeVariant.id}-trail-${trailIndex}`}
+                    x1={trail.x1}
+                    x2={trail.x2}
+                    y1={trail.y1}
+                    y2={trail.y2}
+                  />
+                ))}
+              </svg>
               <div className="treasure-map-overlay" aria-hidden="true">
                 {activeVariant.mapNotes.map((note) => (
                   <article className="treasure-map-note" key={`${activeVariant.id}-${note.label}`} style={{ left: note.x, top: note.y }}>
@@ -649,6 +704,10 @@ function TreasureDaySection({
                       {note.note ? <span>{note.note}</span> : null}
                     </article>
                   ))}
+                </div>
+                <div className="treasure-food-caption">
+                  <strong>今日味觉线索</strong>
+                  <p>{activeVariant.foodCaption}</p>
                 </div>
               </div>
             </Tilt>
