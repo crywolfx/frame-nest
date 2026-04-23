@@ -24,6 +24,13 @@ type RouteStep = {
   detail: string;
 };
 
+type OverlayNote = {
+  label: string;
+  note?: string;
+  x: string;
+  y: string;
+};
+
 type DayVariant = {
   id: string;
   label: string;
@@ -41,6 +48,8 @@ type DayVariant = {
   transport: string[];
   prep: string[];
   stops: Stop[];
+  mapNotes: OverlayNote[];
+  foodNotes: OverlayNote[];
 };
 
 type DayEntry = {
@@ -93,6 +102,14 @@ const sources = [
   { label: "Cotai Water Jet", href: "https://www.cotaiwaterjet.com/ferry-schedule/hongkong-macau-taipa" },
   { label: "山顶缆车票价", href: "https://www.thepeak.com.hk/en/getting-to-the-peak/peak-tram" },
   { label: "天星小轮", href: "https://www.starferry.com.hk/en/service" }
+];
+
+const heroMapNotes: OverlayNote[] = [
+  { label: "Day 1 入海", note: "杭州飞香港，跨桥进澳门", x: "20%", y: "26%" },
+  { label: "Day 2 岔路", note: "澳门半岛 A / B 双线切换", x: "66%", y: "32%" },
+  { label: "Day 3 换城", note: "氹仔码头坐船到上环", x: "56%", y: "55%" },
+  { label: "Day 4 登高", note: "天星小轮 + 山顶 + 庙街", x: "35%", y: "66%" },
+  { label: "Day 5 归岸", note: "海滨散步后从容去机场", x: "73%", y: "74%" }
 ];
 
 const days: DayEntry[] = [
@@ -182,6 +199,17 @@ const days: DayEntry[] = [
           { name: "澳门瑞吉酒店", coords: [22.1478, 113.5664] },
           { name: "官也街", coords: [22.1539, 113.5562] },
           { name: "路氹夜景区", coords: [22.1459, 113.5639] }
+        ],
+        mapNotes: [
+          { label: "香港机场", note: "12:55 抵达后先取行李", x: "22%", y: "22%" },
+          { label: "香港口岸", note: "14:00 去坐金巴", x: "52%", y: "24%" },
+          { label: "澳门口岸", note: "过关后接驳去酒店", x: "74%", y: "48%" },
+          { label: "官也街", note: "傍晚边吃边逛", x: "60%", y: "72%" }
+        ],
+        foodNotes: [
+          { label: "António", note: "第一晚认真吃葡国菜", x: "24%", y: "30%" },
+          { label: "官也街小食", note: "猪扒包 / 牛杂 / 饮品", x: "62%", y: "44%" },
+          { label: "Lord Stow's", note: "葡挞和咖啡收尾", x: "44%", y: "76%" }
         ]
       }
     ]
@@ -266,6 +294,17 @@ const days: DayEntry[] = [
           { name: "大三巴牌坊", coords: [22.1977, 113.5409] },
           { name: "大炮台", coords: [22.1979, 113.5424] },
           { name: "路氹酒店区", coords: [22.146, 113.564] }
+        ],
+        mapNotes: [
+          { label: "亚婆井", note: "09:05 开始慢拍旧墙坡道", x: "22%", y: "34%" },
+          { label: "议事亭", note: "石板路和街口层次最好", x: "54%", y: "30%" },
+          { label: "恋爱巷", note: "彩色立面只停留短一点", x: "72%", y: "44%" },
+          { label: "大三巴 / 大炮台", note: "中午前后走完最完整", x: "56%", y: "72%" }
+        ],
+        foodNotes: [
+          { label: "A Lorcha", note: "海鲜饭和葡式鸡", x: "26%", y: "36%" },
+          { label: "António", note: "晚餐延续葡国菜线", x: "64%", y: "50%" },
+          { label: "咖啡小歇", note: "下午补水不赶路", x: "42%", y: "76%" }
         ]
       },
       {
@@ -339,6 +378,17 @@ const days: DayEntry[] = [
           { name: "大炮台", coords: [22.1979, 113.5424] },
           { name: "澳门博物馆", coords: [22.1981, 113.5425] },
           { name: "路氹酒店区", coords: [22.146, 113.564] }
+        ],
+        mapNotes: [
+          { label: "议事亭", note: "09:15 进入最经典步行区", x: "26%", y: "30%" },
+          { label: "恋爱巷", note: "短巷快拍即可", x: "66%", y: "32%" },
+          { label: "大三巴", note: "到此一拍再往旁边走", x: "70%", y: "58%" },
+          { label: "大炮台", note: "晴天看城市层次", x: "38%", y: "74%" }
+        ],
+        foodNotes: [
+          { label: "黄枝记", note: "虾子捞面最顺路", x: "30%", y: "32%" },
+          { label: "茶咖休息", note: "下午留给慢一点", x: "68%", y: "52%" },
+          { label: "晚餐回路氹", note: "按体力决定", x: "46%", y: "78%" }
         ]
       }
     ]
@@ -392,6 +442,17 @@ const days: DayEntry[] = [
           { name: "M+", coords: [22.302, 114.1594] },
           { name: "西九海滨", coords: [22.3001, 114.1561] },
           { name: "尖沙咀海滨", coords: [22.2939, 114.174] }
+        ],
+        mapNotes: [
+          { label: "氹仔码头", note: "提早 30-45 分钟到", x: "20%", y: "30%" },
+          { label: "上环", note: "先寄存行李再进城", x: "54%", y: "28%" },
+          { label: "M+", note: "14:30 进馆看展", x: "70%", y: "48%" },
+          { label: "维港夜景", note: "尖沙咀收下换城句号", x: "52%", y: "76%" }
+        ],
+        foodNotes: [
+          { label: "一乐烧鹅", note: "换城后第一顿香港味", x: "24%", y: "30%" },
+          { label: "Bakehouse", note: "M+ 前后最好补给", x: "66%", y: "46%" },
+          { label: "鼎泰丰", note: "夜景前后都很稳", x: "40%", y: "76%" }
         ]
       }
     ]
@@ -448,6 +509,17 @@ const days: DayEntry[] = [
           { name: "半山扶梯", coords: [22.2822, 114.1536] },
           { name: "旧油麻地警署", coords: [22.3098, 114.169] },
           { name: "庙街", coords: [22.3074, 114.1694] }
+        ],
+        mapNotes: [
+          { label: "天星小轮", note: "08:35 从尖沙咀去中环", x: "24%", y: "28%" },
+          { label: "山顶缆车", note: "早到才能避开假日人流", x: "68%", y: "24%" },
+          { label: "半山扶梯", note: "下午切进上环生活感", x: "58%", y: "54%" },
+          { label: "庙街", note: "夜晚回到九龙电影感", x: "34%", y: "78%" }
+        ],
+        foodNotes: [
+          { label: "茶餐厅早餐", note: "奶茶多士先开场", x: "26%", y: "30%" },
+          { label: "中环烧味", note: "山顶下来最顺", x: "64%", y: "48%" },
+          { label: "美都 / 麦文记", note: "晚餐在油麻地收尾", x: "44%", y: "76%" }
         ]
       }
     ]
@@ -494,6 +566,16 @@ const days: DayEntry[] = [
           { name: "千禧新世界香港酒店", coords: [22.2982, 114.1784] },
           { name: "尖沙咀海滨", coords: [22.2939, 114.174] },
           { name: "香港机场", coords: [22.308, 113.9185] }
+        ],
+        mapNotes: [
+          { label: "酒店", note: "早餐后核对所有证件", x: "22%", y: "32%" },
+          { label: "海滨", note: "最后只散步不加点", x: "56%", y: "44%" },
+          { label: "香港机场", note: "11:10 前后开始值机", x: "72%", y: "74%" }
+        ],
+        foodNotes: [
+          { label: "酒店早餐", note: "返程日最稳妥", x: "30%", y: "30%" },
+          { label: "Bakehouse", note: "想轻一点就买外带", x: "62%", y: "46%" },
+          { label: "机场简餐", note: "市区时间紧就直接吃", x: "42%", y: "76%" }
         ]
       }
     ]
@@ -545,6 +627,14 @@ function TreasureDaySection({
           <Tilt glareEnable glareMaxOpacity={0.16} perspective={1400} scale={1.02} tiltMaxAngleX={8} tiltMaxAngleY={8}>
             <div className="treasure-map-frame">
               <Image alt={activeVariant.mapAlt} className="treasure-map-art" fill priority={index < 2} sizes="(max-width: 860px) 100vw, 42vw" src={activeVariant.mapImage} />
+              <div className="treasure-map-overlay" aria-hidden="true">
+                {activeVariant.mapNotes.map((note) => (
+                  <article className="treasure-map-note" key={`${activeVariant.id}-${note.label}`} style={{ left: note.x, top: note.y }}>
+                    <strong>{note.label}</strong>
+                    {note.note ? <span>{note.note}</span> : null}
+                  </article>
+                ))}
+              </div>
               <div className="treasure-map-glow" />
             </div>
           </Tilt>
@@ -552,6 +642,14 @@ function TreasureDaySection({
             <Tilt glareEnable glareMaxOpacity={0.14} perspective={1300} scale={1.015} tiltMaxAngleX={10} tiltMaxAngleY={10}>
               <div className="treasure-food-frame">
                 <Image alt={activeVariant.imageAlt} className="treasure-food-art" fill sizes="(max-width: 860px) 100vw, 36vw" src={activeVariant.image} />
+                <div className="treasure-food-overlay" aria-hidden="true">
+                  {activeVariant.foodNotes.map((note) => (
+                    <article className="treasure-food-tag" key={`${activeVariant.id}-food-${note.label}`} style={{ left: note.x, top: note.y }}>
+                      <strong>{note.label}</strong>
+                      {note.note ? <span>{note.note}</span> : null}
+                    </article>
+                  ))}
+                </div>
               </div>
             </Tilt>
           </motion.div>
@@ -699,6 +797,14 @@ export default function HongKongGuidePage() {
           <Tilt glareEnable glareMaxOpacity={0.18} perspective={1500} scale={1.025} tiltMaxAngleX={8} tiltMaxAngleY={10}>
             <div className="treasure-hero-map">
               <Image alt="港澳五日藏宝图卷轴" fill priority sizes="(max-width: 860px) 100vw, 52vw" src="/treasure/hero-map.png" />
+              <div className="treasure-map-overlay treasure-map-overlay-hero" aria-hidden="true">
+                {heroMapNotes.map((note) => (
+                  <article className="treasure-map-note" key={note.label} style={{ left: note.x, top: note.y }}>
+                    <strong>{note.label}</strong>
+                    {note.note ? <span>{note.note}</span> : null}
+                  </article>
+                ))}
+              </div>
             </div>
           </Tilt>
         </motion.div>
