@@ -24,7 +24,7 @@ const views: { id: ViewPresetId; label: string }[] = [
 ];
 
 const visualStyles: { id: VisualStyleId; label: string; note: string }[] = [
-  { id: "nasa", label: "NASA 拟真", note: "基于公开天体影像特征的程序材质" },
+  { id: "nasa", label: "NASA 拟真", note: "使用本地真实行星贴图与柔和暗面补光" },
   { id: "cinema", label: "电影宇宙", note: "高反差光晕与暖色镜头感" },
   { id: "instrument", label: "暗夜仪器", note: "低饱和观测屏幕与细轨道线" },
   { id: "neon", label: "霓虹星图", note: "高亮边缘与星图式色彩" }
@@ -243,7 +243,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
           ))}
         </div>
         <p className={styles.attribution}>
-          材质为程序生成，参考 NASA/JPL 公开行星影像与任务图库的颜色、云带、环系和地形特征；未加载外部贴图文件。
+          NASA 拟真使用 Solar System Scope 2K 贴图（CC BY 4.0，基于 NASA 影像/高程资料）并参考 NASA/JPL 行星图；其他风格保留程序材质。
         </p>
 
         <PanelTitle icon={<ImageIcon size={16} />} title="海报编辑" />

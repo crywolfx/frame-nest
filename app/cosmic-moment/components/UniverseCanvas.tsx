@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls } from "@react-three/drei";
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import styles from "../cosmic.module.css";
@@ -50,7 +50,9 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
         <color attach="background" args={[palette.background]} />
         <SceneBridge canvasRef={canvasRef} />
         <ambientLight intensity={palette.ambient} />
+        <hemisphereLight args={[palette.skyFill, palette.groundFill, palette.hemisphere]} />
         <pointLight position={[0, 0, 0]} intensity={palette.sunLight} decay={1.55} color={palette.sunLightColor} />
+        <directionalLight position={[-28, 18, -22]} intensity={palette.backFill} color={palette.backFillColor} />
         <StarField visualStyleId={visualStyleId} />
         <SolarSystem states={states} selectedBodyId={selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
         <CameraRig states={states} selectedBodyId={selectedBodyId} selectedViewId={selectedViewId} focusKey={focusKey} paused={paused} />
@@ -127,10 +129,13 @@ function BodyMesh({
   const isSun = body.id === "sun";
   const segments = body.visualRadius > 1.2 ? 96 : 64;
   const palette = stylePalettes[visualStyleId];
-  const surface = useMemo(() => makeBodyTexture(body.id, visualStyleId), [body.id, visualStyleId]);
-  const ringTexture = useMemo(() => (body.id === "saturn" ? makeRingTexture(visualStyleId) : null), [body.id, visualStyleId]);
+  const fallbackSurface = useMemo(() => makeBodyTexture(body.id, visualStyleId), [body.id, visualStyleId]);
+  const surface = useTextureWithFallback(nasaTexturePaths[body.id], visualStyleId === "nasa", fallbackSurface);
+  const fallbackRing = useMemo(() => (body.id === "saturn" ? makeRingTexture(visualStyleId) : null), [body.id, visualStyleId]);
+  const ringTexture = useTextureWithFallback("/cosmic/textures/2k_saturn_ring_alpha.png", visualStyleId === "nasa" && body.id === "saturn", fallbackRing);
   const atmosphere = atmosphereFor(body.id, visualStyleId);
   const roughness = body.id === "moon" || body.id === "mercury" || body.id === "mars" ? 0.94 : 0.68;
+  const emissiveIntensity = selected ? palette.selectedEmissiveIntensity : palette.bodyEmissiveIntensity;
 
   return (
     <group position={position} rotation={[0, body.rotation, 0]}>
@@ -158,7 +163,8 @@ function BodyMesh({
             roughness={roughness}
             metalness={0.02}
             emissive={selected ? palette.selectedEmissive : palette.bodyEmissive}
-            emissiveIntensity={selected ? 0.32 : 0.08}
+            emissiveMap={surface}
+            emissiveIntensity={emissiveIntensity}
           />
         )}
       </mesh>
@@ -177,10 +183,14 @@ function BodyMesh({
         </mesh>
       )}
 
+      {body.id === "earth" && visualStyleId === "nasa" && <EarthTextureLayers radius={body.visualRadius} />}
+
+      {body.id === "venus" && visualStyleId === "nasa" && <MappedAtmosphere radius={body.visualRadius} src="/cosmic/textures/2k_venus_atmosphere.jpg" opacity={0.18} />}
+
       {body.id === "saturn" && (
         <mesh rotation={[Math.PI / 2.7, 0.2, 0]}>
           <ringGeometry args={[body.visualRadius * 1.32, body.visualRadius * 2.34, 160]} />
-          <meshBasicMaterial map={ringTexture ?? undefined} color={palette.ringColor} side={THREE.DoubleSide} transparent opacity={0.78} />
+          <meshBasicMaterial map={ringTexture ?? undefined} color={palette.ringColor} side={THREE.DoubleSide} transparent opacity={0.9} alphaTest={0.04} />
         </mesh>
       )}
 
@@ -198,8 +208,141 @@ function BodyMesh({
   );
 }
 
+function EarthTextureLayers({ radius }: { radius: number }) {
+  const clouds = useTextureWithFallback("/cosmic/textures/2k_earth_clouds.jpg", true, null);
+  const night = useTextureWithFallback("/cosmic/textures/2k_earth_nightmap.jpg", true, null);
+
+  return (
+    <>
+      {night && (
+        <mesh scale={1.006}>
+          <sphereGeometry args={[radius, 96, 48]} />
+          <shaderMaterial
+            uniforms={{ map: { value: night }, sunPosition: { value: new THREE.Vector3(0, 0, 0) }, opacity: { value: 0.9 } }}
+            vertexShader={nightSideVertexShader}
+            fragmentShader={nightSideFragmentShader}
+            transparent
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      )}
+      {clouds && (
+        <mesh scale={1.018}>
+          <sphereGeometry args={[radius, 96, 48]} />
+          <shaderMaterial
+            uniforms={{ map: { value: clouds }, opacity: { value: 0.32 } }}
+            vertexShader={textureAlphaVertexShader}
+            fragmentShader={textureAlphaFragmentShader}
+            transparent
+            depthWrite={false}
+          />
+        </mesh>
+      )}
+    </>
+  );
+}
+
+function MappedAtmosphere({ radius, src, opacity }: { radius: number; src: string; opacity: number }) {
+  const texture = useTextureWithFallback(src, true, null);
+  if (!texture) return null;
+
+  return (
+    <mesh scale={1.03}>
+      <sphereGeometry args={[radius, 96, 48]} />
+      <meshBasicMaterial map={texture} color="#ffe1a2" transparent opacity={opacity} blending={THREE.AdditiveBlending} depthWrite={false} />
+    </mesh>
+  );
+}
+
+function useTextureWithFallback<T extends THREE.Texture | null>(src: string | undefined, enabled: boolean, fallback: T) {
+  const [texture, setTexture] = useState<THREE.Texture | T>(fallback);
+
+  useEffect(() => {
+    setTexture(fallback);
+    if (!enabled || !src) return;
+
+    let live = true;
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      src,
+      (loaded) => {
+        setupLoadedTexture(loaded);
+        if (live) setTexture(loaded);
+      },
+      undefined,
+      () => {
+        if (live) setTexture(fallback);
+      }
+    );
+
+    return () => {
+      live = false;
+    };
+  }, [enabled, fallback, src]);
+
+  return texture;
+}
+
+function setupLoadedTexture(texture: THREE.Texture) {
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.anisotropy = 8;
+  texture.needsUpdate = true;
+}
+
+const textureAlphaVertexShader = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const textureAlphaFragmentShader = `
+  uniform sampler2D map;
+  uniform float opacity;
+  varying vec2 vUv;
+  void main() {
+    vec3 color = texture2D(map, vUv).rgb;
+    float mask = smoothstep(0.08, 0.72, max(max(color.r, color.g), color.b));
+    gl_FragColor = vec4(vec3(1.0), mask * opacity);
+  }
+`;
+
+const nightSideVertexShader = `
+  varying vec2 vUv;
+  varying vec3 vWorldNormal;
+  varying vec3 vWorldPosition;
+  void main() {
+    vUv = uv;
+    vWorldNormal = normalize(mat3(modelMatrix) * normal);
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+    vWorldPosition = worldPosition.xyz;
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+  }
+`;
+
+const nightSideFragmentShader = `
+  uniform sampler2D map;
+  uniform vec3 sunPosition;
+  uniform float opacity;
+  varying vec2 vUv;
+  varying vec3 vWorldNormal;
+  varying vec3 vWorldPosition;
+  void main() {
+    vec3 city = texture2D(map, vUv).rgb;
+    vec3 sunDirection = normalize(sunPosition - vWorldPosition);
+    float night = smoothstep(0.2, -0.18, dot(normalize(vWorldNormal), sunDirection));
+    float mask = smoothstep(0.04, 0.85, max(max(city.r, city.g), city.b));
+    gl_FragColor = vec4(city * 1.35, mask * night * opacity);
+  }
+`;
+
 function StarField({ visualStyleId }: { visualStyleId: VisualStyleId }) {
   const palette = stylePalettes[visualStyleId];
+  const milkyWay = useTextureWithFallback("/cosmic/textures/2k_stars_milky_way.jpg", visualStyleId === "nasa", null);
   const positions = useMemo(() => {
     const values = new Float32Array(1400 * 3);
     let seed = 29;
@@ -221,20 +364,46 @@ function StarField({ visualStyleId }: { visualStyleId: VisualStyleId }) {
   }, []);
 
   return (
-    <points>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial color={palette.stars} size={palette.starSize} sizeAttenuation transparent opacity={palette.starOpacity} />
-    </points>
+    <>
+      {milkyWay && (
+        <mesh>
+          <sphereGeometry args={[145, 96, 48]} />
+          <meshBasicMaterial map={milkyWay} side={THREE.BackSide} color="#dce8ff" opacity={0.52} transparent depthWrite={false} />
+        </mesh>
+      )}
+      <points>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        </bufferGeometry>
+        <pointsMaterial color={palette.stars} size={palette.starSize} sizeAttenuation transparent opacity={palette.starOpacity} />
+      </points>
+    </>
   );
 }
+
+const nasaTexturePaths: Record<BodyId, string> = {
+  sun: "/cosmic/textures/2k_sun.jpg",
+  mercury: "/cosmic/textures/2k_mercury.jpg",
+  venus: "/cosmic/textures/2k_venus_surface.jpg",
+  earth: "/cosmic/textures/2k_earth_daymap.jpg",
+  moon: "/cosmic/textures/2k_moon.jpg",
+  mars: "/cosmic/textures/2k_mars.jpg",
+  jupiter: "/cosmic/textures/2k_jupiter.jpg",
+  saturn: "/cosmic/textures/2k_saturn.jpg",
+  uranus: "/cosmic/textures/2k_uranus.jpg",
+  neptune: "/cosmic/textures/2k_neptune.jpg"
+};
 
 const stylePalettes: Record<
   VisualStyleId,
   {
     background: string;
     ambient: number;
+    hemisphere: number;
+    skyFill: string;
+    groundFill: string;
+    backFill: number;
+    backFillColor: string;
     sunLight: number;
     sunLightColor: string;
     sunSurface: string;
@@ -249,12 +418,19 @@ const stylePalettes: Record<
     selection: string;
     bodyEmissive: string;
     selectedEmissive: string;
+    bodyEmissiveIntensity: number;
+    selectedEmissiveIntensity: number;
   }
 > = {
   nasa: {
     background: "#02040a",
-    ambient: 0.04,
-    sunLight: 920,
+    ambient: 0.22,
+    hemisphere: 0.34,
+    skyFill: "#556b86",
+    groundFill: "#161b24",
+    backFill: 0.38,
+    backFillColor: "#b6c7df",
+    sunLight: 860,
     sunLightColor: "#ffdca0",
     sunSurface: "#fff0a2",
     sunGlow: "#ff8a2c",
@@ -266,12 +442,19 @@ const stylePalettes: Record<
     orbitOpacity: 0.34,
     ringColor: "#f0d28c",
     selection: "#dff5ff",
-    bodyEmissive: "#000000",
-    selectedEmissive: "#123047"
+    bodyEmissive: "#526173",
+    selectedEmissive: "#8bc7ff",
+    bodyEmissiveIntensity: 0.055,
+    selectedEmissiveIntensity: 0.12
   },
   cinema: {
     background: "#08050a",
     ambient: 0.07,
+    hemisphere: 0.16,
+    skyFill: "#3f2a2a",
+    groundFill: "#120806",
+    backFill: 0.18,
+    backFillColor: "#ffb06d",
     sunLight: 1080,
     sunLightColor: "#ffbf76",
     sunSurface: "#ffd26b",
@@ -285,11 +468,18 @@ const stylePalettes: Record<
     ringColor: "#ffd48a",
     selection: "#ffcf8b",
     bodyEmissive: "#120806",
-    selectedEmissive: "#4d210e"
+    selectedEmissive: "#4d210e",
+    bodyEmissiveIntensity: 0.08,
+    selectedEmissiveIntensity: 0.32
   },
   instrument: {
     background: "#01070a",
     ambient: 0.025,
+    hemisphere: 0.12,
+    skyFill: "#2b6170",
+    groundFill: "#001116",
+    backFill: 0.14,
+    backFillColor: "#8deeff",
     sunLight: 760,
     sunLightColor: "#d9f7ff",
     sunSurface: "#e8fbff",
@@ -303,11 +493,18 @@ const stylePalettes: Record<
     ringColor: "#b6f0ef",
     selection: "#80f7ff",
     bodyEmissive: "#001116",
-    selectedEmissive: "#00313b"
+    selectedEmissive: "#00313b",
+    bodyEmissiveIntensity: 0.08,
+    selectedEmissiveIntensity: 0.32
   },
   neon: {
     background: "#040210",
     ambient: 0.085,
+    hemisphere: 0.2,
+    skyFill: "#49228a",
+    groundFill: "#110022",
+    backFill: 0.2,
+    backFillColor: "#e476ff",
     sunLight: 840,
     sunLightColor: "#ffd5ff",
     sunSurface: "#ffe66f",
@@ -321,7 +518,9 @@ const stylePalettes: Record<
     ringColor: "#ffcc6f",
     selection: "#ff61f6",
     bodyEmissive: "#110022",
-    selectedEmissive: "#36006f"
+    selectedEmissive: "#36006f",
+    bodyEmissiveIntensity: 0.1,
+    selectedEmissiveIntensity: 0.34
   }
 };
 
@@ -512,7 +711,7 @@ function CameraRig({
     }
   });
 
-  return <OrbitControls ref={controlsRef} enableDamping dampingFactor={0.08} makeDefault minDistance={4} maxDistance={92} />;
+  return <OrbitControls ref={controlsRef} enableDamping dampingFactor={0.08} makeDefault minDistance={0.35} maxDistance={160} />;
 }
 
 function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPresetId, elapsed = 0) {
@@ -522,15 +721,14 @@ function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPre
   const moon = byId.moon;
   const sun = byId.sun;
   const bodyTarget = vec(selected.position);
-  const radius = Math.max(2.4, selected.visualRadius * 5.2);
 
   if (view === "overview") return pair([0, 34, 56], [0, 0, 0]);
   if (view === "top") return pair([0, 82, 0.1], [0, 0, 0]);
-  if (view === "sun") return pair([9, 7, 12], sun.position);
-  if (view === "earth") return fromBody(earth, [3.5, 1.6, 5.6], earth.position);
-  if (view === "moon") return fromBody(moon, [1.2, 0.7, 2.4], moon.position);
-  if (view === "earthToMoon") return between(earth, moon, 1.8);
-  if (view === "moonToEarth") return between(moon, earth, 0.85);
+  if (view === "sun") return focusBody(sun, new THREE.Vector3(1, 0.55, 1.15));
+  if (view === "earth") return focusBody(earth, vec(earth.position).sub(vec(sun.position)).add(new THREE.Vector3(0.8, 0.35, 0.45)));
+  if (view === "moon") return focusBody(moon, vec(moon.position).sub(vec(earth.position)).add(new THREE.Vector3(0.45, 0.35, 0.7)));
+  if (view === "earthToMoon") return between(earth, moon, 0.55);
+  if (view === "moonToEarth") return between(moon, earth, 0.45);
   if (view === "cinematic") {
     const angle = elapsed * 0.11;
     return {
@@ -539,26 +737,32 @@ function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPre
     };
   }
 
+  return focusBody(selected, bodyTarget.clone().normalize().add(new THREE.Vector3(0.9, 0.45, 1.15)));
+}
+
+function focusBody(body: BodyState, direction: THREE.Vector3) {
+  const target = vec(body.position);
+  const safeDirection = direction.lengthSq() > 0.0001 ? direction.clone().normalize() : new THREE.Vector3(1, 0.35, 1).normalize();
+  const distance = THREE.MathUtils.clamp(body.visualRadius * (body.id === "sun" ? 4.2 : 6.2), body.id === "moon" ? 1.45 : 2.1, body.id === "sun" ? 16 : 12);
+
   return {
-    target: bodyTarget,
-    position: bodyTarget.clone().add(new THREE.Vector3(radius, radius * 0.42, radius * 1.45))
+    target,
+    position: target.clone().add(safeDirection.multiplyScalar(distance))
   };
 }
 
-function fromBody(body: BodyState, offset: Vec3, target: Vec3) {
-  return {
-    target: vec(target),
-    position: vec(body.position).add(new THREE.Vector3(...offset))
-  };
-}
-
-function between(origin: BodyState, target: BodyState, distance: number) {
+function between(origin: BodyState, target: BodyState, clearance: number) {
   const originVec = vec(origin.position);
   const targetVec = vec(target.position);
   const direction = targetVec.clone().sub(originVec).normalize();
+  const span = originVec.distanceTo(targetVec);
+  const maxOffset = Math.max(origin.visualRadius + 0.2, span - target.visualRadius - 0.2);
+  const offset = Math.min(origin.visualRadius + clearance, maxOffset);
+  const lift = Math.max(0.12, origin.visualRadius * 0.32);
+
   return {
     target: targetVec,
-    position: originVec.add(direction.multiplyScalar(origin.visualRadius + distance)).add(new THREE.Vector3(0, 0.22, 0))
+    position: originVec.add(direction.multiplyScalar(offset)).add(new THREE.Vector3(0, lift, 0))
   };
 }
 

@@ -84,9 +84,9 @@
 }
 
 .heroCopy {
-  left: clamp(20px, 4vw, 56px);
-  bottom: clamp(150px, 18vh, 210px);
-  width: min(620px, 45vw);
+  left: clamp(456px, 31vw, 560px);
+  bottom: clamp(132px, 16vh, 190px);
+  width: min(620px, calc(100vw - 950px));
   pointer-events: none;
 }
 
@@ -102,7 +102,7 @@
 .heroCopy h1 {
   margin: 0;
   color: #fff7db;
-  font-size: clamp(2.9rem, 6vw, 6.4rem);
+  font-size: clamp(2.8rem, 5.4vw, 6.1rem);
   line-height: 0.92;
   text-wrap: balance;
   text-shadow: 0 28px 80px rgba(0, 0, 0, 0.78);
