@@ -1,9 +1,9 @@
 export const speeds = [
-  { label: "1x", value: 1, title: "Real time" },
-  { label: "60x", value: 60, title: "Minute / second" },
-  { label: "1h/s", value: 3600, title: "Hour / second" },
-  { label: "1d/s", value: 86400, title: "Day / second" },
-  { label: "1w/s", value: 604800, title: "Week / second" }
+  { label: "1倍", value: 1, title: "真实时间" },
+  { label: "60倍", value: 60, title: "每秒一分钟" },
+  { label: "1时/秒", value: 3600, title: "每秒一小时" },
+  { label: "1日/秒", value: 86400, title: "每秒一天" },
+  { label: "1周/秒", value: 604800, title: "每秒一周" }
 ] as const;
 
 function pad(value: number) {

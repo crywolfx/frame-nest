@@ -206,6 +206,8 @@
 .batchInput:focus-visible,
 .chip:focus-visible,
 .selectedChip:focus-visible,
+.styleButton:focus-visible,
+.selectedStyle:focus-visible,
 .viewButton:focus-visible,
 .activeView:focus-visible,
 .primaryButton:focus-visible,
@@ -227,6 +229,8 @@
 .exportButton,
 .chip,
 .selectedChip,
+.styleButton,
+.selectedStyle,
 .viewButton,
 .activeView {
   min-height: 38px;
@@ -254,6 +258,7 @@
 .primaryButton:hover,
 .exportButton:hover,
 .chip:hover,
+.styleButton:hover,
 .viewButton:hover {
   transform: translateY(-1px);
   border-color: rgba(157, 232, 193, 0.42);
@@ -261,6 +266,7 @@
 }
 
 .selectedChip,
+.selectedStyle,
 .activeView,
 .exportButton {
   border-color: rgba(255, 188, 92, 0.72);
@@ -269,16 +275,25 @@
 }
 
 .bodyGrid,
-.layoutGrid {
+.layoutGrid,
+.styleGrid {
   display: flex;
   gap: 0.42rem;
   flex-wrap: wrap;
 }
 
 .chip,
-.selectedChip {
+.selectedChip,
+.styleButton,
+.selectedStyle {
   padding: 0 0.72rem;
   font-size: 0.76rem;
+}
+
+.styleButton,
+.selectedStyle {
+  flex: 1 1 calc(50% - 0.42rem);
+  min-width: 132px;
 }
 
 .viewButton,
@@ -294,6 +309,13 @@
   color: rgba(243, 240, 223, 0.74);
   font-size: 0.75rem;
   line-height: 1.45;
+}
+
+.attribution {
+  margin: -0.1rem 0 0.1rem;
+  color: rgba(243, 240, 223, 0.58);
+  font-size: 0.72rem;
+  line-height: 1.5;
 }
 
 .textarea,
@@ -439,6 +461,11 @@
     min-width: 0;
     padding: 0 0.36rem;
   }
+
+  .styleButton,
+  .selectedStyle {
+    min-width: 0;
+  }
 }
 
 @media (max-width: 560px) {
@@ -461,6 +488,8 @@
   .exportButton,
   .chip,
   .selectedChip,
+  .styleButton,
+  .selectedStyle,
   .viewButton,
   .activeView {
     transition-duration: 1ms;

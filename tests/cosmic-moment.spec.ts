@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-test("cosmic moment renders an interactive nonblank universe", async ({ page }) => {
+test("宇宙此刻渲染可交互且非空白的宇宙场景", async ({ page }) => {
   await page.goto("/cosmic-moment");
-  await expect(page.getByText("Cosmic Moment")).toBeVisible();
-  await expect(page.getByRole("button", { name: /Export/i })).toBeVisible();
+  await expect(page.getByText("宇宙此刻")).toBeVisible();
+  await expect(page.getByRole("button", { name: /导出/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: "NASA 拟真" })).toBeVisible();
 
   const canvas = page.locator("canvas").first();
   await expect(canvas).toBeVisible();

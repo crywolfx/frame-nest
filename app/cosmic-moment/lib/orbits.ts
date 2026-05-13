@@ -63,7 +63,7 @@ export function moonPhaseName(states: BodyState[]) {
   const sun = states.find((body) => body.id === "sun");
   const earth = states.find((body) => body.id === "earth");
   const moon = states.find((body) => body.id === "moon");
-  if (!sun || !earth || !moon) return "Unknown";
+  if (!sun || !earth || !moon) return "月相未知";
 
   const sunVector = [
     sun.position[0] - moon.position[0],
@@ -80,12 +80,12 @@ export function moonPhaseName(states: BodyState[]) {
   const b = Math.hypot(...earthVector);
   const phase = (1 - dot / (a * b)) / 2;
 
-  if (phase < 0.04) return "New moon";
-  if (phase < 0.22) return "Waxing crescent";
-  if (phase < 0.32) return "First quarter";
-  if (phase < 0.48) return "Waxing gibbous";
-  if (phase < 0.56) return "Full moon";
-  if (phase < 0.74) return "Waning gibbous";
-  if (phase < 0.84) return "Last quarter";
-  return "Waning crescent";
+  if (phase < 0.04) return "新月";
+  if (phase < 0.22) return "娥眉月";
+  if (phase < 0.32) return "上弦月";
+  if (phase < 0.48) return "盈凸月";
+  if (phase < 0.56) return "满月";
+  if (phase < 0.74) return "亏凸月";
+  if (phase < 0.84) return "下弦月";
+  return "残月";
 }

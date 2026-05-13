@@ -3,7 +3,7 @@ import type { BodyDefinition, BodyId } from "./types";
 export const bodies: BodyDefinition[] = [
   {
     id: "sun",
-    name: "Sun",
+    name: "太阳",
     visualRadius: 3.2,
     orbitRadius: 0,
     orbitPeriodDays: 1,
@@ -15,7 +15,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "mercury",
-    name: "Mercury",
+    name: "水星",
     visualRadius: 0.42,
     orbitRadius: 7,
     orbitPeriodDays: 87.969,
@@ -26,7 +26,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "venus",
-    name: "Venus",
+    name: "金星",
     visualRadius: 0.72,
     orbitRadius: 9.8,
     orbitPeriodDays: 224.701,
@@ -37,7 +37,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "earth",
-    name: "Earth",
+    name: "地球",
     visualRadius: 0.84,
     orbitRadius: 13,
     orbitPeriodDays: 365.256,
@@ -48,7 +48,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "moon",
-    name: "Moon",
+    name: "月球",
     parentId: "earth",
     visualRadius: 0.28,
     orbitRadius: 2.05,
@@ -60,7 +60,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "mars",
-    name: "Mars",
+    name: "火星",
     visualRadius: 0.62,
     orbitRadius: 17,
     orbitPeriodDays: 686.98,
@@ -71,7 +71,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "jupiter",
-    name: "Jupiter",
+    name: "木星",
     visualRadius: 1.75,
     orbitRadius: 23,
     orbitPeriodDays: 4332.59,
@@ -82,7 +82,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "saturn",
-    name: "Saturn",
+    name: "土星",
     visualRadius: 1.46,
     orbitRadius: 29,
     orbitPeriodDays: 10759.22,
@@ -93,7 +93,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "uranus",
-    name: "Uranus",
+    name: "天王星",
     visualRadius: 1.05,
     orbitRadius: 35,
     orbitPeriodDays: 30688.5,
@@ -104,7 +104,7 @@ export const bodies: BodyDefinition[] = [
   },
   {
     id: "neptune",
-    name: "Neptune",
+    name: "海王星",
     visualRadius: 1.02,
     orbitRadius: 41,
     orbitPeriodDays: 60182,

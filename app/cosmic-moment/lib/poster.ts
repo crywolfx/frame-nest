@@ -33,12 +33,13 @@ function drawCover(ctx: CanvasRenderingContext2D, source: HTMLCanvasElement, wid
 }
 
 function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
-  const words = text.replace(/\s+/g, " ").trim().split(" ");
+  const source = text.replace(/\s+/g, " ").trim();
+  const words = /[\u3400-\u9fff]/.test(source) ? Array.from(source) : source.split(" ");
   const lines: string[] = [];
   let line = "";
 
   words.forEach((word) => {
-    const next = line ? `${line} ${word}` : word;
+    const next = /[\u3400-\u9fff]/.test(source) ? `${line}${word}` : line ? `${line} ${word}` : word;
     if (ctx.measureText(next).width > maxWidth && line) {
       lines.push(line);
       line = word;
@@ -58,7 +59,7 @@ export async function composePoster(source: HTMLCanvasElement, config: PosterCon
   canvas.height = height;
 
   const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas export is unavailable.");
+  if (!ctx) throw new Error("画布导出不可用。");
 
   drawCover(ctx, source, width, height);
 
@@ -95,7 +96,7 @@ export async function composePoster(source: HTMLCanvasElement, config: PosterCon
   }
 
   return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("Poster export failed."))), "image/png", 0.94);
+    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("海报导出失败。"))), "image/png", 0.94);
   });
 }
 

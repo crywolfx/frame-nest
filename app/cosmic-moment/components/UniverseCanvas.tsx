@@ -8,7 +8,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import styles from "../cosmic.module.css";
 import { bodies } from "../lib/bodies";
 import { sampleOrbit } from "../lib/orbits";
-import type { BodyId, BodyState, Vec3, ViewPresetId } from "../lib/types";
+import type { BodyId, BodyState, Vec3, ViewPresetId, VisualStyleId } from "../lib/types";
 
 export type UniverseHandle = {
   captureFrame: () => Promise<HTMLCanvasElement>;
@@ -20,11 +20,12 @@ type UniverseCanvasProps = {
   selectedViewId: ViewPresetId;
   focusKey: number;
   paused: boolean;
+  visualStyleId: VisualStyleId;
   onSelect: (bodyId: BodyId) => void;
 };
 
 export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(function UniverseCanvas(
-  { states, selectedBodyId, selectedViewId, focusKey, paused, onSelect },
+  { states, selectedBodyId, selectedViewId, focusKey, paused, visualStyleId, onSelect },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -32,10 +33,12 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
   useImperativeHandle(ref, () => ({
     async captureFrame() {
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      if (!canvasRef.current) throw new Error("Universe canvas is not ready.");
+      if (!canvasRef.current) throw new Error("宇宙画布尚未就绪。");
       return canvasRef.current;
     }
   }));
+
+  const palette = stylePalettes[visualStyleId];
 
   return (
     <div className={styles.canvasWrap} data-testid="universe-canvas-wrap">
@@ -44,12 +47,12 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
         dpr={[1, 1.6]}
         gl={{ antialias: true, alpha: false, preserveDrawingBuffer: true, powerPreference: "high-performance" }}
       >
-        <color attach="background" args={["#03050a"]} />
+        <color attach="background" args={[palette.background]} />
         <SceneBridge canvasRef={canvasRef} />
-        <ambientLight intensity={0.035} />
-        <pointLight position={[0, 0, 0]} intensity={820} decay={1.55} color="#ffd991" />
-        <StarField />
-        <SolarSystem states={states} selectedBodyId={selectedBodyId} onSelect={onSelect} />
+        <ambientLight intensity={palette.ambient} />
+        <pointLight position={[0, 0, 0]} intensity={palette.sunLight} decay={1.55} color={palette.sunLightColor} />
+        <StarField visualStyleId={visualStyleId} />
+        <SolarSystem states={states} selectedBodyId={selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
         <CameraRig states={states} selectedBodyId={selectedBodyId} selectedViewId={selectedViewId} focusKey={focusKey} paused={paused} />
       </Canvas>
     </div>
@@ -69,12 +72,15 @@ function SceneBridge({ canvasRef }: { canvasRef: React.MutableRefObject<HTMLCanv
 function SolarSystem({
   states,
   selectedBodyId,
+  visualStyleId,
   onSelect
 }: {
   states: BodyState[];
   selectedBodyId: BodyId;
+  visualStyleId: VisualStyleId;
   onSelect: (bodyId: BodyId) => void;
 }) {
+  const palette = stylePalettes[visualStyleId];
   const orbitPoints = useMemo(
     () =>
       bodies
@@ -89,20 +95,42 @@ function SolarSystem({
   return (
     <group>
       {orbitPoints.map(({ id, points }) => (
-        <Line key={id} points={points} color={id === "moon" ? "#d8e8ff" : "#31465f"} lineWidth={id === "moon" ? 1.2 : 0.7} transparent opacity={0.34} />
+        <Line
+          key={id}
+          points={points}
+          color={id === "moon" ? palette.moonOrbit : palette.orbit}
+          lineWidth={id === "moon" ? 1.25 : 0.75}
+          transparent
+          opacity={palette.orbitOpacity}
+        />
       ))}
 
       {states.map((body) => (
-        <BodyMesh key={body.id} body={body} selected={body.id === selectedBodyId} onSelect={onSelect} />
+        <BodyMesh key={body.id} body={body} selected={body.id === selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
       ))}
     </group>
   );
 }
 
-function BodyMesh({ body, selected, onSelect }: { body: BodyState; selected: boolean; onSelect: (bodyId: BodyId) => void }) {
+function BodyMesh({
+  body,
+  selected,
+  visualStyleId,
+  onSelect
+}: {
+  body: BodyState;
+  selected: boolean;
+  visualStyleId: VisualStyleId;
+  onSelect: (bodyId: BodyId) => void;
+}) {
   const position = body.position;
   const isSun = body.id === "sun";
-  const segments = body.visualRadius > 1.2 ? 56 : 36;
+  const segments = body.visualRadius > 1.2 ? 96 : 64;
+  const palette = stylePalettes[visualStyleId];
+  const surface = useMemo(() => makeBodyTexture(body.id, visualStyleId), [body.id, visualStyleId]);
+  const ringTexture = useMemo(() => (body.id === "saturn" ? makeRingTexture(visualStyleId) : null), [body.id, visualStyleId]);
+  const atmosphere = atmosphereFor(body.id, visualStyleId);
+  const roughness = body.id === "moon" || body.id === "mercury" || body.id === "mars" ? 0.94 : 0.68;
 
   return (
     <group position={position} rotation={[0, body.rotation, 0]}>
@@ -119,32 +147,47 @@ function BodyMesh({ body, selected, onSelect }: { body: BodyState; selected: boo
           document.body.style.cursor = "";
         }}
       >
-        <sphereGeometry args={[body.visualRadius * (selected ? 1.13 : 1), segments, Math.max(18, segments / 2)]} />
+        <sphereGeometry args={[body.visualRadius * (selected ? 1.13 : 1), segments, Math.max(28, segments / 2)]} />
         {isSun ? (
-          <meshBasicMaterial color={body.color} toneMapped={false} />
+          <meshBasicMaterial map={surface} color={palette.sunSurface} toneMapped={false} />
         ) : (
-          <meshStandardMaterial color={body.color} roughness={0.72} metalness={0.04} emissive={selected ? "#111d2a" : "#000000"} />
+          <meshStandardMaterial
+            map={surface}
+            bumpMap={surface}
+            bumpScale={body.id === "moon" ? 0.08 : body.id === "earth" ? 0.018 : 0.035}
+            roughness={roughness}
+            metalness={0.02}
+            emissive={selected ? palette.selectedEmissive : palette.bodyEmissive}
+            emissiveIntensity={selected ? 0.32 : 0.08}
+          />
         )}
       </mesh>
 
       {body.id === "sun" && (
-        <mesh scale={1.22}>
+        <mesh scale={1.36}>
           <sphereGeometry args={[body.visualRadius, 48, 24]} />
-          <meshBasicMaterial color="#ff7f22" transparent opacity={0.16} blending={THREE.AdditiveBlending} />
+          <meshBasicMaterial color={palette.sunGlow} transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} />
+        </mesh>
+      )}
+
+      {atmosphere && (
+        <mesh scale={atmosphere.scale}>
+          <sphereGeometry args={[body.visualRadius, 64, 32]} />
+          <meshBasicMaterial color={atmosphere.color} transparent opacity={atmosphere.opacity} blending={THREE.AdditiveBlending} depthWrite={false} />
         </mesh>
       )}
 
       {body.id === "saturn" && (
         <mesh rotation={[Math.PI / 2.7, 0.2, 0]}>
-          <ringGeometry args={[body.visualRadius * 1.35, body.visualRadius * 2.18, 96]} />
-          <meshBasicMaterial color="#d5be83" side={THREE.DoubleSide} transparent opacity={0.58} />
+          <ringGeometry args={[body.visualRadius * 1.32, body.visualRadius * 2.34, 160]} />
+          <meshBasicMaterial map={ringTexture ?? undefined} color={palette.ringColor} side={THREE.DoubleSide} transparent opacity={0.78} />
         </mesh>
       )}
 
       {selected && (
         <mesh>
           <sphereGeometry args={[body.visualRadius * 1.55, 36, 18]} />
-          <meshBasicMaterial color="#dff5ff" transparent opacity={0.09} blending={THREE.AdditiveBlending} depthWrite={false} />
+          <meshBasicMaterial color={palette.selection} transparent opacity={0.12} blending={THREE.AdditiveBlending} depthWrite={false} />
         </mesh>
       )}
 
@@ -155,7 +198,8 @@ function BodyMesh({ body, selected, onSelect }: { body: BodyState; selected: boo
   );
 }
 
-function StarField() {
+function StarField({ visualStyleId }: { visualStyleId: VisualStyleId }) {
+  const palette = stylePalettes[visualStyleId];
   const positions = useMemo(() => {
     const values = new Float32Array(1400 * 3);
     let seed = 29;
@@ -181,9 +225,254 @@ function StarField() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial color="#c9e6ff" size={0.08} sizeAttenuation transparent opacity={0.7} />
+      <pointsMaterial color={palette.stars} size={palette.starSize} sizeAttenuation transparent opacity={palette.starOpacity} />
     </points>
   );
+}
+
+const stylePalettes: Record<
+  VisualStyleId,
+  {
+    background: string;
+    ambient: number;
+    sunLight: number;
+    sunLightColor: string;
+    sunSurface: string;
+    sunGlow: string;
+    stars: string;
+    starSize: number;
+    starOpacity: number;
+    orbit: string;
+    moonOrbit: string;
+    orbitOpacity: number;
+    ringColor: string;
+    selection: string;
+    bodyEmissive: string;
+    selectedEmissive: string;
+  }
+> = {
+  nasa: {
+    background: "#02040a",
+    ambient: 0.04,
+    sunLight: 920,
+    sunLightColor: "#ffdca0",
+    sunSurface: "#fff0a2",
+    sunGlow: "#ff8a2c",
+    stars: "#d7e8ff",
+    starSize: 0.075,
+    starOpacity: 0.72,
+    orbit: "#304158",
+    moonOrbit: "#d7e7ff",
+    orbitOpacity: 0.34,
+    ringColor: "#f0d28c",
+    selection: "#dff5ff",
+    bodyEmissive: "#000000",
+    selectedEmissive: "#123047"
+  },
+  cinema: {
+    background: "#08050a",
+    ambient: 0.07,
+    sunLight: 1080,
+    sunLightColor: "#ffbf76",
+    sunSurface: "#ffd26b",
+    sunGlow: "#ff5f2d",
+    stars: "#ffe7ca",
+    starSize: 0.09,
+    starOpacity: 0.82,
+    orbit: "#705642",
+    moonOrbit: "#ffe4bd",
+    orbitOpacity: 0.28,
+    ringColor: "#ffd48a",
+    selection: "#ffcf8b",
+    bodyEmissive: "#120806",
+    selectedEmissive: "#4d210e"
+  },
+  instrument: {
+    background: "#01070a",
+    ambient: 0.025,
+    sunLight: 760,
+    sunLightColor: "#d9f7ff",
+    sunSurface: "#e8fbff",
+    sunGlow: "#58d7ff",
+    stars: "#9ee9ff",
+    starSize: 0.055,
+    starOpacity: 0.58,
+    orbit: "#2f7f8b",
+    moonOrbit: "#bdf6ff",
+    orbitOpacity: 0.42,
+    ringColor: "#b6f0ef",
+    selection: "#80f7ff",
+    bodyEmissive: "#001116",
+    selectedEmissive: "#00313b"
+  },
+  neon: {
+    background: "#040210",
+    ambient: 0.085,
+    sunLight: 840,
+    sunLightColor: "#ffd5ff",
+    sunSurface: "#ffe66f",
+    sunGlow: "#ff3df2",
+    stars: "#f5d6ff",
+    starSize: 0.1,
+    starOpacity: 0.86,
+    orbit: "#743bff",
+    moonOrbit: "#72fff3",
+    orbitOpacity: 0.5,
+    ringColor: "#ffcc6f",
+    selection: "#ff61f6",
+    bodyEmissive: "#110022",
+    selectedEmissive: "#36006f"
+  }
+};
+
+const bodyColors: Record<BodyId, string[]> = {
+  sun: ["#fff4a8", "#ffc247", "#ff6a1f", "#7a1f0e"],
+  mercury: ["#5a5146", "#8d8170", "#c5b9a5", "#342f2b"],
+  venus: ["#6f5227", "#c99242", "#f1d078", "#fff0ad"],
+  earth: ["#073b80", "#1567b0", "#2f8c5a", "#ded2a8", "#ffffff"],
+  moon: ["#4c4b47", "#8f8b81", "#d7d0c2", "#262522"],
+  mars: ["#622b20", "#a6472d", "#d47a4a", "#f0bd83"],
+  jupiter: ["#6b422c", "#b98155", "#e5c098", "#f6e4c2", "#9b3d2e"],
+  saturn: ["#6f5b35", "#b89458", "#ead394", "#f7e8b7"],
+  uranus: ["#2f8d9b", "#7ad7df", "#d3fbff", "#175965"],
+  neptune: ["#142e80", "#355cc9", "#6f9cff", "#d7e8ff"]
+};
+
+function makeBodyTexture(bodyId: BodyId, style: VisualStyleId) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return new THREE.CanvasTexture(canvas);
+
+  const colors = remapColors(bodyColors[bodyId], style);
+  const random = seeded(`${bodyId}-${style}`);
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  colors.forEach((color, index) => gradient.addColorStop(index / Math.max(1, colors.length - 1), color));
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (bodyId === "sun") drawSolarGranules(ctx, canvas, random, style);
+  else if (bodyId === "earth") drawEarth(ctx, canvas, random, style);
+  else if (bodyId === "jupiter" || bodyId === "saturn" || bodyId === "uranus" || bodyId === "neptune" || bodyId === "venus") drawBands(ctx, canvas, bodyId, random, style);
+  else drawRock(ctx, canvas, bodyId, random, style);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.anisotropy = 4;
+  return texture;
+}
+
+function drawEarth(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, random: () => number, style: VisualStyleId) {
+  ctx.fillStyle = style === "neon" ? "rgba(90,255,210,0.75)" : "rgba(47,132,86,0.82)";
+  for (let index = 0; index < 34; index += 1) {
+    ctx.beginPath();
+    ctx.ellipse(random() * canvas.width, 36 + random() * 176, 34 + random() * 92, 12 + random() * 42, random() * Math.PI, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = "rgba(255,255,255,0.62)";
+  for (let index = 0; index < 44; index += 1) {
+    ctx.beginPath();
+    ctx.ellipse(random() * canvas.width, random() * canvas.height, 18 + random() * 72, 2 + random() * 9, random() * 0.45, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawBands(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, bodyId: BodyId, random: () => number, style: VisualStyleId) {
+  const bandCount = bodyId === "jupiter" ? 18 : bodyId === "saturn" ? 14 : 9;
+  for (let index = 0; index < bandCount; index += 1) {
+    const y = (index / bandCount) * canvas.height;
+    ctx.fillStyle = `rgba(255,255,255,${0.05 + random() * 0.18})`;
+    ctx.fillRect(0, y, canvas.width, 5 + random() * 18);
+    ctx.fillStyle = `rgba(45,20,10,${style === "instrument" ? 0.08 : 0.1 + random() * 0.16})`;
+    ctx.fillRect(0, y + 8 + random() * 8, canvas.width, 2 + random() * 9);
+  }
+  if (bodyId === "jupiter") {
+    ctx.fillStyle = style === "neon" ? "rgba(255,70,230,0.68)" : "rgba(150,55,42,0.72)";
+    ctx.beginPath();
+    ctx.ellipse(canvas.width * 0.68, canvas.height * 0.58, 44, 18, -0.08, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawRock(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, bodyId: BodyId, random: () => number, style: VisualStyleId) {
+  const craters = bodyId === "moon" ? 92 : bodyId === "mercury" ? 68 : 36;
+  for (let index = 0; index < craters; index += 1) {
+    const radius = (bodyId === "moon" ? 3 : 2) + random() * (bodyId === "mars" ? 9 : 15);
+    const x = random() * canvas.width;
+    const y = random() * canvas.height;
+    ctx.strokeStyle = `rgba(255,255,255,${style === "neon" ? 0.22 : 0.08 + random() * 0.14})`;
+    ctx.lineWidth = 1 + random() * 1.4;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = `rgba(0,0,0,${0.08 + random() * 0.16})`;
+    ctx.beginPath();
+    ctx.arc(x + radius * 0.12, y + radius * 0.1, radius * 0.72, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawSolarGranules(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, random: () => number, style: VisualStyleId) {
+  for (let index = 0; index < 260; index += 1) {
+    ctx.fillStyle = style === "instrument" ? "rgba(120,230,255,0.14)" : "rgba(255,95,18,0.18)";
+    ctx.beginPath();
+    ctx.ellipse(random() * canvas.width, random() * canvas.height, 8 + random() * 26, 2 + random() * 8, random() * Math.PI, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function makeRingTexture(style: VisualStyleId) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 32;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return new THREE.CanvasTexture(canvas);
+  for (let x = 0; x < canvas.width; x += 1) {
+    const t = x / canvas.width;
+    const gap = Math.abs(t - 0.47) < 0.018 || Math.abs(t - 0.72) < 0.012;
+    ctx.fillStyle = gap ? "rgba(0,0,0,0)" : ringStripe(style, t);
+    ctx.fillRect(x, 0, 1, canvas.height);
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  return texture;
+}
+
+function ringStripe(style: VisualStyleId, t: number) {
+  if (style === "neon") return `rgba(255,${Math.round(170 + t * 70)},120,${0.42 + t * 0.36})`;
+  if (style === "instrument") return `rgba(180,245,245,${0.32 + t * 0.28})`;
+  return `rgba(${210 + Math.round(t * 36)},${178 + Math.round(t * 38)},${116 + Math.round(t * 34)},${0.34 + t * 0.42})`;
+}
+
+function atmosphereFor(bodyId: BodyId, style: VisualStyleId) {
+  const colors: Partial<Record<BodyId, string>> = {
+    earth: style === "neon" ? "#48ffe8" : "#77caff",
+    venus: "#ffd37a",
+    uranus: "#9ff6ff",
+    neptune: "#7ca4ff"
+  };
+  const color = colors[bodyId];
+  return color ? { color, scale: bodyId === "earth" ? 1.08 : 1.045, opacity: bodyId === "earth" ? 0.18 : 0.1 } : null;
+}
+
+function remapColors(colors: string[], style: VisualStyleId) {
+  if (style === "nasa") return colors;
+  if (style === "instrument") return colors.map((color) => new THREE.Color(color).lerp(new THREE.Color("#9ff4ff"), 0.42).getStyle());
+  if (style === "neon") return colors.map((color) => new THREE.Color(color).offsetHSL(0.08, 0.28, 0.06).getStyle());
+  return colors.map((color) => new THREE.Color(color).offsetHSL(-0.03, 0.08, -0.02).getStyle());
+}
+
+function seeded(seedText: string) {
+  let seed = 0;
+  for (let index = 0; index < seedText.length; index += 1) seed = (seed * 31 + seedText.charCodeAt(index)) >>> 0;
+  return () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
 }
 
 function CameraRig({

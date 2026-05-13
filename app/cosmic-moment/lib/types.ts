@@ -22,6 +22,7 @@ export type ViewPresetId =
   | "cinematic";
 
 export type RatioId = "1:1" | "4:5" | "9:16" | "16:9" | "custom";
+export type VisualStyleId = "nasa" | "cinema" | "instrument" | "neon";
 export type Vec3 = [number, number, number];
 
 export type BodyDefinition = {
