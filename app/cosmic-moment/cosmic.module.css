@@ -1,0 +1,468 @@
+.shell {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #f3f0df;
+  background:
+    linear-gradient(180deg, rgba(255, 176, 76, 0.09), transparent 28%),
+    #03050a;
+  font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+.shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 76px 76px;
+  mask-image: radial-gradient(circle at 50% 45%, transparent 0 34%, black 72%);
+  opacity: 0.45;
+  z-index: 1;
+}
+
+.canvasWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.nav,
+.heroCopy,
+.leftPanel,
+.rightPanel,
+.batchPanel,
+.viewRail {
+  position: absolute;
+  z-index: 2;
+}
+
+.nav {
+  left: 22px;
+  right: 22px;
+  top: calc(16px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  border: 1px solid rgba(245, 240, 220, 0.18);
+  border-radius: 999px;
+  padding: 0 1rem;
+  background: rgba(3, 5, 10, 0.52);
+  color: #fff6dc;
+  font-weight: 800;
+  letter-spacing: 0;
+  backdrop-filter: blur(16px);
+}
+
+.navMeta {
+  display: flex;
+  max-width: min(62vw, 720px);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  color: rgba(243, 240, 223, 0.74);
+  font-size: 0.78rem;
+}
+
+.navMeta span,
+.readout,
+.status {
+  border: 1px solid rgba(245, 240, 220, 0.14);
+  border-radius: 999px;
+  padding: 0.48rem 0.68rem;
+  background: rgba(4, 8, 15, 0.42);
+  backdrop-filter: blur(12px);
+}
+
+.heroCopy {
+  left: clamp(20px, 4vw, 56px);
+  bottom: clamp(150px, 18vh, 210px);
+  width: min(620px, 45vw);
+  pointer-events: none;
+}
+
+.heroCopy p {
+  margin: 0 0 0.72rem;
+  color: #9de8c1;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  margin: 0;
+  color: #fff7db;
+  font-size: clamp(2.9rem, 6vw, 6.4rem);
+  line-height: 0.92;
+  text-wrap: balance;
+  text-shadow: 0 28px 80px rgba(0, 0, 0, 0.78);
+}
+
+.leftPanel,
+.rightPanel,
+.batchPanel {
+  display: grid;
+  gap: 0.78rem;
+  border: 1px solid rgba(244, 238, 214, 0.18);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(9, 16, 26, 0.76), rgba(5, 9, 16, 0.56));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(18px);
+}
+
+.leftPanel {
+  left: 22px;
+  bottom: 22px;
+  width: min(410px, calc(100vw - 44px));
+  padding: 1rem;
+}
+
+.rightPanel {
+  right: 22px;
+  top: 86px;
+  width: min(390px, calc(100vw - 44px));
+  max-height: calc(100svh - 188px);
+  overflow: auto;
+  padding: 1rem;
+}
+
+.batchPanel {
+  right: 22px;
+  bottom: 22px;
+  width: min(390px, calc(100vw - 44px));
+  padding: 0.9rem;
+}
+
+.viewRail {
+  left: 50%;
+  bottom: 22px;
+  display: flex;
+  max-width: min(650px, calc(100vw - 900px));
+  transform: translateX(-50%);
+  gap: 0.42rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.panelTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.48rem;
+  color: #fff6dc;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  color: rgba(243, 240, 223, 0.74);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.buttonRow select,
+.textarea,
+.batchInput {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(244, 238, 214, 0.16);
+  border-radius: 8px;
+  color: #fff8e3;
+  background: rgba(3, 7, 13, 0.7);
+  outline: none;
+}
+
+.field input,
+.field select,
+.buttonRow select {
+  min-height: 38px;
+  padding: 0.55rem 0.66rem;
+}
+
+.field input[type="color"] {
+  padding: 0.25rem;
+}
+
+.field input:focus-visible,
+.field select:focus-visible,
+.buttonRow select:focus-visible,
+.textarea:focus-visible,
+.batchInput:focus-visible,
+.chip:focus-visible,
+.selectedChip:focus-visible,
+.viewButton:focus-visible,
+.activeView:focus-visible,
+.primaryButton:focus-visible,
+.exportButton:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid rgba(157, 232, 193, 0.72);
+  outline-offset: 2px;
+}
+
+.buttonRow,
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.primaryButton,
+.exportButton,
+.chip,
+.selectedChip,
+.viewButton,
+.activeView {
+  min-height: 38px;
+  border: 1px solid rgba(244, 238, 214, 0.17);
+  border-radius: 999px;
+  color: #f8f0d0;
+  background: rgba(7, 12, 21, 0.66);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.primaryButton,
+.exportButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+}
+
+.primaryButton:hover,
+.exportButton:hover,
+.chip:hover,
+.viewButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(157, 232, 193, 0.42);
+  background: rgba(22, 40, 43, 0.78);
+}
+
+.selectedChip,
+.activeView,
+.exportButton {
+  border-color: rgba(255, 188, 92, 0.72);
+  background: linear-gradient(135deg, rgba(255, 188, 92, 0.26), rgba(102, 181, 255, 0.14));
+  color: #fff9df;
+}
+
+.bodyGrid,
+.layoutGrid {
+  display: flex;
+  gap: 0.42rem;
+  flex-wrap: wrap;
+}
+
+.chip,
+.selectedChip {
+  padding: 0 0.72rem;
+  font-size: 0.76rem;
+}
+
+.viewButton,
+.activeView {
+  min-width: 74px;
+  padding: 0 0.72rem;
+  font-size: 0.74rem;
+  backdrop-filter: blur(14px);
+}
+
+.readout {
+  margin: 0;
+  color: rgba(243, 240, 223, 0.74);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.textarea,
+.batchInput {
+  resize: vertical;
+  padding: 0.72rem;
+  line-height: 1.45;
+}
+
+.textarea {
+  min-height: 90px;
+}
+
+.batchInput {
+  min-height: 96px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.76rem;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(243, 240, 223, 0.78);
+  font-size: 0.78rem;
+}
+
+.status {
+  display: block;
+  min-height: 38px;
+  overflow: hidden;
+  color: rgba(243, 240, 223, 0.76);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+}
+
+.bodyLabel,
+.activeLabel {
+  pointer-events: none;
+  border: 1px solid rgba(255, 246, 220, 0.14);
+  border-radius: 999px;
+  padding: 0.18rem 0.4rem;
+  color: rgba(246, 244, 225, 0.7);
+  background: rgba(3, 5, 10, 0.38);
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translateY(-2px);
+}
+
+.activeLabel {
+  border-color: rgba(255, 188, 92, 0.64);
+  color: #fff7db;
+  background: rgba(255, 159, 59, 0.18);
+}
+
+@media (max-width: 1280px) {
+  .viewRail {
+    left: 22px;
+    right: 22px;
+    bottom: 230px;
+    max-width: none;
+    transform: none;
+    justify-content: flex-start;
+  }
+
+  .heroCopy {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .shell {
+    min-height: 100svh;
+    overflow: auto;
+    padding: calc(72px + env(safe-area-inset-top)) 12px 18px;
+  }
+
+  .shell::after {
+    position: fixed;
+  }
+
+  .canvasWrap {
+    position: relative;
+    height: 62svh;
+    min-height: 410px;
+    border: 1px solid rgba(244, 238, 214, 0.16);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 24px 90px rgba(0, 0, 0, 0.42);
+  }
+
+  .nav {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: calc(10px + env(safe-area-inset-top));
+  }
+
+  .navMeta {
+    display: none;
+  }
+
+  .leftPanel,
+  .rightPanel,
+  .batchPanel,
+  .viewRail,
+  .heroCopy {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: none;
+    transform: none;
+  }
+
+  .heroCopy {
+    display: block;
+    margin: 1rem 0;
+    pointer-events: auto;
+  }
+
+  .heroCopy h1 {
+    font-size: clamp(2.25rem, 11vw, 4.4rem);
+  }
+
+  .leftPanel,
+  .rightPanel,
+  .batchPanel {
+    margin-top: 0.8rem;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .viewRail {
+    margin-top: 0.8rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .viewButton,
+  .activeView {
+    min-width: 0;
+    padding: 0 0.36rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .buttonRow,
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+
+  .viewRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .canvasWrap {
+    min-height: 360px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryButton,
+  .exportButton,
+  .chip,
+  .selectedChip,
+  .viewButton,
+  .activeView {
+    transition-duration: 1ms;
+  }
+}

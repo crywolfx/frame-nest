@@ -4,3 +4,5 @@ node_modules
 .wrangler
 tsconfig.tsbuildinfo
 dist
+test-results
+playwright-report

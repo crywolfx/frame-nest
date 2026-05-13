@@ -67,10 +67,10 @@ export default function HomePage() {
           <p className="eyebrow">Content</p>
           <h2 id="recent-title">近期内容</h2>
         </div>
-        <Link className="recent-link" href="/travel">
-          <span>攻略</span>
-          <strong>香港攻略</strong>
-          <p>先放好资料结构，后续继续补充。</p>
+        <Link className="recent-link" href="/cosmic-moment">
+          <span>WebGL</span>
+          <strong>Cosmic Moment</strong>
+          <p>用指定时间、视角和文字生成宇宙海报。</p>
         </Link>
       </section>
     </main>

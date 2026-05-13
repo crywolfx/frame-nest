@@ -12,16 +12,21 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
     "leaflet": "^1.9.4",
+    "lucide-react": "^1.14.0",
     "motion": "^12.38.0",
     "next": "16.2.4",
     "react": "19.2.5",
     "react-dom": "19.2.5",
-    "react-parallax-tilt": "^1.7.324"
+    "react-parallax-tilt": "^1.7.324",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260421.0",
     "@opennextjs/cloudflare": "^1.19.3",
+    "@playwright/test": "^1.60.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^22.15.17",
     "@types/react": "^19.1.2",
