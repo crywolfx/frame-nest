@@ -72,6 +72,11 @@ export default function HomePage() {
           <strong>Cosmic Moment</strong>
           <p>用指定时间、视角和文字生成宇宙海报。</p>
         </Link>
+        <Link className="recent-link" href="/poster-lab">
+          <span>Poster</span>
+          <strong>Poster Lab</strong>
+          <p>使用月相模板生成图片海报。</p>
+        </Link>
       </section>
     </main>
   );
