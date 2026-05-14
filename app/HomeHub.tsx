@@ -92,12 +92,12 @@ export default function HomeHub() {
           <div className={styles.orbitRing} />
           <div className={styles.visualHeader}>
             <span>ROUTE MAP</span>
-            <strong>{routes.length} 个当前入口</strong>
+            <strong>{categories.length} 个规划分类</strong>
           </div>
           <div className={styles.visualGrid}>
-            {routes.map((route, index) => (
-              <span key={route.href} style={{ "--delay": `${index * 120}ms` } as CSSProperties}>
-                {route.category}
+            {categories.map((category, index) => (
+              <span key={category.name} style={{ "--delay": `${index * 120}ms` } as CSSProperties}>
+                {category.name}
               </span>
             ))}
           </div>
