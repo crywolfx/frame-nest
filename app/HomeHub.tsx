@@ -126,19 +126,17 @@ export default function HomeHub() {
           <h2 id="routes-title">当前可用入口</h2>
         </div>
         <div className={styles.routeGrid}>
-          {routes.map((route, index) => {
+          {routes.map((route) => {
             const Icon = route.icon;
             return (
-              <motion.div key={route.href} initial={{ y: 24, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.45, delay: index * 0.06 }}>
-                <Link className={styles.routeCard} href={route.href}>
-                  <span className={styles.routeIcon}><Icon size={18} /></span>
-                  <span className={styles.routeMeta}>{route.category} · {route.status}</span>
-                  <h3>{route.title}</h3>
-                  <strong>{route.subtitle}</strong>
-                  <p>{route.description}</p>
-                  <em>打开 <ArrowRight size={15} /></em>
-                </Link>
-              </motion.div>
+              <Link className={styles.routeCard} href={route.href} key={route.href}>
+                <span className={styles.routeIcon}><Icon size={18} /></span>
+                <span className={styles.routeMeta}>{route.category} · {route.status}</span>
+                <h3>{route.title}</h3>
+                <strong>{route.subtitle}</strong>
+                <p>{route.description}</p>
+                <em>打开 <ArrowRight size={15} /></em>
+              </Link>
             );
           })}
         </div>
