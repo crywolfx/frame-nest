@@ -76,7 +76,7 @@ const layouts: { id: PosterConfig["layout"]; label: string; x: number; y: number
 ];
 
 const defaultPoster: PosterConfig = {
-  text: "在那一秒，天空替我们记住时间。",
+  text: "宇宙此刻观测记录",
   font: "Avenir Next",
   color: "#fff6dc",
   size: 72,
