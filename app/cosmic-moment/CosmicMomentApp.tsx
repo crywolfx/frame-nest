@@ -1,7 +1,24 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Camera, Clock3, Download, Image as ImageIcon, Layers, Palette, Pause, Play, Sparkles } from "lucide-react";
+import {
+  Camera,
+  Clock3,
+  Download,
+  Image as ImageIcon,
+  Layers,
+  Maximize2,
+  Minimize2,
+  Palette,
+  PanelLeftClose,
+  PanelRightClose,
+  Pause,
+  Play,
+  RefreshCw,
+  RotateCcw,
+  Sparkles,
+  View
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UniverseCanvas, type UniverseHandle } from "./components/UniverseCanvas";
 import styles from "./cosmic.module.css";
@@ -76,6 +93,7 @@ const defaultBatch = `2026-05-13 21:30:15 | 我们抬头的那个夜晚 | 地望
 2026-06-01 00:00:00 | 六月的天空 | 总览`;
 
 export default function CosmicMomentApp({ initialIso }: { initialIso: string }) {
+  const shellRef = useRef<HTMLElement | null>(null);
   const universeRef = useRef<UniverseHandle>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const previewStateRef = useRef<{ poster: PosterConfig; date: Date; viewLabel: string } | null>(null);
@@ -87,6 +105,11 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   const [selectedViewId, setSelectedViewId] = useState<ViewPresetId>("overview");
   const [visualStyleId, setVisualStyleId] = useState<VisualStyleId>("nasa");
   const [focusKey, setFocusKey] = useState(0);
+  const [showEclipseAssist, setShowEclipseAssist] = useState(false);
+  const [showPosterPreview, setShowPosterPreview] = useState(false);
+  const [previewStatus, setPreviewStatus] = useState("尚未生成预览。");
+  const [hiddenPanels, setHiddenPanels] = useState({ left: false, views: false, right: false });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [poster, setPoster] = useState<PosterConfig>(defaultPoster);
   const [batchText, setBatchText] = useState(defaultBatch);
   const [status, setStatus] = useState("已准备渲染。");
@@ -97,6 +120,14 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
 
   useEffect(() => {
     seekDate(new Date());
+  }, []);
+
+  useEffect(() => {
+    const syncFullscreen = () => {
+      setIsFullscreen(document.fullscreenElement === shellRef.current);
+    };
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreen);
   }, []);
 
   useEffect(() => {
@@ -118,31 +149,24 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     if (!target || !previewState) return;
 
     try {
+      setPreviewStatus("正在生成预览...");
       const canvas = await universeRef.current?.captureFrame();
       if (!canvas) return;
       renderPosterPreview(target, canvas, previewState.poster, previewState.date, previewState.viewLabel);
+      setPreviewStatus("预览已更新。");
     } catch {
-      // The preview retries on the next state change or timer tick while the scene is loading.
+      setPreviewStatus("预览生成失败，画布可能仍在加载。");
     }
   }, []);
 
   useEffect(() => {
-    if (!paused) return;
+    if (!paused || !showPosterPreview) return;
 
     const timer = window.setTimeout(() => {
       void refreshPosterPreview();
-    }, 90);
+    }, 180);
     return () => window.clearTimeout(timer);
-  }, [currentDate, focusKey, paused, refreshPosterPreview, selectedBodyId, selectedViewId, timeRevision, visualStyleId]);
-
-  useEffect(() => {
-    if (paused) return;
-
-    const timer = window.setInterval(() => {
-      void refreshPosterPreview();
-    }, 1100);
-    return () => window.clearInterval(timer);
-  }, [paused, refreshPosterPreview]);
+  }, [paused, refreshPosterPreview, showPosterPreview]);
 
   function jumpToEvent(event: CelestialEvent) {
     const eventDate = new Date(event.peaksAt ?? event.startsAt);
@@ -152,9 +176,24 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     seekDate(eventDate);
     setSelectedBodyId(event.type === "lunarEclipse" ? "moon" : "earth");
     setSelectedViewId(event.recommendedView);
+    setShowEclipseAssist(true);
     setFocusKey((key) => key + 1);
-    setStatus(`已跳到${event.title}：${event.timeLabel}`);
+    setStatus(`已跳到${event.title}：${event.timeLabel}。已开启天象光影辅助。`);
   }
+
+  async function toggleFullscreen() {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await shellRef.current?.requestFullscreen();
+      }
+    } catch {
+      setStatus("全屏切换失败，浏览器可能拦截了请求。");
+    }
+  }
+
+  const allPanelsHidden = hiddenPanels.left && hiddenPanels.views && hiddenPanels.right;
 
   async function generatePoster(config = poster, date = currentDate, view = selectedViewId, suffix = "single") {
     try {
@@ -192,7 +231,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   }
 
   return (
-    <main className={styles.shell} id="main">
+    <main ref={shellRef} className={styles.shell} id="main">
       <UniverseCanvas
         ref={universeRef}
         currentDate={currentDate}
@@ -203,6 +242,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
         focusKey={focusKey}
         paused={paused}
         visualStyleId={visualStyleId}
+        showEclipseAssist={showEclipseAssist}
         onDateChange={handleCanvasDateChange}
         onManualCamera={() => {
           setSelectedViewId("free");
@@ -224,104 +264,154 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
         </div>
       </motion.nav>
 
-      <motion.section className={styles.heroCopy} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.7, delay: 0.05 }}>
-        <p>太阳系海报工作台</p>
-        <h1>把重要的一秒，定格成一片真实的星空。</h1>
-      </motion.section>
+      <div className={styles.immersiveToolbar} aria-label="沉浸式控制">
+        <button
+          className={hiddenPanels.left ? styles.toolbarButtonActive : styles.toolbarButton}
+          type="button"
+          onClick={() => setHiddenPanels((value) => ({ ...value, left: !value.left }))}
+        >
+          <PanelLeftClose size={15} />
+          {hiddenPanels.left ? "恢复左侧" : "隐藏左侧"}
+        </button>
+        <button
+          className={hiddenPanels.views ? styles.toolbarButtonActive : styles.toolbarButton}
+          type="button"
+          onClick={() => setHiddenPanels((value) => ({ ...value, views: !value.views }))}
+        >
+          <View size={15} />
+          {hiddenPanels.views ? "恢复视角" : "隐藏视角"}
+        </button>
+        <button
+          className={hiddenPanels.right ? styles.toolbarButtonActive : styles.toolbarButton}
+          type="button"
+          onClick={() => setHiddenPanels((value) => ({ ...value, right: !value.right }))}
+        >
+          <PanelRightClose size={15} />
+          {hiddenPanels.right ? "恢复右侧" : "隐藏右侧"}
+        </button>
+        <button
+          className={allPanelsHidden ? styles.toolbarButtonActive : styles.toolbarButton}
+          type="button"
+          onClick={() => setHiddenPanels(allPanelsHidden ? { left: false, views: false, right: false } : { left: true, views: true, right: true })}
+        >
+          <RotateCcw size={15} />
+          {allPanelsHidden ? "恢复全部" : "隐藏全部"}
+        </button>
+        <button className={isFullscreen ? styles.toolbarButtonActive : styles.toolbarButton} type="button" onClick={() => void toggleFullscreen()}>
+          {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+          {isFullscreen ? "退出全屏" : "全屏"}
+        </button>
+      </div>
 
-      <section className={styles.leftPanel} aria-label="模拟控制">
-        <PanelTitle icon={<Clock3 size={16} />} title="时间机器" />
-        <label className={styles.field}>
-          <span>日期与时间</span>
-          <input
-            type="datetime-local"
-            step={1}
-            value={toDatetimeLocal(currentDate)}
-            onFocus={() => setPaused(true)}
-            onChange={(event) => seekDate(fromDatetimeLocal(event.target.value))}
-          />
-        </label>
-        <div className={styles.buttonRow}>
-          <button className={styles.primaryButton} type="button" onClick={() => setPaused((value) => !value)}>
-            {paused ? <Play size={16} /> : <Pause size={16} />}
-            {paused ? "继续" : "暂停"}
-          </button>
-          <select aria-label="模拟速度" value={speed} onChange={(event) => setSpeed(Number(event.target.value))}>
-            {speeds.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label} - {item.title}
-              </option>
+      {!allPanelsHidden && (
+        <motion.section className={styles.heroCopy} initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.7, delay: 0.05 }}>
+          <p>太阳系海报工作台</p>
+          <h1>把重要的一秒，定格成一片真实的星空。</h1>
+        </motion.section>
+      )}
+
+      {!hiddenPanels.left && (
+        <section className={styles.leftPanel} aria-label="模拟控制">
+          <PanelTitle icon={<Clock3 size={16} />} title="时间机器" />
+          <label className={styles.field}>
+            <span>日期与时间</span>
+            <input
+              type="datetime-local"
+              step={1}
+              value={toDatetimeLocal(currentDate)}
+              onFocus={() => setPaused(true)}
+              onChange={(event) => seekDate(fromDatetimeLocal(event.target.value))}
+            />
+          </label>
+          <div className={styles.buttonRow}>
+            <button className={styles.primaryButton} type="button" onClick={() => setPaused((value) => !value)}>
+              {paused ? <Play size={16} /> : <Pause size={16} />}
+              {paused ? "继续" : "暂停"}
+            </button>
+            <select aria-label="模拟速度" value={speed} onChange={(event) => setSpeed(Number(event.target.value))}>
+              {speeds.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label} - {item.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <PanelTitle icon={<Sparkles size={16} />} title="天体" />
+          <div className={styles.bodyGrid}>
+            {bodies.map((body) => (
+              <button
+                key={body.id}
+                className={body.id === selectedBodyId ? styles.selectedChip : styles.chip}
+                type="button"
+                onClick={() => {
+                  setSelectedBodyId(body.id);
+                  setSelectedViewId("free");
+                  setFocusKey((key) => key + 1);
+                }}
+              >
+                {body.name}
+              </button>
             ))}
-          </select>
-        </div>
+          </div>
+          <p className={styles.readout}>
+            当前聚焦：{selectedBody?.name}。月相由场景光照实时呈现，不使用静态帧贴图。
+          </p>
 
-        <PanelTitle icon={<Sparkles size={16} />} title="天体" />
-        <div className={styles.bodyGrid}>
-          {bodies.map((body) => (
+          <PanelTitle icon={<Sparkles size={16} />} title="特殊天象" />
+          <p className={styles.eventNote}>日期和可见地区来自预置资料；3D 构图为简化太阳系模型与示意辅助，不代表精确食带路径。</p>
+          <label className={styles.toggle}>
+            <input type="checkbox" checked={showEclipseAssist} onChange={(event) => setShowEclipseAssist(event.target.checked)} />
+            天象光影辅助
+          </label>
+          <div className={styles.eventList}>
+            {celestialEvents.map((event) => (
+              <article className={styles.eventCard} key={event.id}>
+                <div className={styles.eventHeader}>
+                  <span className={event.type === "solarEclipse" ? styles.solarBadge : styles.lunarBadge}>{event.type === "solarEclipse" ? "日食" : "月食"}</span>
+                  <strong>{event.title}</strong>
+                </div>
+                <p className={styles.eventTime}>{event.timeLabel}</p>
+                <p className={styles.eventPlace}>{event.locationSummary}</p>
+                <p className={styles.eventDescription}>{event.description}</p>
+                <p className={styles.eventVisibility}>{event.visibility}</p>
+                <div className={styles.eventActions}>
+                  <button className={styles.eventButton} type="button" onClick={() => jumpToEvent(event)}>
+                    <Clock3 size={14} />
+                    跳到时刻
+                  </button>
+                  {event.sourceUrl && (
+                    <a className={styles.eventSource} href={event.sourceUrl} target="_blank" rel="noreferrer">
+                      {event.sourceLabel ?? "来源"}
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {!hiddenPanels.views && (
+        <section className={styles.viewRail} aria-label="视角预设">
+          {views.map((view) => (
             <button
-              key={body.id}
-              className={body.id === selectedBodyId ? styles.selectedChip : styles.chip}
+              key={view.id}
+              className={view.id === selectedViewId ? styles.activeView : styles.viewButton}
               type="button"
               onClick={() => {
-                setSelectedBodyId(body.id);
-                setSelectedViewId("free");
+                setSelectedViewId(view.id);
                 setFocusKey((key) => key + 1);
               }}
             >
-              {body.name}
+              {view.label}
             </button>
           ))}
-        </div>
-        <p className={styles.readout}>
-          当前聚焦：{selectedBody?.name}。月相由场景光照实时呈现，不使用静态帧贴图。
-        </p>
+        </section>
+      )}
 
-        <PanelTitle icon={<Sparkles size={16} />} title="特殊天象" />
-        <p className={styles.eventNote}>日期和可见地区来自预置资料；3D 构图为简化太阳系模型示意。</p>
-        <div className={styles.eventList}>
-          {celestialEvents.map((event) => (
-            <article className={styles.eventCard} key={event.id}>
-              <div className={styles.eventHeader}>
-                <span className={event.type === "solarEclipse" ? styles.solarBadge : styles.lunarBadge}>{event.type === "solarEclipse" ? "日食" : "月食"}</span>
-                <strong>{event.title}</strong>
-              </div>
-              <p className={styles.eventTime}>{event.timeLabel}</p>
-              <p className={styles.eventPlace}>{event.locationSummary}</p>
-              <p className={styles.eventDescription}>{event.description}</p>
-              <p className={styles.eventVisibility}>{event.visibility}</p>
-              <div className={styles.eventActions}>
-                <button className={styles.eventButton} type="button" onClick={() => jumpToEvent(event)}>
-                  <Clock3 size={14} />
-                  跳到时刻
-                </button>
-                {event.sourceUrl && (
-                  <a className={styles.eventSource} href={event.sourceUrl} target="_blank" rel="noreferrer">
-                    {event.sourceLabel ?? "来源"}
-                  </a>
-                )}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.viewRail} aria-label="视角预设">
-        {views.map((view) => (
-          <button
-            key={view.id}
-            className={view.id === selectedViewId ? styles.activeView : styles.viewButton}
-            type="button"
-            onClick={() => {
-              setSelectedViewId(view.id);
-              setFocusKey((key) => key + 1);
-            }}
-          >
-            {view.label}
-          </button>
-        ))}
-      </section>
-
-      <div className={styles.rightDock}>
+      {!hiddenPanels.right && (
+        <div className={styles.rightDock}>
         <section className={styles.rightPanel} aria-label="海报编辑器">
           <PanelTitle icon={<Palette size={16} />} title="视觉风格" />
           <div className={styles.styleGrid}>
@@ -342,9 +432,24 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
           </p>
 
           <PanelTitle icon={<ImageIcon size={16} />} title="海报预览" />
-          <div className={styles.posterPreview} style={{ aspectRatio: `${size.width} / ${size.height}` }}>
-            <canvas ref={previewCanvasRef} aria-label="海报实时预览" />
+          <div className={styles.previewControls}>
+            <label className={styles.toggle}>
+              <input type="checkbox" checked={showPosterPreview} onChange={(event) => setShowPosterPreview(event.target.checked)} />
+              显示预览
+            </label>
+            <button className={styles.inlineButton} type="button" onClick={() => void refreshPosterPreview()} disabled={!showPosterPreview}>
+              <RefreshCw size={15} />
+              生成/刷新预览
+            </button>
           </div>
+          {showPosterPreview && (
+            <>
+              <div className={styles.posterPreview} style={{ aspectRatio: `${size.width} / ${size.height}` }}>
+                <canvas ref={previewCanvasRef} aria-label="海报位置预览" />
+              </div>
+              <p className={styles.previewStatus}>{previewStatus}</p>
+            </>
+          )}
 
           <PanelTitle icon={<ImageIcon size={16} />} title="海报编辑" />
           <textarea
@@ -459,7 +564,8 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
             <span className={styles.status}>{status}</span>
           </div>
         </section>
-      </div>
+        </div>
+      )}
     </main>
   );
 }
