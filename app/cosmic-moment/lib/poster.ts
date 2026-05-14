@@ -1,4 +1,4 @@
-import { filenameDate } from "./time";
+import { filenameDate, formatBeijingDateTimeLabel } from "./time";
 import type { PosterConfig } from "./types";
 
 export const ratioSizes = {
@@ -92,7 +92,7 @@ export async function composePoster(source: HTMLCanvasElement, config: PosterCon
     ctx.shadowBlur = 12;
     ctx.font = `500 ${Math.max(18, width * 0.018)}px ${config.font}`;
     ctx.fillStyle = "rgba(245,247,238,0.82)";
-    ctx.fillText(`${date.toISOString()} / ${viewLabel}`, x, Math.min(height - 36, y + lineHeight * 1.7), maxWidth);
+    ctx.fillText(`${formatBeijingDateTimeLabel(date)} / ${viewLabel}`, x, Math.min(height - 36, y + lineHeight * 1.7), maxWidth);
   }
 
   return new Promise<Blob>((resolve, reject) => {

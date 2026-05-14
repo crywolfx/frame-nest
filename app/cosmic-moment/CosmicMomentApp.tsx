@@ -9,7 +9,7 @@ import { bodies } from "./lib/bodies";
 import { celestialEvents } from "./lib/celestialEvents";
 import { getSolarSystemState, moonPhaseName } from "./lib/orbits";
 import { composePoster, downloadBlob, outputSize, ratioSizes } from "./lib/poster";
-import { fromDatetimeLocal, speeds, toDatetimeLocal } from "./lib/time";
+import { formatBeijingDateTimeLabel, fromDatetimeLocal, parseDatetimeLocal, speeds, toDatetimeLocal } from "./lib/time";
 import type { BatchRow, BodyId, CelestialEvent, PosterConfig, RatioId, ViewPresetId, VisualStyleId } from "./lib/types";
 
 const views: { id: ViewPresetId; label: string }[] = [
@@ -168,7 +168,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
           宇宙此刻
         </a>
         <div className={styles.navMeta}>
-          <span>{currentDate.toISOString()}</span>
+          <span>{formatBeijingDateTimeLabel(currentDate)}</span>
           <span>{moonPhaseName(states)}</span>
         </div>
       </motion.nav>
@@ -410,9 +410,9 @@ function parseBatch(value: string): BatchRow[] {
     .filter(Boolean)
     .flatMap((line) => {
       const [rawDate, text, rawView] = line.split("|").map((part) => part.trim());
-      const date = new Date(rawDate.replace(" ", "T"));
+      const date = parseDatetimeLocal(rawDate.replace(" ", "T"));
       const view = views.find((item) => item.id === rawView || item.label === rawView)?.id ?? "overview";
-      return Number.isNaN(date.getTime()) || !text ? [] : [{ date, text, view }];
+      return !date || !text ? [] : [{ date, text, view }];
     });
 }
 
