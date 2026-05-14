@@ -56,7 +56,7 @@ function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
   return lines;
 }
 
-export function drawPoster(ctx: CanvasRenderingContext2D, source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
+export function drawPoster(ctx: CanvasRenderingContext2D, source: HTMLCanvasElement, config: PosterConfig, date: Date) {
   const { width, height } = outputSize(config);
 
   ctx.clearRect(0, 0, width, height);
@@ -91,11 +91,11 @@ export function drawPoster(ctx: CanvasRenderingContext2D, source: HTMLCanvasElem
     ctx.shadowBlur = 12;
     ctx.font = `500 ${Math.max(18, width * 0.018)}px ${posterFontFamily(config.font)}`;
     ctx.fillStyle = "rgba(245,247,238,0.82)";
-    ctx.fillText(`${formatBeijingDateTimeLabel(date)} / ${viewLabel}`, x, Math.min(height - 36, y + lineHeight * 1.7), maxWidth);
+    ctx.fillText(formatBeijingDateTimeLabel(date), x, Math.min(height - 36, y + lineHeight * 1.7), maxWidth);
   }
 }
 
-export function renderPosterPreview(target: HTMLCanvasElement, source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
+export function renderPosterPreview(target: HTMLCanvasElement, source: HTMLCanvasElement, config: PosterConfig, date: Date) {
   const { width, height } = outputSize(config);
   target.width = width;
   target.height = height;
@@ -103,10 +103,10 @@ export function renderPosterPreview(target: HTMLCanvasElement, source: HTMLCanva
   const ctx = target.getContext("2d");
   if (!ctx) throw new Error("预览画布不可用。");
 
-  drawPoster(ctx, source, config, date, viewLabel);
+  drawPoster(ctx, source, config, date);
 }
 
-export async function composePoster(source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
+export async function composePoster(source: HTMLCanvasElement, config: PosterConfig, date: Date) {
   const { width, height } = outputSize(config);
   const canvas = document.createElement("canvas");
   canvas.width = width;
@@ -115,7 +115,7 @@ export async function composePoster(source: HTMLCanvasElement, config: PosterCon
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("画布导出不可用。");
 
-  drawPoster(ctx, source, config, date, viewLabel);
+  drawPoster(ctx, source, config, date);
 
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("海报导出失败。"))), "image/png", 0.94);

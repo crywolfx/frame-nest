@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, OrbitControls } from "@react-three/drei";
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState, type MutableRefObject } from "react";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import styles from "../cosmic.module.css";
@@ -12,7 +12,12 @@ import { getSolarSystemStateAt, sampleOrbit } from "../lib/orbits";
 import type { BodyDefinition, BodyId, BodyState, CelestialEventType, Vec3, ViewPresetId, VisualStyleId } from "../lib/types";
 
 export type UniverseHandle = {
-  captureFrame: () => Promise<HTMLCanvasElement>;
+  captureFrame: (options?: CaptureFrameOptions) => Promise<HTMLCanvasElement>;
+};
+
+type CaptureFrameOptions = {
+  waitForCamera?: boolean;
+  timeoutMs?: number;
 };
 
 type UniverseCanvasProps = {
@@ -47,12 +52,15 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const cameraSettledRef = useRef(true);
   const simulationRef = useRef<SimulationStore | null>(null);
   const simulation = simulationRef.current ?? (simulationRef.current = createSimulation(currentDate.getTime(), speed));
 
   useImperativeHandle(ref, () => ({
-    async captureFrame() {
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    async captureFrame(options = {}) {
+      await waitForPaintFrames(2);
+      if (options.waitForCamera) await waitForCameraSettled(cameraSettledRef, options.timeoutMs ?? 3000);
+      await waitForPaintFrames(2);
       if (!canvasRef.current) throw new Error("宇宙画布尚未就绪。");
       return canvasRef.current;
     }
@@ -85,6 +93,7 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
         <SolarSystem simulation={simulation} selectedBodyId={selectedBodyId} visualStyleId={visualStyleId} showEclipseAssist={showEclipseAssist} onSelect={onSelect} />
         <CameraRig
           simulation={simulation}
+          cameraSettledRef={cameraSettledRef}
           selectedBodyId={selectedBodyId}
           selectedViewId={selectedViewId}
           focusKey={focusKey}
@@ -97,6 +106,32 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
     </div>
   );
 });
+
+function waitForPaintFrames(count: number) {
+  return new Promise<void>((resolve) => {
+    let remaining = Math.max(1, count);
+    const tick = () => {
+      remaining -= 1;
+      if (remaining <= 0) resolve();
+      else requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+function waitForCameraSettled(cameraSettledRef: MutableRefObject<boolean>, timeoutMs: number) {
+  const startedAt = performance.now();
+  return new Promise<void>((resolve) => {
+    const tick = () => {
+      if (cameraSettledRef.current || performance.now() - startedAt >= timeoutMs) {
+        resolve();
+        return;
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  });
+}
 
 function createSimulation(timeMs: number, speed: number): SimulationStore {
   const states = getSolarSystemStateAt(timeMs);
@@ -1043,6 +1078,7 @@ function seeded(seedText: string) {
 
 function CameraRig({
   simulation,
+  cameraSettledRef,
   selectedBodyId,
   selectedViewId,
   focusKey,
@@ -1052,6 +1088,7 @@ function CameraRig({
   onManualCamera
 }: {
   simulation: SimulationStore;
+  cameraSettledRef: MutableRefObject<boolean>;
   selectedBodyId: BodyId;
   selectedViewId: ViewPresetId;
   focusKey: number;
@@ -1081,19 +1118,21 @@ function CameraRig({
     if (selectedViewId === "free") {
       flyTo.current = null;
       manualOverrideRef.current = true;
+      cameraSettledRef.current = true;
       return;
     }
 
     manualOverrideRef.current = false;
     if (selectedViewId === "cinematic") {
+      cameraSettledRef.current = true;
       return;
     }
 
     const presetStates = getSolarSystemStateAt(eventTimeMs);
-    const activeEclipseType = eclipseEffectAt(eventTimeMs)?.type;
-    const preset = cameraPreset(presetStates, selectedBodyId, selectedViewId, 0, cameraFit(camera, size), activeEclipseType);
+    const preset = cameraPreset(presetStates, selectedBodyId, selectedViewId, 0, cameraFit(camera, size));
+    cameraSettledRef.current = false;
     flyTo.current = preset;
-  }, [camera, focusKey, selectedBodyId, selectedViewId, size.height, size.width, timeRevision]);
+  }, [camera, cameraSettledRef, eventTimeMs, focusKey, selectedBodyId, selectedViewId, size.height, size.width, timeRevision]);
 
   useFrame((_, delta) => {
     const controls = controlsRef.current;
@@ -1102,6 +1141,7 @@ function CameraRig({
     if (!paused) cinematicTimeRef.current += Math.min(delta, maxFrameElapsedMs / 1000);
 
     if (selectedViewId === "cinematic") {
+      cameraSettledRef.current = true;
       const targetPreset = cameraPreset(simulation.states, selectedBodyId, selectedViewId, cinematicTimeRef.current, cameraFit(camera, size));
       programmaticChangeRef.current = true;
       camera.position.lerp(targetPreset.position, 0.055);
@@ -1112,21 +1152,27 @@ function CameraRig({
     }
 
     if (manualOverrideRef.current) {
+      cameraSettledRef.current = true;
       controls.update();
       return;
     }
 
     if (flyTo.current) {
       const targetPreset = flyTo.current;
+      cameraSettledRef.current = false;
       programmaticChangeRef.current = true;
       camera.position.lerp(targetPreset.position, 0.055);
       controls.target.lerp(targetPreset.target, 0.07);
       controls.update();
       programmaticChangeRef.current = false;
-      if (camera.position.distanceTo(targetPreset.position) < 0.08 && controls.target.distanceTo(targetPreset.target) < 0.08) flyTo.current = null;
+      if (camera.position.distanceTo(targetPreset.position) < 0.08 && controls.target.distanceTo(targetPreset.target) < 0.08) {
+        flyTo.current = null;
+        cameraSettledRef.current = true;
+      }
       return;
     }
 
+    cameraSettledRef.current = true;
     programmaticChangeRef.current = true;
     controls.update();
     programmaticChangeRef.current = false;
@@ -1174,8 +1220,7 @@ function cameraPreset(
   selectedBodyId: BodyId,
   view: ViewPresetId,
   elapsed = 0,
-  fit: CameraFit = { fov: 52, aspect: 1.6 },
-  eclipseType?: CelestialEventType
+  fit: CameraFit = { fov: 52, aspect: 1.6 }
 ) {
   const byId = Object.fromEntries(states.map((body) => [body.id, body])) as Record<BodyId, BodyState>;
   const selected = byId[selectedBodyId] ?? byId.earth;
@@ -1189,10 +1234,24 @@ function cameraPreset(
   if (view === "sun") return focusBody(sun, new THREE.Vector3(1, 0.55, 1.15), fit);
   if (view === "earth") return focusBody(earth, vec(earth.position).sub(vec(sun.position)).add(new THREE.Vector3(0.8, 0.35, 0.45)), fit);
   if (view === "moon") return focusBody(moon, vec(moon.position).sub(vec(earth.position)).add(new THREE.Vector3(0.45, 0.35, 0.7)), fit);
-  if (view === "earthToMoon" && eclipseType === "solarEclipse") return eclipsePreset(earth, moon, sun, "solarEclipse", fit);
-  if (view === "moonToEarth" && eclipseType === "lunarEclipse") return eclipsePreset(earth, moon, sun, "lunarEclipse", fit);
-  if (view === "earthToMoon") return between(earth, moon, 0.45, fit);
-  if (view === "moonToEarth") return between(moon, earth, 0.5, fit);
+  if (view === "earthToMoon") {
+    return twoBodyLookPreset(earth, moon, fit, {
+      observerClearance: 1.72,
+      targetFill: 0.42,
+      targetScale: 2.15,
+      sideBias: 1,
+      liftScale: 1.28
+    });
+  }
+  if (view === "moonToEarth") {
+    return twoBodyLookPreset(moon, earth, fit, {
+      observerClearance: 1.95,
+      targetFill: 0.38,
+      targetScale: 1.58,
+      sideBias: -1,
+      liftScale: 1.05
+    });
+  }
   if (view === "cinematic") {
     const angle = elapsed * 0.11;
     return {
@@ -1202,25 +1261,6 @@ function cameraPreset(
   }
 
   return focusBody(selected, bodyTarget.clone().normalize().add(new THREE.Vector3(0.9, 0.45, 1.15)), fit);
-}
-
-function eclipsePreset(earth: BodyState, moon: BodyState, sun: BodyState, type: CelestialEventType, fit: CameraFit) {
-  const earthVec = vec(earth.position);
-  const sunVec = vec(sun.position);
-  const earthToSun = sunVec.clone().sub(earthVec).normalize();
-  const moonDistance = THREE.MathUtils.clamp(vec(moon.position).distanceTo(earthVec), earth.visualRadius * 2.2, earth.visualRadius * 3.8);
-  const schematicMoon = type === "solarEclipse" ? earthVec.clone().add(earthToSun.clone().multiplyScalar(moonDistance)) : earthVec.clone().sub(earthToSun.clone().multiplyScalar(moonDistance));
-  const target = earthVec.clone().lerp(schematicMoon, type === "solarEclipse" ? 0.42 : 0.58);
-  const relation = schematicMoon.clone().sub(earthVec).normalize();
-  const side = new THREE.Vector3().crossVectors(relation, new THREE.Vector3(0, 1, 0));
-  if (side.lengthSq() < 0.0001) side.set(1, 0, 0);
-  side.normalize();
-  const lift = new THREE.Vector3(0, Math.max(0.38, earth.visualRadius * 0.55), 0);
-  const framingRadius = earthVec.distanceTo(schematicMoon) + earth.visualRadius * 2.4;
-  const distance = THREE.MathUtils.clamp(fitDistanceForRadius(framingRadius, fit, 0.5), 4.2, 9.5);
-  const position = target.clone().add(side.multiplyScalar(distance * 0.72)).add(lift).add(relation.clone().multiplyScalar(type === "solarEclipse" ? -distance * 0.3 : distance * 0.22));
-
-  return { target, position };
 }
 
 function focusBody(body: BodyState, direction: THREE.Vector3, fit: CameraFit) {
@@ -1238,25 +1278,40 @@ function focusBody(body: BodyState, direction: THREE.Vector3, fit: CameraFit) {
   };
 }
 
-function between(origin: BodyState, target: BodyState, clearance: number, fit: CameraFit) {
-  const originVec = vec(origin.position);
+function twoBodyLookPreset(
+  observer: BodyState,
+  target: BodyState,
+  fit: CameraFit,
+  options: {
+    observerClearance: number;
+    targetFill: number;
+    targetScale: number;
+    sideBias: 1 | -1;
+    liftScale: number;
+  }
+) {
+  const originVec = vec(observer.position);
   const targetVec = vec(target.position);
   const direction = targetVec.clone().sub(originVec);
   if (direction.lengthSq() < 0.0001) return focusBody(target, new THREE.Vector3(1, 0.45, 1), fit);
   direction.normalize();
   const span = originVec.distanceTo(targetVec);
-  const targetDistance = fitDistanceForRadius(target.visualRadius * 1.68, fit, target.id === "earth" ? 0.42 : 0.5);
-  const originClearance = origin.visualRadius * 1.45 + clearance;
+  const targetDistance = fitDistanceForRadius(target.visualRadius * options.targetScale, fit, options.targetFill);
+  const originClearance = observer.visualRadius * options.observerClearance + Math.max(0.12, target.visualRadius * 0.22);
   const distanceFromTarget = Math.max(targetDistance, span + originClearance);
-  const up = new THREE.Vector3(0, 1, 0);
-  const side = new THREE.Vector3().crossVectors(direction, up);
+  const worldUp = new THREE.Vector3(0, 1, 0);
+  const side = new THREE.Vector3().crossVectors(direction, worldUp);
   if (side.lengthSq() < 0.0001) side.set(1, 0, 0);
-  side.normalize();
-  const lift = Math.max(0.22, Math.max(origin.visualRadius, target.visualRadius) * 0.46);
-  const sideOffset = Math.max(0.18, target.visualRadius * 0.28);
+  side.normalize().multiplyScalar(options.sideBias);
+  const up = new THREE.Vector3().crossVectors(side, direction).normalize();
+  const minimumRayClearance = observer.visualRadius * options.observerClearance;
+  const projectedOffset = minimumRayClearance * (distanceFromTarget / Math.max(0.001, span));
+  const sideOffset = Math.max(projectedOffset * 0.78, observer.visualRadius * 1.35, target.visualRadius * 0.5);
+  const lift = Math.max(projectedOffset * 0.42, observer.visualRadius * options.liftScale, 0.28);
+  const targetLift = Math.min(target.visualRadius * 0.18, 0.24);
 
   return {
-    target: targetVec.clone().add(up.clone().multiplyScalar(target.visualRadius * 0.08)),
+    target: targetVec.clone().add(up.clone().multiplyScalar(targetLift)),
     position: targetVec
       .clone()
       .sub(direction.multiplyScalar(distanceFromTarget))

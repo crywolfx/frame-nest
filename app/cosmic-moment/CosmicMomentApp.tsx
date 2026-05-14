@@ -17,7 +17,8 @@ import {
   RefreshCw,
   RotateCcw,
   Sparkles,
-  View
+  View,
+  X
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UniverseCanvas, type UniverseHandle } from "./components/UniverseCanvas";
@@ -96,7 +97,8 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   const shellRef = useRef<HTMLElement | null>(null);
   const universeRef = useRef<UniverseHandle>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const previewStateRef = useRef<{ poster: PosterConfig; date: Date; viewLabel: string } | null>(null);
+  const zoomCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const previewStateRef = useRef<{ poster: PosterConfig; date: Date } | null>(null);
   const [currentDate, setCurrentDate] = useState(() => new Date(initialIso));
   const [timeRevision, setTimeRevision] = useState(0);
   const [paused, setPaused] = useState(true);
@@ -107,6 +109,8 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   const [focusKey, setFocusKey] = useState(0);
   const [showEclipseAssist, setShowEclipseAssist] = useState(false);
   const [showPosterPreview, setShowPosterPreview] = useState(false);
+  const [hasPosterPreview, setHasPosterPreview] = useState(false);
+  const [previewZoomOpen, setPreviewZoomOpen] = useState(false);
   const [previewStatus, setPreviewStatus] = useState("尚未生成预览。");
   const [hiddenPanels, setHiddenPanels] = useState({ left: false, views: false, right: false });
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -116,7 +120,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   const states = useMemo(() => getSolarSystemState(currentDate), [currentDate]);
   const selectedBody = bodies.find((body) => body.id === selectedBodyId);
   const size = outputSize(poster);
-  const viewLabel = views.find((item) => item.id === selectedViewId)?.label ?? selectedViewId;
+  const autoPreviewDateTime = paused ? currentDate.getTime() : 0;
 
   useEffect(() => {
     seekDate(new Date());
@@ -131,8 +135,8 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   }, []);
 
   useEffect(() => {
-    previewStateRef.current = { poster, date: currentDate, viewLabel };
-  }, [currentDate, poster, viewLabel]);
+    previewStateRef.current = { poster, date: currentDate };
+  }, [currentDate, poster]);
 
   const handleCanvasDateChange = useCallback((date: Date) => {
     setCurrentDate(date);
@@ -143,30 +147,73 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     setTimeRevision((revision) => revision + 1);
   }
 
-  const refreshPosterPreview = useCallback(async () => {
+  const copyPreviewToZoom = useCallback(() => {
+    const source = previewCanvasRef.current;
+    const target = zoomCanvasRef.current;
+    if (!source || !target || !source.width || !source.height) return;
+
+    target.width = source.width;
+    target.height = source.height;
+    const ctx = target.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, target.width, target.height);
+    ctx.drawImage(source, 0, 0);
+  }, []);
+
+  const refreshPosterPreview = useCallback(async (options: { waitForCamera?: boolean; timeoutMs?: number } = {}) => {
     const target = previewCanvasRef.current;
     const previewState = previewStateRef.current;
     if (!target || !previewState) return;
 
     try {
       setPreviewStatus("正在生成预览...");
-      const canvas = await universeRef.current?.captureFrame();
+      const canvas = await universeRef.current?.captureFrame({ waitForCamera: options.waitForCamera ?? true, timeoutMs: options.timeoutMs ?? 2600 });
       if (!canvas) return;
-      renderPosterPreview(target, canvas, previewState.poster, previewState.date, previewState.viewLabel);
+      renderPosterPreview(target, canvas, previewState.poster, previewState.date);
+      setHasPosterPreview(true);
+      if (previewZoomOpen) copyPreviewToZoom();
       setPreviewStatus("预览已更新。");
     } catch {
       setPreviewStatus("预览生成失败，画布可能仍在加载。");
     }
-  }, []);
+  }, [copyPreviewToZoom, previewZoomOpen]);
 
   useEffect(() => {
-    if (!paused || !showPosterPreview) return;
+    if (!showPosterPreview) return;
 
     const timer = window.setTimeout(() => {
-      void refreshPosterPreview();
-    }, 180);
+      void refreshPosterPreview({ waitForCamera: true, timeoutMs: 3200 });
+    }, 360);
     return () => window.clearTimeout(timer);
-  }, [paused, refreshPosterPreview, showPosterPreview]);
+  }, [
+    autoPreviewDateTime,
+    focusKey,
+    poster,
+    refreshPosterPreview,
+    selectedBodyId,
+    selectedViewId,
+    showEclipseAssist,
+    showPosterPreview,
+    timeRevision,
+    visualStyleId
+  ]);
+
+  useEffect(() => {
+    if (showPosterPreview) return;
+    setHasPosterPreview(false);
+    setPreviewZoomOpen(false);
+  }, [showPosterPreview]);
+
+  useEffect(() => {
+    if (!previewZoomOpen) return;
+
+    copyPreviewToZoom();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPreviewZoomOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [copyPreviewToZoom, previewZoomOpen]);
 
   function jumpToEvent(event: CelestialEvent) {
     const eventDate = new Date(event.peaksAt ?? event.startsAt);
@@ -195,12 +242,12 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
 
   const allPanelsHidden = hiddenPanels.left && hiddenPanels.views && hiddenPanels.right;
 
-  async function generatePoster(config = poster, date = currentDate, view = selectedViewId, suffix = "single") {
+  async function generatePoster(config = poster, date = currentDate, suffix = "single") {
     try {
       setStatus("正在渲染海报...");
-      const canvas = await universeRef.current?.captureFrame();
+      const canvas = await universeRef.current?.captureFrame({ waitForCamera: true, timeoutMs: 3200 });
       if (!canvas) throw new Error("宇宙画布仍在加载。");
-      const blob = await composePoster(canvas, config, date, views.find((item) => item.id === view)?.label ?? view);
+      const blob = await composePoster(canvas, config, date);
       downloadBlob(blob, date, suffix);
       const exportedSize = outputSize(config);
       setStatus(`已下载 ${exportedSize.width} x ${exportedSize.height} PNG。`);
@@ -210,7 +257,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   }
 
   async function generateBatch() {
-    const rows = parseBatch(batchText);
+    const { rows, warnings } = parseBatch(batchText);
     if (!rows.length) {
       setStatus("没有找到有效的批量任务。");
       return;
@@ -218,16 +265,17 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
 
     setPaused(true);
     for (const [index, row] of rows.entries()) {
-      setStatus(`批量 ${index + 1}/${rows.length}: 正在渲染 ${row.text.slice(0, 36)}`);
+      const viewLabel = views.find((item) => item.id === row.view)?.label ?? row.view;
+      setStatus(`批量 ${index + 1}/${rows.length}: 切换到 ${viewLabel}，正在渲染 ${row.text.slice(0, 28)}`);
       seekDate(row.date);
       setSelectedViewId(row.view);
       setPoster((config) => ({ ...config, text: row.text }));
       setFocusKey((key) => key + 1);
-      await wait(850);
-      await generatePoster({ ...poster, text: row.text }, row.date, row.view, `batch-${index + 1}`);
+      await waitForSceneCommit();
+      await generatePoster({ ...poster, text: row.text }, row.date, `batch-${index + 1}`);
       await wait(240);
     }
-    setStatus(`批量完成：${rows.length} 张图片。`);
+    setStatus(`批量完成：${rows.length} 张图片。${warnings.length ? ` ${warnings.join(" ")}` : ""}`);
   }
 
   return (
@@ -441,10 +489,29 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
               <RefreshCw size={15} />
               生成/刷新预览
             </button>
+            <button className={styles.inlineButton} type="button" onClick={() => setPreviewZoomOpen(true)} disabled={!showPosterPreview || !hasPosterPreview}>
+              <Maximize2 size={15} />
+              放大预览
+            </button>
           </div>
           {showPosterPreview && (
             <>
-              <div className={styles.posterPreview} style={{ aspectRatio: `${size.width} / ${size.height}` }}>
+              <div
+                className={styles.posterPreview}
+                style={{ aspectRatio: `${size.width} / ${size.height}` }}
+                role="button"
+                tabIndex={hasPosterPreview ? 0 : -1}
+                onClick={() => {
+                  if (hasPosterPreview) setPreviewZoomOpen(true);
+                }}
+                onKeyDown={(event) => {
+                  if (hasPosterPreview && (event.key === "Enter" || event.key === " ")) {
+                    event.preventDefault();
+                    setPreviewZoomOpen(true);
+                  }
+                }}
+                aria-label="放大查看海报位置预览"
+              >
                 <canvas ref={previewCanvasRef} aria-label="海报位置预览" />
               </div>
               <p className={styles.previewStatus}>{previewStatus}</p>
@@ -566,6 +633,17 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
         </section>
         </div>
       )}
+      {previewZoomOpen && showPosterPreview && (
+        <div className={styles.previewLightbox} role="dialog" aria-modal="true" aria-label="放大预览">
+          <button className={styles.lightboxClose} type="button" onClick={() => setPreviewZoomOpen(false)} aria-label="关闭放大预览">
+            <X size={18} />
+            关闭
+          </button>
+          <div className={styles.lightboxCanvasWrap} style={{ aspectRatio: `${size.width} / ${size.height}` }}>
+            <canvas ref={zoomCanvasRef} aria-label="放大的海报位置预览" />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
@@ -579,17 +657,31 @@ function PanelTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
   );
 }
 
-function parseBatch(value: string): BatchRow[] {
-  return value
+function parseBatch(value: string): { rows: BatchRow[]; warnings: string[] } {
+  const warnings: string[] = [];
+  const rows = value
     .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .flatMap((line) => {
-      const [rawDate, text, rawView] = line.split("|").map((part) => part.trim());
+    .map((line, index) => ({ line: line.trim(), lineNumber: index + 1 }))
+    .filter(({ line }) => Boolean(line))
+    .flatMap(({ line, lineNumber }) => {
+      const [rawDate = "", text = "", rawView = ""] = line.split("|").map((part) => part.trim());
       const date = parseDatetimeLocal(rawDate.replace(" ", "T"));
-      const view = views.find((item) => item.id === rawView || item.label === rawView)?.id ?? "overview";
+      const matchedView = views.find((item) => item.id === rawView || item.label === rawView);
+      const view = matchedView?.id ?? "overview";
+
+      if (!matchedView && rawView) warnings.push(`第 ${lineNumber} 行视角“${rawView}”未识别，已使用总览。`);
       return !date || !text ? [] : [{ date, text, view }];
     });
+
+  return { rows, warnings };
+}
+
+function waitForSceneCommit() {
+  return new Promise<void>((resolve) => {
+    window.setTimeout(() => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    }, 0);
+  });
 }
 
 function wait(ms: number) {
