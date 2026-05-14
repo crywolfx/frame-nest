@@ -7,8 +7,9 @@ import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import styles from "../cosmic.module.css";
 import { bodies } from "../lib/bodies";
+import { celestialEvents } from "../lib/celestialEvents";
 import { getSolarSystemStateAt, sampleOrbit } from "../lib/orbits";
-import type { BodyDefinition, BodyId, BodyState, Vec3, ViewPresetId, VisualStyleId } from "../lib/types";
+import type { BodyDefinition, BodyId, BodyState, CelestialEventType, Vec3, ViewPresetId, VisualStyleId } from "../lib/types";
 
 export type UniverseHandle = {
   captureFrame: () => Promise<HTMLCanvasElement>;
@@ -241,6 +242,7 @@ function SolarSystem({
         />
       ))}
       <MoonOrbit simulation={simulation} palette={palette} points={moonOrbitPoints} />
+      <EclipseEffects simulation={simulation} visualStyleId={visualStyleId} />
 
       {bodies.map((body) => (
         <BodyMesh
@@ -282,6 +284,153 @@ function MoonOrbit({
       <Line points={points} color={palette.moonOrbit} lineWidth={0.55} transparent opacity={opacity} />
     </group>
   );
+}
+
+function EclipseEffects({ simulation, visualStyleId }: { simulation: SimulationStore; visualStyleId: VisualStyleId }) {
+  const lunarConeRef = useRef<THREE.Mesh | null>(null);
+  const solarConeRef = useRef<THREE.Mesh | null>(null);
+  const solarSpotRef = useRef<THREE.Mesh | null>(null);
+  const lunarTintRef = useRef<THREE.Mesh | null>(null);
+  const lunarLabelRef = useRef<THREE.Group | null>(null);
+  const solarLabelRef = useRef<THREE.Group | null>(null);
+  const beamColor = visualStyleId === "instrument" ? "#9ef2ff" : visualStyleId === "neon" ? "#ff62f1" : "#ffbf76";
+
+  useFrame(() => {
+    const effect = eclipseEffectAt(simulation.timeMs);
+    const sun = simulation.byId.sun;
+    const earth = simulation.byId.earth;
+    const moon = simulation.byId.moon;
+    const lunarActive = effect?.type === "lunarEclipse";
+    const solarActive = effect?.type === "solarEclipse";
+
+    setVisible(lunarConeRef.current, lunarActive);
+    setVisible(lunarTintRef.current, lunarActive);
+    setVisible(lunarLabelRef.current, lunarActive);
+    setVisible(solarConeRef.current, solarActive);
+    setVisible(solarSpotRef.current, solarActive);
+    setVisible(solarLabelRef.current, solarActive);
+
+    if (!effect || !sun || !earth || !moon) return;
+
+    const sunVec = vec(sun.position);
+    const earthVec = vec(earth.position);
+    const moonVec = vec(moon.position);
+
+    if (lunarActive) {
+      const awayFromSun = earthVec.clone().sub(sunVec).normalize();
+      const moonDirection = moonVec.clone().sub(earthVec).normalize();
+      const shadowDirection = awayFromSun.lerp(moonDirection, 0.36).normalize();
+      const length = Math.max(earthVec.distanceTo(moonVec) + moon.visualRadius * 2.4, earth.visualRadius * 7);
+      const cone = lunarConeRef.current;
+      const moonTint = lunarTintRef.current;
+      const label = lunarLabelRef.current;
+
+      if (cone) {
+        setConeTransform(cone, earthVec, shadowDirection, length, earth.visualRadius * 1.2);
+        setMaterialOpacity(cone, 0.18 + effect.intensity * 0.22);
+      }
+      if (moonTint) {
+        moonTint.position.copy(moonVec);
+        moonTint.scale.setScalar(moon.visualRadius * 1.1);
+        setMaterialOpacity(moonTint, 0.18 + effect.intensity * 0.34);
+      }
+      if (label) label.position.copy(earthVec.clone().add(shadowDirection.multiplyScalar(Math.min(length * 0.52, 5.8))).add(new THREE.Vector3(0, 0.7, 0)));
+    }
+
+    if (solarActive) {
+      const shadowDirection = earthVec.clone().sub(moonVec).normalize();
+      const length = Math.max(moonVec.distanceTo(earthVec) + earth.visualRadius * 1.6, moon.visualRadius * 10);
+      const cone = solarConeRef.current;
+      const spot = solarSpotRef.current;
+      const label = solarLabelRef.current;
+
+      if (cone) {
+        setConeTransform(cone, moonVec, shadowDirection, length, moon.visualRadius * 1.35);
+        setMaterialOpacity(cone, 0.22 + effect.intensity * 0.26);
+      }
+      if (spot) {
+        const surfaceNormal = moonVec.clone().sub(earthVec).normalize();
+        spot.position.copy(earthVec.clone().add(surfaceNormal.clone().multiplyScalar(earth.visualRadius * 1.028)));
+        spot.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), surfaceNormal);
+        spot.scale.setScalar(earth.visualRadius * (0.18 + effect.intensity * 0.18));
+        setMaterialOpacity(spot, 0.34 + effect.intensity * 0.42);
+      }
+      if (label) label.position.copy(moonVec.clone().add(shadowDirection.multiplyScalar(Math.min(length * 0.46, 4.6))).add(new THREE.Vector3(0, 0.62, 0)));
+    }
+  });
+
+  return (
+    <group>
+      <directionalLight position={[16, 8, 0]} intensity={0.42} color={beamColor} />
+      <mesh ref={lunarConeRef} visible={false}>
+        <coneGeometry args={[1, 1, 72, 1, true]} />
+        <meshBasicMaterial color="#0a0c12" transparent opacity={0.28} depthWrite={false} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={lunarTintRef} visible={false}>
+        <sphereGeometry args={[1, 64, 32]} />
+        <meshBasicMaterial color="#b34a30" transparent opacity={0.42} blending={THREE.AdditiveBlending} depthWrite={false} />
+      </mesh>
+      <group ref={lunarLabelRef} visible={false}>
+        <Html center className={styles.eclipseLabel}>
+          地影锥 / 月面铜红暗化
+        </Html>
+      </group>
+      <mesh ref={solarConeRef} visible={false}>
+        <coneGeometry args={[1, 1, 72, 1, true]} />
+        <meshBasicMaterial color="#030407" transparent opacity={0.34} depthWrite={false} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh ref={solarSpotRef} visible={false}>
+        <circleGeometry args={[1, 72]} />
+        <meshBasicMaterial color="#010101" transparent opacity={0.72} depthWrite={false} />
+      </mesh>
+      <group ref={solarLabelRef} visible={false}>
+        <Html center className={styles.eclipseLabel}>
+          月影锥 / 地表暗影
+        </Html>
+      </group>
+    </group>
+  );
+}
+
+function eclipseEffectAt(timeMs: number): { type: CelestialEventType; intensity: number } | null {
+  for (const event of celestialEvents) {
+    const start = Date.parse(event.startsAt);
+    const peak = Date.parse(event.peaksAt ?? event.startsAt);
+    const end = Date.parse(event.endsAt ?? event.peaksAt ?? event.startsAt);
+    const safeStart = Number.isFinite(start) ? start : peak - 2 * 3_600_000;
+    const safeEnd = Number.isFinite(end) && end > safeStart ? end : peak + 2 * 3_600_000;
+    const paddedStart = Math.min(safeStart, peak - 2 * 3_600_000);
+    const paddedEnd = Math.max(safeEnd, peak + 2 * 3_600_000);
+    if (timeMs < paddedStart || timeMs > paddedEnd) continue;
+
+    const halfWindow = Math.max(1, (paddedEnd - paddedStart) / 2);
+    const distanceFromPeak = Math.abs(timeMs - peak);
+    const intensity = THREE.MathUtils.clamp(1 - distanceFromPeak / halfWindow, 0.16, 1);
+    return { type: event.type, intensity };
+  }
+
+  return null;
+}
+
+function setConeTransform(mesh: THREE.Mesh, origin: THREE.Vector3, direction: THREE.Vector3, length: number, radius: number) {
+  mesh.position.copy(origin).add(direction.clone().multiplyScalar(length / 2));
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+  mesh.scale.set(radius, length, radius);
+}
+
+function setVisible(object: THREE.Object3D | null, visible: boolean) {
+  if (object) object.visible = visible;
+}
+
+function setMaterialOpacity(mesh: THREE.Mesh, opacity: number) {
+  const material = mesh.material;
+  if (Array.isArray(material)) {
+    material.forEach((item) => {
+      item.opacity = opacity;
+    });
+  } else {
+    material.opacity = opacity;
+  }
 }
 
 function BodyMesh({
@@ -891,13 +1040,17 @@ function CameraRig({
 
     const preset = cameraPreset(simulation.states, selectedBodyId, selectedViewId, 0, cameraFit(camera, size));
     flyTo.current = preset;
-  }, [camera, focusKey, selectedBodyId, selectedViewId, simulation.states, size, timeRevision]);
+  }, [camera, focusKey, selectedBodyId, selectedViewId, size, timeRevision, simulation]);
 
   useFrame((_, delta) => {
     const controls = controlsRef.current;
     if (!controls) return;
 
     if (!paused) cinematicTimeRef.current += Math.min(delta, maxFrameElapsedMs / 1000);
+    if (manualOverrideRef.current) {
+      controls.update();
+      return;
+    }
 
     const targetPreset = selectedViewId === "cinematic" ? cameraPreset(simulation.states, selectedBodyId, selectedViewId, cinematicTimeRef.current, cameraFit(camera, size)) : flyTo.current;
     if (targetPreset) {

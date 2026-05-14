@@ -32,8 +32,7 @@
 .nav,
 .heroCopy,
 .leftPanel,
-.rightPanel,
-.batchPanel,
+.rightDock,
 .viewRail {
   position: absolute;
   z-index: 2;
@@ -135,19 +134,25 @@
   padding: 1rem;
 }
 
-.rightPanel {
+.rightDock {
   right: 22px;
   top: 86px;
+  bottom: 22px;
   width: min(390px, calc(100vw - 44px));
-  max-height: calc(100svh - 188px);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.78rem;
+  min-height: 0;
+}
+
+.rightPanel {
+  min-height: 0;
   overflow: auto;
   padding: 1rem;
 }
 
 .batchPanel {
-  right: 22px;
-  bottom: 22px;
-  width: min(390px, calc(100vw - 44px));
+  min-height: 0;
   padding: 0.9rem;
 }
 
@@ -399,7 +404,8 @@
 
 .bodyGrid,
 .layoutGrid,
-.styleGrid {
+.styleGrid,
+.alignGrid {
   display: flex;
   gap: 0.42rem;
   flex-wrap: wrap;
@@ -439,6 +445,26 @@
   color: rgba(243, 240, 223, 0.58);
   font-size: 0.72rem;
   line-height: 1.5;
+}
+
+.posterPreview {
+  position: relative;
+  width: 100%;
+  max-height: min(38svh, 420px);
+  overflow: hidden;
+  border: 1px solid rgba(244, 238, 214, 0.15);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 188, 92, 0.08), rgba(102, 181, 255, 0.06)),
+    rgba(2, 5, 10, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.posterPreview canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .textarea,
@@ -496,6 +522,20 @@
   background: rgba(255, 159, 59, 0.18);
 }
 
+.eclipseLabel {
+  pointer-events: none;
+  border: 1px solid rgba(255, 188, 92, 0.48);
+  border-radius: 999px;
+  padding: 0.24rem 0.48rem;
+  color: #fff7db;
+  background: rgba(3, 5, 10, 0.58);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+  backdrop-filter: blur(12px);
+}
+
 @media (max-width: 1280px) {
   .viewRail {
     left: 22px;
@@ -546,6 +586,7 @@
   .leftPanel,
   .rightPanel,
   .batchPanel,
+  .rightDock,
   .viewRail,
   .heroCopy {
     position: relative;
@@ -582,6 +623,21 @@
     margin-top: 0.8rem;
     max-height: none;
     overflow: visible;
+  }
+
+  .rightDock {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+  }
+
+  .rightDock .rightPanel,
+  .rightDock .batchPanel {
+    margin-top: 0;
+  }
+
+  .posterPreview {
+    max-height: none;
   }
 
   .eventList {

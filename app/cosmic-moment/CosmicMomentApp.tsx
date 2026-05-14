@@ -8,7 +8,7 @@ import styles from "./cosmic.module.css";
 import { bodies } from "./lib/bodies";
 import { celestialEvents } from "./lib/celestialEvents";
 import { getSolarSystemState, moonPhaseName } from "./lib/orbits";
-import { composePoster, downloadBlob, outputSize, ratioSizes } from "./lib/poster";
+import { composePoster, downloadBlob, outputSize, ratioSizes, renderPosterPreview } from "./lib/poster";
 import { formatBeijingDateTimeLabel, fromDatetimeLocal, parseDatetimeLocal, speeds, toDatetimeLocal } from "./lib/time";
 import type { BatchRow, BodyId, CelestialEvent, PosterConfig, RatioId, ViewPresetId, VisualStyleId } from "./lib/types";
 
@@ -32,12 +32,23 @@ const visualStyles: { id: VisualStyleId; label: string; note: string }[] = [
 ];
 
 const fonts = [
-  { value: "Avenir Next", label: "现代无衬线" },
-  { value: "Georgia", label: "经典衬线" },
-  { value: "Times New Roman", label: "报刊衬线" },
-  { value: "Helvetica Neue", label: "瑞士无衬线" },
-  { value: "PingFang SC", label: "苹方中文" },
-  { value: "monospace", label: "等宽数字" }
+  { value: '"Avenir Next", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif', label: "现代无衬线" },
+  { value: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif', label: "苹方 / 微软雅黑" },
+  { value: '"Songti SC", "SimSun", "Noto Serif SC", serif', label: "宋体书卷" },
+  { value: '"Kaiti SC", "KaiTi", "STKaiti", serif', label: "楷体题字" },
+  { value: '"Heiti SC", "Microsoft YaHei", "Noto Sans SC", sans-serif', label: "黑体海报" },
+  { value: '"YuMincho", "Songti SC", "Noto Serif SC", serif', label: "明朝衬线" },
+  { value: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Songti SC", serif', label: "古典衬线" },
+  { value: 'Georgia, "Times New Roman", "Songti SC", serif', label: "报刊衬线" },
+  { value: '"Helvetica Neue", Arial, "PingFang SC", sans-serif', label: "瑞士无衬线" },
+  { value: '"DIN Alternate", "Arial Narrow", "PingFang SC", sans-serif', label: "窄体数字" },
+  { value: '"Menlo", "SFMono-Regular", "Consolas", "Microsoft YaHei", monospace', label: "等宽观测" }
+];
+
+const alignments: { id: CanvasTextAlign; label: string }[] = [
+  { id: "left", label: "左对齐" },
+  { id: "center", label: "居中" },
+  { id: "right", label: "右对齐" }
 ];
 const layouts: { id: PosterConfig["layout"]; label: string; x: number; y: number; align: CanvasTextAlign; size: number }[] = [
   { id: "lowerLeft", label: "左下标题", x: 0.1, y: 0.78, align: "left", size: 72 },
@@ -66,6 +77,8 @@ const defaultBatch = `2026-05-13 21:30:15 | 我们抬头的那个夜晚 | 地望
 
 export default function CosmicMomentApp({ initialIso }: { initialIso: string }) {
   const universeRef = useRef<UniverseHandle>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const previewStateRef = useRef<{ poster: PosterConfig; date: Date; viewLabel: string } | null>(null);
   const [currentDate, setCurrentDate] = useState(() => new Date(initialIso));
   const [timeRevision, setTimeRevision] = useState(0);
   const [paused, setPaused] = useState(true);
@@ -80,10 +93,15 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   const states = useMemo(() => getSolarSystemState(currentDate), [currentDate]);
   const selectedBody = bodies.find((body) => body.id === selectedBodyId);
   const size = outputSize(poster);
+  const viewLabel = views.find((item) => item.id === selectedViewId)?.label ?? selectedViewId;
 
   useEffect(() => {
     seekDate(new Date());
   }, []);
+
+  useEffect(() => {
+    previewStateRef.current = { poster, date: currentDate, viewLabel };
+  }, [currentDate, poster, viewLabel]);
 
   const handleCanvasDateChange = useCallback((date: Date) => {
     setCurrentDate(date);
@@ -93,6 +111,38 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     setCurrentDate(date);
     setTimeRevision((revision) => revision + 1);
   }
+
+  const refreshPosterPreview = useCallback(async () => {
+    const target = previewCanvasRef.current;
+    const previewState = previewStateRef.current;
+    if (!target || !previewState) return;
+
+    try {
+      const canvas = await universeRef.current?.captureFrame();
+      if (!canvas) return;
+      renderPosterPreview(target, canvas, previewState.poster, previewState.date, previewState.viewLabel);
+    } catch {
+      // The preview retries on the next state change or timer tick while the scene is loading.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!paused) return;
+
+    const timer = window.setTimeout(() => {
+      void refreshPosterPreview();
+    }, 90);
+    return () => window.clearTimeout(timer);
+  }, [currentDate, focusKey, paused, refreshPosterPreview, selectedBodyId, selectedViewId, timeRevision, visualStyleId]);
+
+  useEffect(() => {
+    if (paused) return;
+
+    const timer = window.setInterval(() => {
+      void refreshPosterPreview();
+    }, 1100);
+    return () => window.clearInterval(timer);
+  }, [paused, refreshPosterPreview]);
 
   function jumpToEvent(event: CelestialEvent) {
     const eventDate = new Date(event.peaksAt ?? event.startsAt);
@@ -113,7 +163,8 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
       if (!canvas) throw new Error("宇宙画布仍在加载。");
       const blob = await composePoster(canvas, config, date, views.find((item) => item.id === view)?.label ?? view);
       downloadBlob(blob, date, suffix);
-      setStatus(`已下载 ${size.width} x ${size.height} PNG。`);
+      const exportedSize = outputSize(config);
+      setStatus(`已下载 ${exportedSize.width} x ${exportedSize.height} PNG。`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "海报导出失败。");
     }
@@ -270,126 +321,145 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
         ))}
       </section>
 
-      <section className={styles.rightPanel} aria-label="海报编辑器">
-        <PanelTitle icon={<Palette size={16} />} title="视觉风格" />
-        <div className={styles.styleGrid}>
-          {visualStyles.map((item) => (
-            <button
-              key={item.id}
-              className={visualStyleId === item.id ? styles.selectedStyle : styles.styleButton}
-              type="button"
-              title={item.note}
-              onClick={() => setVisualStyleId(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <p className={styles.attribution}>
-          NASA 拟真使用 Solar System Scope 2K 贴图（CC BY 4.0，基于 NASA 影像/高程资料）并参考 NASA/JPL 行星图；其他风格保留程序材质。
-        </p>
+      <div className={styles.rightDock}>
+        <section className={styles.rightPanel} aria-label="海报编辑器">
+          <PanelTitle icon={<Palette size={16} />} title="视觉风格" />
+          <div className={styles.styleGrid}>
+            {visualStyles.map((item) => (
+              <button
+                key={item.id}
+                className={visualStyleId === item.id ? styles.selectedStyle : styles.styleButton}
+                type="button"
+                title={item.note}
+                onClick={() => setVisualStyleId(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <p className={styles.attribution}>
+            NASA 拟真使用 Solar System Scope 2K 贴图（CC BY 4.0，基于 NASA 影像/高程资料）并参考 NASA/JPL 行星图；其他风格保留程序材质。
+          </p>
 
-        <PanelTitle icon={<ImageIcon size={16} />} title="海报编辑" />
-        <textarea
-          className={styles.textarea}
-          value={poster.text}
-          onChange={(event) => setPoster({ ...poster, text: event.target.value })}
-          aria-label="海报文字"
-        />
-        <div className={styles.twoCol}>
-          <label className={styles.field}>
-            <span>字体</span>
-            <select value={poster.font} onChange={(event) => setPoster({ ...poster, font: event.target.value })}>
-              {fonts.map((font) => (
-                <option key={font.value} value={font.value}>
-                  {font.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={styles.field}>
-            <span>颜色</span>
-            <input type="color" value={poster.color} onChange={(event) => setPoster({ ...poster, color: event.target.value })} />
-          </label>
-        </div>
-        <div className={styles.twoCol}>
-          <label className={styles.field}>
-            <span>字号</span>
-            <input type="range" min={28} max={140} value={poster.size} onChange={(event) => setPoster({ ...poster, size: Number(event.target.value) })} />
-          </label>
-          <label className={styles.field}>
-            <span>比例</span>
-            <select
-              value={poster.ratio}
-              onChange={(event) => {
-                const ratio = event.target.value as RatioId;
-                const [width, height] = ratio === "custom" ? [poster.width, poster.height] : ratioSizes[ratio];
-                setPoster({ ...poster, ratio, width, height });
-              }}
-            >
-              <option value="1:1">1:1</option>
-              <option value="4:5">4:5</option>
-              <option value="9:16">9:16</option>
-              <option value="16:9">16:9</option>
-              <option value="custom">自定义</option>
-            </select>
-          </label>
-        </div>
-        <div className={styles.twoCol}>
-          <label className={styles.field}>
-            <span>横向位置</span>
-            <input type="range" min={0.05} max={0.95} step={0.01} value={poster.x} onChange={(event) => setPoster({ ...poster, x: Number(event.target.value) })} />
-          </label>
-          <label className={styles.field}>
-            <span>纵向位置</span>
-            <input type="range" min={0.08} max={0.92} step={0.01} value={poster.y} onChange={(event) => setPoster({ ...poster, y: Number(event.target.value) })} />
-          </label>
-        </div>
-        {poster.ratio === "custom" && (
+          <PanelTitle icon={<ImageIcon size={16} />} title="海报预览" />
+          <div className={styles.posterPreview} style={{ aspectRatio: `${size.width} / ${size.height}` }}>
+            <canvas ref={previewCanvasRef} aria-label="海报实时预览" />
+          </div>
+
+          <PanelTitle icon={<ImageIcon size={16} />} title="海报编辑" />
+          <textarea
+            className={styles.textarea}
+            value={poster.text}
+            onChange={(event) => setPoster({ ...poster, text: event.target.value })}
+            aria-label="海报文字"
+          />
           <div className={styles.twoCol}>
             <label className={styles.field}>
-              <span>宽度</span>
-              <input type="number" value={poster.width} onChange={(event) => setPoster({ ...poster, width: Number(event.target.value) })} />
+              <span>字体</span>
+              <select value={poster.font} onChange={(event) => setPoster({ ...poster, font: event.target.value })}>
+                {fonts.map((font) => (
+                  <option key={font.value} value={font.value}>
+                    {font.label}
+                  </option>
+                ))}
+              </select>
             </label>
             <label className={styles.field}>
-              <span>高度</span>
-              <input type="number" value={poster.height} onChange={(event) => setPoster({ ...poster, height: Number(event.target.value) })} />
+              <span>颜色</span>
+              <input type="color" value={poster.color} onChange={(event) => setPoster({ ...poster, color: event.target.value })} />
             </label>
           </div>
-        )}
-        <div className={styles.layoutGrid}>
-          {layouts.map((layout) => (
-            <button
-              key={layout.id}
-              className={poster.layout === layout.id ? styles.selectedChip : styles.chip}
-              type="button"
-              onClick={() => setPoster({ ...poster, layout: layout.id, x: layout.x, y: layout.y, align: layout.align, size: layout.size })}
-            >
-              {layout.label}
-            </button>
-          ))}
-        </div>
-        <label className={styles.toggle}>
-          <input type="checkbox" checked={poster.metadata} onChange={(event) => setPoster({ ...poster, metadata: event.target.checked })} />
-          添加时间戳信息
-        </label>
-        <button className={styles.exportButton} type="button" onClick={() => generatePoster()}>
-          <Download size={17} />
-          导出 {size.width} x {size.height}
-        </button>
-      </section>
-
-      <section className={styles.batchPanel} aria-label="批量生成">
-        <PanelTitle icon={<Layers size={16} />} title="批量队列" />
-        <textarea className={styles.batchInput} value={batchText} onChange={(event) => setBatchText(event.target.value)} aria-label="批量行" />
-        <div className={styles.buttonRow}>
-          <button className={styles.primaryButton} type="button" onClick={generateBatch}>
-            <Camera size={16} />
-            全部生成
+          <div className={styles.twoCol}>
+            <label className={styles.field}>
+              <span>字号 {poster.size}</span>
+              <input type="range" min={28} max={140} value={poster.size} onChange={(event) => setPoster({ ...poster, size: Number(event.target.value) })} />
+            </label>
+            <label className={styles.field}>
+              <span>比例</span>
+              <select
+                value={poster.ratio}
+                onChange={(event) => {
+                  const ratio = event.target.value as RatioId;
+                  const [width, height] = ratio === "custom" ? [poster.width, poster.height] : ratioSizes[ratio];
+                  setPoster({ ...poster, ratio, width, height });
+                }}
+              >
+                <option value="1:1">1:1</option>
+                <option value="4:5">4:5</option>
+                <option value="9:16">9:16</option>
+                <option value="16:9">16:9</option>
+                <option value="custom">自定义</option>
+              </select>
+            </label>
+          </div>
+          <div className={styles.twoCol}>
+            <label className={styles.field}>
+              <span>横向位置 {Math.round(poster.x * 100)}%</span>
+              <input type="range" min={0.05} max={0.95} step={0.01} value={poster.x} onChange={(event) => setPoster({ ...poster, x: Number(event.target.value) })} />
+            </label>
+            <label className={styles.field}>
+              <span>纵向位置 {Math.round(poster.y * 100)}%</span>
+              <input type="range" min={0.08} max={0.92} step={0.01} value={poster.y} onChange={(event) => setPoster({ ...poster, y: Number(event.target.value) })} />
+            </label>
+          </div>
+          {poster.ratio === "custom" && (
+            <div className={styles.twoCol}>
+              <label className={styles.field}>
+                <span>宽度</span>
+                <input type="number" value={poster.width} onChange={(event) => setPoster({ ...poster, width: Number(event.target.value) })} />
+              </label>
+              <label className={styles.field}>
+                <span>高度</span>
+                <input type="number" value={poster.height} onChange={(event) => setPoster({ ...poster, height: Number(event.target.value) })} />
+              </label>
+            </div>
+          )}
+          <div className={styles.layoutGrid}>
+            {layouts.map((layout) => (
+              <button
+                key={layout.id}
+                className={poster.layout === layout.id ? styles.selectedChip : styles.chip}
+                type="button"
+                onClick={() => setPoster({ ...poster, layout: layout.id, x: layout.x, y: layout.y, align: layout.align, size: layout.size })}
+              >
+                {layout.label}
+              </button>
+            ))}
+          </div>
+          <div className={styles.alignGrid} aria-label="文字对齐">
+            {alignments.map((alignment) => (
+              <button
+                key={alignment.id}
+                className={poster.align === alignment.id ? styles.selectedChip : styles.chip}
+                type="button"
+                onClick={() => setPoster({ ...poster, align: alignment.id })}
+              >
+                {alignment.label}
+              </button>
+            ))}
+          </div>
+          <label className={styles.toggle}>
+            <input type="checkbox" checked={poster.metadata} onChange={(event) => setPoster({ ...poster, metadata: event.target.checked })} />
+            添加时间戳信息
+          </label>
+          <button className={styles.exportButton} type="button" onClick={() => generatePoster()}>
+            <Download size={17} />
+            导出 {size.width} x {size.height}
           </button>
-          <span className={styles.status}>{status}</span>
-        </div>
-      </section>
+        </section>
+
+        <section className={styles.batchPanel} aria-label="批量生成">
+          <PanelTitle icon={<Layers size={16} />} title="批量队列" />
+          <textarea className={styles.batchInput} value={batchText} onChange={(event) => setBatchText(event.target.value)} aria-label="批量行" />
+          <div className={styles.buttonRow}>
+            <button className={styles.primaryButton} type="button" onClick={generateBatch}>
+              <Camera size={16} />
+              全部生成
+            </button>
+            <span className={styles.status}>{status}</span>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

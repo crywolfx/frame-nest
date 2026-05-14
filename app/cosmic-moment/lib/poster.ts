@@ -32,6 +32,10 @@ function drawCover(ctx: CanvasRenderingContext2D, source: HTMLCanvasElement, wid
   ctx.drawImage(source, sx, sy, sw, sh, 0, 0, width, height);
 }
 
+export function posterFontFamily(font: string) {
+  return font.includes(",") || font.includes(" ") ? font : `${font}, sans-serif`;
+}
+
 function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   const source = text.replace(/\s+/g, " ").trim();
   const words = /[\u3400-\u9fff]/.test(source) ? Array.from(source) : source.split(" ");
@@ -52,15 +56,10 @@ function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number
   return lines;
 }
 
-export async function composePoster(source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
+export function drawPoster(ctx: CanvasRenderingContext2D, source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
   const { width, height } = outputSize(config);
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("画布导出不可用。");
-
+  ctx.clearRect(0, 0, width, height);
   drawCover(ctx, source, width, height);
 
   const gradient = ctx.createLinearGradient(0, 0, 0, height);
@@ -76,7 +75,7 @@ export async function composePoster(source: HTMLCanvasElement, config: PosterCon
   const maxWidth = config.layout === "center" ? width * 0.78 : width * 0.56;
   const lineHeight = fontSize * 1.08;
 
-  ctx.font = `700 ${fontSize}px ${config.font}`;
+  ctx.font = `700 ${fontSize}px ${posterFontFamily(config.font)}`;
   ctx.fillStyle = config.color;
   ctx.textAlign = config.align;
   ctx.textBaseline = "alphabetic";
@@ -90,10 +89,33 @@ export async function composePoster(source: HTMLCanvasElement, config: PosterCon
 
   if (config.metadata) {
     ctx.shadowBlur = 12;
-    ctx.font = `500 ${Math.max(18, width * 0.018)}px ${config.font}`;
+    ctx.font = `500 ${Math.max(18, width * 0.018)}px ${posterFontFamily(config.font)}`;
     ctx.fillStyle = "rgba(245,247,238,0.82)";
     ctx.fillText(`${formatBeijingDateTimeLabel(date)} / ${viewLabel}`, x, Math.min(height - 36, y + lineHeight * 1.7), maxWidth);
   }
+}
+
+export function renderPosterPreview(target: HTMLCanvasElement, source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
+  const { width, height } = outputSize(config);
+  target.width = width;
+  target.height = height;
+
+  const ctx = target.getContext("2d");
+  if (!ctx) throw new Error("预览画布不可用。");
+
+  drawPoster(ctx, source, config, date, viewLabel);
+}
+
+export async function composePoster(source: HTMLCanvasElement, config: PosterConfig, date: Date, viewLabel: string) {
+  const { width, height } = outputSize(config);
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("画布导出不可用。");
+
+  drawPoster(ctx, source, config, date, viewLabel);
 
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("海报导出失败。"))), "image/png", 0.94);
