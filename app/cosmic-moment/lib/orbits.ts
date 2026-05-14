@@ -9,11 +9,11 @@ function degToRad(deg: number) {
   return (deg / 180) * Math.PI;
 }
 
-function orbitPosition(bodyId: BodyId, date: Date): Vec3 {
+function orbitPositionAt(bodyId: BodyId, timeMs: number): Vec3 {
   const body = bodyById[bodyId];
   if (body.id === "sun") return [0, 0, 0];
 
-  const days = (date.getTime() - epoch) / dayMs;
+  const days = (timeMs - epoch) / dayMs;
   const angle = degToRad(body.phaseDeg) + (days / body.orbitPeriodDays) * tau;
   const incline = degToRad(body.inclinationDeg);
   const radius = body.orbitRadius;
@@ -23,7 +23,7 @@ function orbitPosition(bodyId: BodyId, date: Date): Vec3 {
   const z = Math.cos(incline) * zFlat;
 
   if (body.parentId) {
-    const parent = orbitPosition(body.parentId, date);
+    const parent = orbitPositionAt(body.parentId, timeMs);
     return [parent[0] + x, parent[1] + y, parent[2] + z];
   }
 
@@ -31,11 +31,15 @@ function orbitPosition(bodyId: BodyId, date: Date): Vec3 {
 }
 
 export function getSolarSystemState(date: Date): BodyState[] {
-  const hours = (date.getTime() - epoch) / 3_600_000;
+  return getSolarSystemStateAt(date.getTime());
+}
+
+export function getSolarSystemStateAt(timeMs: number): BodyState[] {
+  const hours = (timeMs - epoch) / 3_600_000;
 
   return bodies.map((body) => ({
     ...body,
-    position: orbitPosition(body.id, date),
+    position: orbitPositionAt(body.id, timeMs),
     rotation: body.rotationPeriodHours ? (hours / body.rotationPeriodHours) * tau : 0
   }));
 }
@@ -45,8 +49,7 @@ export function sampleOrbit(bodyId: BodyId, count = 192): Vec3[] {
   if (body.id === "sun") return [];
 
   const points: Vec3[] = [];
-  const sampleDate = new Date(epoch);
-  const parent = body.parentId ? orbitPosition(body.parentId, sampleDate) : [0, 0, 0];
+  const parent = body.parentId ? orbitPositionAt(body.parentId, epoch) : [0, 0, 0];
 
   for (let index = 0; index <= count; index += 1) {
     const angle = (index / count) * tau;

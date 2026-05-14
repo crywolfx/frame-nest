@@ -7,28 +7,45 @@ import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import styles from "../cosmic.module.css";
 import { bodies } from "../lib/bodies";
-import { sampleOrbit } from "../lib/orbits";
-import type { BodyId, BodyState, Vec3, ViewPresetId, VisualStyleId } from "../lib/types";
+import { getSolarSystemStateAt, sampleOrbit } from "../lib/orbits";
+import type { BodyDefinition, BodyId, BodyState, Vec3, ViewPresetId, VisualStyleId } from "../lib/types";
 
 export type UniverseHandle = {
   captureFrame: () => Promise<HTMLCanvasElement>;
 };
 
 type UniverseCanvasProps = {
-  states: BodyState[];
+  currentDate: Date;
+  timeRevision: number;
+  speed: number;
   selectedBodyId: BodyId;
   selectedViewId: ViewPresetId;
   focusKey: number;
   paused: boolean;
   visualStyleId: VisualStyleId;
+  onDateChange: (date: Date) => void;
   onSelect: (bodyId: BodyId) => void;
 };
 
+type SimulationStore = {
+  timeMs: number;
+  targetSpeed: number;
+  smoothedSpeed: number;
+  states: BodyState[];
+  byId: Record<BodyId, BodyState>;
+};
+
+const maxFrameElapsedMs = 100;
+const speedEaseMs = 180;
+const uiDateUpdateMs = 125;
+
 export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(function UniverseCanvas(
-  { states, selectedBodyId, selectedViewId, focusKey, paused, visualStyleId, onSelect },
+  { currentDate, timeRevision, speed, selectedBodyId, selectedViewId, focusKey, paused, visualStyleId, onDateChange, onSelect },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const simulationRef = useRef<SimulationStore | null>(null);
+  const simulation = simulationRef.current ?? (simulationRef.current = createSimulation(currentDate.getTime(), speed));
 
   useImperativeHandle(ref, () => ({
     async captureFrame() {
@@ -54,12 +71,114 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
         <pointLight position={[0, 0, 0]} intensity={palette.sunLight} decay={1.55} color={palette.sunLightColor} />
         <directionalLight position={[-28, 18, -22]} intensity={palette.backFill} color={palette.backFillColor} />
         <StarField visualStyleId={visualStyleId} />
-        <SolarSystem states={states} selectedBodyId={selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
-        <CameraRig states={states} selectedBodyId={selectedBodyId} selectedViewId={selectedViewId} focusKey={focusKey} paused={paused} />
+        <SimulationTicker
+          simulation={simulation}
+          manualTimeMs={currentDate.getTime()}
+          timeRevision={timeRevision}
+          speed={speed}
+          paused={paused}
+          onDateChange={onDateChange}
+        />
+        <SolarSystem simulation={simulation} selectedBodyId={selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
+        <CameraRig simulation={simulation} selectedBodyId={selectedBodyId} selectedViewId={selectedViewId} focusKey={focusKey} paused={paused} />
       </Canvas>
     </div>
   );
 });
+
+function createSimulation(timeMs: number, speed: number): SimulationStore {
+  const states = getSolarSystemStateAt(timeMs);
+  return {
+    timeMs,
+    targetSpeed: speed,
+    smoothedSpeed: speed,
+    states,
+    byId: indexStates(states)
+  };
+}
+
+function updateSimulation(simulation: SimulationStore, timeMs: number) {
+  const states = getSolarSystemStateAt(timeMs);
+  simulation.timeMs = timeMs;
+  simulation.states = states;
+  simulation.byId = indexStates(states);
+}
+
+function indexStates(states: BodyState[]) {
+  return Object.fromEntries(states.map((body) => [body.id, body])) as Record<BodyId, BodyState>;
+}
+
+function SimulationTicker({
+  simulation,
+  manualTimeMs,
+  timeRevision,
+  speed,
+  paused,
+  onDateChange
+}: {
+  simulation: SimulationStore;
+  manualTimeMs: number;
+  timeRevision: number;
+  speed: number;
+  paused: boolean;
+  onDateChange: (date: Date) => void;
+}) {
+  const pausedRef = useRef(paused);
+  const onDateChangeRef = useRef(onDateChange);
+  const lastUiDateAtRef = useRef(0);
+  const lastFrameTime = useRef<number | null>(null);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    if (paused) {
+      simulation.smoothedSpeed = speed;
+      lastFrameTime.current = null;
+    }
+  }, [paused, simulation, speed]);
+
+  useEffect(() => {
+    simulation.targetSpeed = speed;
+    if (pausedRef.current) simulation.smoothedSpeed = speed;
+  }, [simulation, speed]);
+
+  useEffect(() => {
+    onDateChangeRef.current = onDateChange;
+  }, [onDateChange]);
+
+  useEffect(() => {
+    updateSimulation(simulation, manualTimeMs);
+    simulation.targetSpeed = speed;
+    simulation.smoothedSpeed = speed;
+    lastFrameTime.current = null;
+    lastUiDateAtRef.current = 0;
+  }, [simulation, timeRevision]);
+
+  useFrame(() => {
+    const now = performance.now();
+    const lastFrameTimeMs = lastFrameTime.current ?? now;
+    const elapsedMs = Math.min(now - lastFrameTimeMs, maxFrameElapsedMs);
+    lastFrameTime.current = now;
+
+    if (pausedRef.current) return;
+
+    const speedEase = 1 - Math.exp(-elapsedMs / speedEaseMs);
+    simulation.smoothedSpeed += (simulation.targetSpeed - simulation.smoothedSpeed) * speedEase;
+    updateSimulation(simulation, simulation.timeMs + elapsedMs * simulation.smoothedSpeed);
+
+    if (now - lastUiDateAtRef.current >= uiDateUpdateMs) {
+      lastUiDateAtRef.current = now;
+      onDateChangeRef.current(new Date(simulation.timeMs));
+    }
+  }, -100);
+
+  return null;
+}
+
+function syncBodyTransform(group: THREE.Group | null, state: BodyState | undefined) {
+  if (!group || !state) return;
+  group.position.set(state.position[0], state.position[1], state.position[2]);
+  group.rotation.y = state.rotation;
+}
 
 function SceneBridge({ canvasRef }: { canvasRef: React.MutableRefObject<HTMLCanvasElement | null> }) {
   const { gl } = useThree();
@@ -72,12 +191,12 @@ function SceneBridge({ canvasRef }: { canvasRef: React.MutableRefObject<HTMLCanv
 }
 
 function SolarSystem({
-  states,
+  simulation,
   selectedBodyId,
   visualStyleId,
   onSelect
 }: {
-  states: BodyState[];
+  simulation: SimulationStore;
   selectedBodyId: BodyId;
   visualStyleId: VisualStyleId;
   onSelect: (bodyId: BodyId) => void;
@@ -107,8 +226,15 @@ function SolarSystem({
         />
       ))}
 
-      {states.map((body) => (
-        <BodyMesh key={body.id} body={body} selected={body.id === selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
+      {bodies.map((body) => (
+        <BodyMesh
+          key={body.id}
+          body={body}
+          simulation={simulation}
+          selected={body.id === selectedBodyId}
+          visualStyleId={visualStyleId}
+          onSelect={onSelect}
+        />
       ))}
     </group>
   );
@@ -116,16 +242,18 @@ function SolarSystem({
 
 function BodyMesh({
   body,
+  simulation,
   selected,
   visualStyleId,
   onSelect
 }: {
-  body: BodyState;
+  body: BodyDefinition;
+  simulation: SimulationStore;
   selected: boolean;
   visualStyleId: VisualStyleId;
   onSelect: (bodyId: BodyId) => void;
 }) {
-  const position = body.position;
+  const groupRef = useRef<THREE.Group | null>(null);
   const isSun = body.id === "sun";
   const segments = body.visualRadius > 1.2 ? 96 : 64;
   const palette = stylePalettes[visualStyleId];
@@ -137,8 +265,16 @@ function BodyMesh({
   const roughness = body.id === "moon" || body.id === "mercury" || body.id === "mars" ? 0.94 : 0.68;
   const emissiveIntensity = selected ? palette.selectedEmissiveIntensity : palette.bodyEmissiveIntensity;
 
+  useEffect(() => {
+    syncBodyTransform(groupRef.current, simulation.byId[body.id]);
+  }, [body.id, simulation]);
+
+  useFrame(() => {
+    syncBodyTransform(groupRef.current, simulation.byId[body.id]);
+  });
+
   return (
-    <group position={position} rotation={[0, body.rotation, 0]}>
+    <group ref={groupRef}>
       <mesh
         onClick={(event) => {
           event.stopPropagation();
@@ -675,13 +811,13 @@ function seeded(seedText: string) {
 }
 
 function CameraRig({
-  states,
+  simulation,
   selectedBodyId,
   selectedViewId,
   focusKey,
   paused
 }: {
-  states: BodyState[];
+  simulation: SimulationStore;
   selectedBodyId: BodyId;
   selectedViewId: ViewPresetId;
   focusKey: number;
@@ -690,17 +826,21 @@ function CameraRig({
   const { camera } = useThree();
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const flyTo = useRef<{ position: THREE.Vector3; target: THREE.Vector3 } | null>(null);
+  const cinematicTimeRef = useRef(0);
 
   useEffect(() => {
-    const preset = cameraPreset(states, selectedBodyId, selectedViewId);
+    const preset = cameraPreset(simulation.states, selectedBodyId, selectedViewId);
     flyTo.current = preset;
   }, [focusKey, selectedBodyId, selectedViewId]);
 
-  useFrame(({ clock }) => {
+  useFrame((_, delta) => {
     const controls = controlsRef.current;
     if (!controls) return;
 
-    const targetPreset = selectedViewId === "free" ? flyTo.current : cameraPreset(states, selectedBodyId, selectedViewId, clock.elapsedTime);
+    if (!paused) cinematicTimeRef.current += Math.min(delta, maxFrameElapsedMs / 1000);
+
+    const targetPreset =
+      selectedViewId === "free" ? flyTo.current : cameraPreset(simulation.states, selectedBodyId, selectedViewId, cinematicTimeRef.current);
     if (targetPreset) {
       camera.position.lerp(targetPreset.position, 0.055);
       controls.target.lerp(targetPreset.target, 0.07);

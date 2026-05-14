@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Camera, Clock3, Download, Image as ImageIcon, Layers, Palette, Pause, Play, Sparkles } from "lucide-react";
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UniverseCanvas, type UniverseHandle } from "./components/UniverseCanvas";
 import styles from "./cosmic.module.css";
 import { bodies } from "./lib/bodies";
@@ -66,6 +66,7 @@ const defaultBatch = `2026-05-13 21:30:15 | 我们抬头的那个夜晚 | 地望
 export default function CosmicMomentApp({ initialIso }: { initialIso: string }) {
   const universeRef = useRef<UniverseHandle>(null);
   const [currentDate, setCurrentDate] = useState(() => new Date(initialIso));
+  const [timeRevision, setTimeRevision] = useState(0);
   const [paused, setPaused] = useState(true);
   const [speed, setSpeed] = useState<number>(60);
   const [selectedBodyId, setSelectedBodyId] = useState<BodyId>("earth");
@@ -80,22 +81,17 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
   const size = outputSize(poster);
 
   useEffect(() => {
-    setCurrentDate(new Date());
+    seekDate(new Date());
   }, []);
 
-  useEffect(() => {
-    if (paused) return;
+  const handleCanvasDateChange = useCallback((date: Date) => {
+    setCurrentDate(date);
+  }, []);
 
-    let last = performance.now();
-    const tick = window.setInterval(() => {
-      const now = performance.now();
-      const elapsed = now - last;
-      last = now;
-      setCurrentDate((date) => new Date(date.getTime() + elapsed * speed));
-    }, 250);
-
-    return () => window.clearInterval(tick);
-  }, [paused, speed]);
+  function seekDate(date: Date) {
+    setCurrentDate(date);
+    setTimeRevision((revision) => revision + 1);
+  }
 
   async function generatePoster(config = poster, date = currentDate, view = selectedViewId, suffix = "single") {
     try {
@@ -120,7 +116,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     setPaused(true);
     for (const [index, row] of rows.entries()) {
       setStatus(`批量 ${index + 1}/${rows.length}: 正在渲染 ${row.text.slice(0, 36)}`);
-      setCurrentDate(row.date);
+      seekDate(row.date);
       setSelectedViewId(row.view);
       setPoster((config) => ({ ...config, text: row.text }));
       setFocusKey((key) => key + 1);
@@ -135,12 +131,15 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     <main className={styles.shell} id="main">
       <UniverseCanvas
         ref={universeRef}
-        states={states}
+        currentDate={currentDate}
+        timeRevision={timeRevision}
+        speed={speed}
         selectedBodyId={selectedBodyId}
         selectedViewId={selectedViewId}
         focusKey={focusKey}
         paused={paused}
         visualStyleId={visualStyleId}
+        onDateChange={handleCanvasDateChange}
         onSelect={(bodyId) => {
           setSelectedBodyId(bodyId);
           setSelectedViewId("free");
@@ -172,7 +171,7 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
             step={1}
             value={toDatetimeLocal(currentDate)}
             onFocus={() => setPaused(true)}
-            onChange={(event) => setCurrentDate(fromDatetimeLocal(event.target.value))}
+            onChange={(event) => seekDate(fromDatetimeLocal(event.target.value))}
           />
         </label>
         <div className={styles.buttonRow}>
