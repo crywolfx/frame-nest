@@ -6,6 +6,10 @@ export type BackgroundStyleId = "observatory" | "instrument" | "deepBlack";
 
 export type MoonPosterLayout = "lowerLeft" | "center" | "upperRight" | "caption";
 
+export type InfoModuleId = "phaseName" | "lunarAge" | "date" | "phaseIndex" | "illumination";
+
+export type MoonPosterInfoModules = Record<InfoModuleId, boolean>;
+
 export type MoonPosterConfig = {
   templateId: PosterLabTemplateId;
   date: Date;
@@ -22,7 +26,7 @@ export type MoonPosterConfig = {
   ratio: RatioId;
   width: number;
   height: number;
-  metadata: boolean;
+  infoModules: MoonPosterInfoModules;
   backgroundStyle: BackgroundStyleId;
   moonScale: number;
   moonY: number;

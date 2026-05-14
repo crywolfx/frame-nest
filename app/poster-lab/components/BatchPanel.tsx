@@ -16,6 +16,12 @@ export function BatchPanel({ value, rows, status, running, onChange, onGenerate 
   return (
     <section className={styles.batchPanel} aria-label="批量生成">
       <PanelTitle icon={<Layers size={16} />} title="批量队列" />
+      <div className={styles.batchHelp}>
+        <strong>每行：日期 | 月相 | 文案</strong>
+        <span>月相可填 auto、phase-00 到 phase-29、00 到 29，或中文月相名如 满月。</span>
+        <code>2026-05-17 | auto | 月相观测记录</code>
+        <code>2026-05-17 | 满月 | 满月记录</code>
+      </div>
       <textarea className={styles.batchInput} value={value} onChange={(event) => onChange(event.target.value)} aria-label="批量行" />
       <div className={styles.batchActions}>
         <button className={styles.primaryButton} type="button" onClick={onGenerate} disabled={running}>

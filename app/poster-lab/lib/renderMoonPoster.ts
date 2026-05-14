@@ -9,6 +9,16 @@ export function resolvedPhaseIndex(config: MoonPosterConfig) {
   return config.phaseMode === "date" ? moonPhaseFromDate(config.date).phaseIndex : config.phaseIndex;
 }
 
+async function waitForPosterFonts(config: MoonPosterConfig) {
+  if (!("fonts" in document)) return;
+  const family = posterFontFamily(config.font);
+  await Promise.allSettled([
+    document.fonts.load(`800 72px ${family}`, config.text || "月相观测记录"),
+    document.fonts.load(`600 22px ${family}`, "月相：满月 · 月龄 16 · 北京时间 2026-05-17 · 相位 15/29")
+  ]);
+  await document.fonts.ready;
+}
+
 export function loadMoonPhaseImage(phaseIndex: number) {
   const phase = phaseByIndex(phaseIndex);
   const cached = imageCache.get(phase.index);
@@ -95,8 +105,6 @@ function drawTechnicalOverlay(ctx: CanvasRenderingContext2D, width: number, heig
 
 export function drawMoonPoster(ctx: CanvasRenderingContext2D, image: HTMLImageElement, config: MoonPosterConfig) {
   const { width, height } = outputSize(config);
-  const phase = phaseByIndex(resolvedPhaseIndex(config));
-  const phaseInfo = moonPhaseFromDate(config.date);
 
   ctx.clearRect(0, 0, width, height);
   drawBackground(ctx, width, height, config.backgroundStyle);
@@ -137,23 +145,19 @@ export function drawMoonPoster(ctx: CanvasRenderingContext2D, image: HTMLImageEl
     ctx.fillText(line, x, y + index * lineHeight, maxWidth);
   });
 
-  if (config.metadata) {
-    const metadata = [
-      `月相：${phase.nameZh}`,
-      `${phase.lunarDayLabel} · 相位 ${String(phase.index).padStart(2, "0")}/29`,
-      `日期：${formatBeijingDate(config.date)}`,
-      `照明：${Math.round((config.phaseMode === "date" ? phaseInfo.illumination : phase.expectedIllumination) * 100)}%`
-    ];
+  const metadata = posterInfoLine(config);
+  if (metadata) {
     ctx.shadowBlur = 10;
     ctx.font = `600 ${Math.max(18, width * 0.017)}px ${posterFontFamily(config.font)}`;
     ctx.fillStyle = "rgba(245,247,238,0.82)";
-    ctx.fillText(metadata.join("  /  "), x, Math.min(height - 34, y + lineHeight * 1.42), Math.min(width * 0.82, maxWidth * 1.35));
+    ctx.fillText(metadata, x, Math.min(height - 34, y + lineHeight * 1.42), Math.min(width * 0.82, maxWidth * 1.35));
   }
 }
 
 export async function renderMoonPosterPreview(target: HTMLCanvasElement, config: MoonPosterConfig) {
   const { width, height } = outputSize(config);
   const image = await loadMoonPhaseImage(resolvedPhaseIndex(config));
+  await waitForPosterFonts(config);
   target.width = width;
   target.height = height;
   const ctx = target.getContext("2d");
@@ -164,6 +168,7 @@ export async function renderMoonPosterPreview(target: HTMLCanvasElement, config:
 export async function composeMoonPoster(config: MoonPosterConfig) {
   const { width, height } = outputSize(config);
   const image = await loadMoonPhaseImage(resolvedPhaseIndex(config));
+  await waitForPosterFonts(config);
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
@@ -184,4 +189,22 @@ export async function exportMoonPoster(config: MoonPosterConfig, suffix = `phase
 export function metadataStatus(config: MoonPosterConfig) {
   const phase = phaseByIndex(resolvedPhaseIndex(config));
   return `${formatBeijingDateTimeLabel(config.date)} · ${phase.nameZh} · ${phase.lunarDayLabel}`;
+}
+
+export function posterInfoLine(config: MoonPosterConfig) {
+  const phase = phaseByIndex(resolvedPhaseIndex(config));
+  const phaseInfo = moonPhaseFromDate(config.date);
+  const modules = config.infoModules;
+  const parts: string[] = [];
+
+  if (modules.phaseName) parts.push(`月相：${phase.nameZh}`);
+  if (modules.lunarAge) parts.push(phase.lunarDayLabel);
+  if (modules.date) parts.push(`北京时间 ${formatBeijingDate(config.date)}`);
+  if (modules.phaseIndex) parts.push(`相位 ${String(phase.index).padStart(2, "0")}/29`);
+  if (modules.illumination) {
+    const illumination = config.phaseMode === "date" ? phaseInfo.illumination : phase.expectedIllumination;
+    parts.push(`光照 ${Math.round(illumination * 100)}%`);
+  }
+
+  return parts.join(" · ");
 }

@@ -5,6 +5,18 @@ test("海报实验室渲染月相预览并可切换相位", async ({ page }) => 
   await expect(page.getByText("海报实验室")).toBeVisible();
   await expect(page.getByText("月相海报生成器")).toBeVisible();
   await expect(page.getByRole("button", { name: "导出 PNG" }).first()).toBeVisible();
+  await expect(page.getByLabel("海报编辑器").getByText("信息标注")).toBeVisible();
+  await expect(page.getByLabel("海报编辑器").getByText("显示月相名称")).toBeVisible();
+  await expect(page.getByLabel("海报编辑器").getByText("显示月龄")).toBeVisible();
+  await expect(page.getByLabel("海报编辑器").getByText("显示日期")).toBeVisible();
+  await expect(page.getByLabel("海报编辑器").getByText("显示相位编号")).toBeVisible();
+  await expect(page.getByText("事实信息")).toHaveCount(0);
+  const fontOptions = await page.locator("label:has-text('字体') option").allTextContents();
+  expect(fontOptions).toContain("站酷快乐（可爱）");
+  expect(fontOptions).toContain("马善政（手写）");
+  expect(fontOptions).toContain("站酷庆科黄油（技术）");
+  await expect(page.getByText("每行：日期 | 月相 | 文案")).toBeVisible();
+  await expect(page.getByText("auto、phase-00 到 phase-29、00 到 29")).toBeVisible();
 
   const canvas = page.locator("canvas").first();
   await expect(canvas).toBeVisible();

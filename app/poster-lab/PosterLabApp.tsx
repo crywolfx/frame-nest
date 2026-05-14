@@ -26,7 +26,7 @@ import { alignments, fonts } from "./lib/fonts";
 import { parseBatchRows } from "./lib/batch";
 import { moonPhaseFromDate, phaseByIndex } from "./lib/moonPhases";
 import { exportMoonPoster, metadataStatus, renderMoonPosterPreview, resolvedPhaseIndex } from "./lib/renderMoonPoster";
-import type { BatchRow, MoonPosterConfig, MoonPosterLayout } from "./lib/types";
+import type { BatchRow, InfoModuleId, MoonPosterConfig, MoonPosterLayout } from "./lib/types";
 import styles from "./poster-lab.module.css";
 
 const layoutPresets: { id: MoonPosterLayout; label: string; x: number; y: number; align: CanvasTextAlign; size: number }[] = [
@@ -39,6 +39,14 @@ const layoutPresets: { id: MoonPosterLayout; label: string; x: number; y: number
 const defaultBatch = `2026-05-15 | auto | 月相观测记录
 2026-05-16 | phase-08 | 上弦月记录
 2026-05-17 | 满月 | 满月记录`;
+
+const infoModules: { id: InfoModuleId; label: string }[] = [
+  { id: "phaseName", label: "显示月相名称" },
+  { id: "lunarAge", label: "显示月龄" },
+  { id: "date", label: "显示日期" },
+  { id: "phaseIndex", label: "显示相位编号" },
+  { id: "illumination", label: "显示光照比例" }
+];
 
 function defaultConfig(initialIso: string): MoonPosterConfig {
   const date = new Date(initialIso);
@@ -59,7 +67,13 @@ function defaultConfig(initialIso: string): MoonPosterConfig {
     ratio: "4:5",
     width: 1080,
     height: 1350,
-    metadata: true,
+    infoModules: {
+      phaseName: true,
+      lunarAge: true,
+      date: true,
+      phaseIndex: true,
+      illumination: false
+    },
     backgroundStyle: "observatory",
     moonScale: 0.74,
     moonY: 0.42
@@ -131,6 +145,16 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
 
   function updateConfig(patch: Partial<MoonPosterConfig>) {
     setConfig((current) => ({ ...current, ...patch }));
+  }
+
+  function updateInfoModule(id: InfoModuleId, value: boolean) {
+    setConfig((current) => ({
+      ...current,
+      infoModules: {
+        ...current.infoModules,
+        [id]: value
+      }
+    }));
   }
 
   async function handleExport() {
@@ -360,10 +384,15 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
                 <option value="deepBlack">深空黑</option>
               </select>
             </label>
-            <label className={styles.toggle}>
-              <input type="checkbox" checked={config.metadata} onChange={(event) => updateConfig({ metadata: event.target.checked })} />
-              添加事实信息
-            </label>
+            <PanelTitle icon={<LayoutGrid size={16} />} title="信息标注" />
+            <div className={styles.toggleGrid}>
+              {infoModules.map((module) => (
+                <label className={styles.toggle} key={module.id}>
+                  <input type="checkbox" checked={config.infoModules[module.id]} onChange={(event) => updateInfoModule(module.id, event.target.checked)} />
+                  {module.label}
+                </label>
+              ))}
+            </div>
           </section>
 
           <BatchPanel value={batchText} rows={batchRows} status={batchStatus} running={batchRunning} onChange={setBatchText} onGenerate={() => void handleBatchGenerate()} />
