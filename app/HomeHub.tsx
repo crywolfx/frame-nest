@@ -47,9 +47,9 @@ const routes = [
 
 const categories = [
   { name: "宇宙与时间", count: 1, note: "天体状态、时间推演、观测视角" },
-  { name: "创作工具", count: 1, note: "图片生成、海报导出、批量任务" },
-  { name: "旅行与地图", count: 2, note: "行程、地图、交通和清单" },
-  { name: "实验功能", count: 0, note: "新工具会先放入这里验证" }
+  { name: "创作工具", count: 2, note: "图片生成、海报导出、批量任务" },
+  { name: "旅行与地图", count: 3, note: "行程、地图、交通和清单" },
+  { name: "实验功能", count: 4, note: "新工具会先放入这里验证" }
 ];
 
 const expansion = ["工具卡片", "嵌套路由", "分类导航", "批量生成", "地图体验", "3D 场景"];
