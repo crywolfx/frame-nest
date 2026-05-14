@@ -49,7 +49,7 @@ export function sampleOrbit(bodyId: BodyId, count = 192): Vec3[] {
   if (body.id === "sun") return [];
 
   const points: Vec3[] = [];
-  const parent = body.parentId ? orbitPositionAt(body.parentId, epoch) : [0, 0, 0];
+  const parent: Vec3 = [0, 0, 0];
 
   for (let index = 0; index <= count; index += 1) {
     const angle = (index / count) * tau;

@@ -24,6 +24,7 @@ type UniverseCanvasProps = {
   paused: boolean;
   visualStyleId: VisualStyleId;
   onDateChange: (date: Date) => void;
+  onManualCamera: () => void;
   onSelect: (bodyId: BodyId) => void;
 };
 
@@ -40,7 +41,7 @@ const speedEaseMs = 180;
 const uiDateUpdateMs = 125;
 
 export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(function UniverseCanvas(
-  { currentDate, timeRevision, speed, selectedBodyId, selectedViewId, focusKey, paused, visualStyleId, onDateChange, onSelect },
+  { currentDate, timeRevision, speed, selectedBodyId, selectedViewId, focusKey, paused, visualStyleId, onDateChange, onManualCamera, onSelect },
   ref
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -80,7 +81,15 @@ export const UniverseCanvas = forwardRef<UniverseHandle, UniverseCanvasProps>(fu
           onDateChange={onDateChange}
         />
         <SolarSystem simulation={simulation} selectedBodyId={selectedBodyId} visualStyleId={visualStyleId} onSelect={onSelect} />
-        <CameraRig simulation={simulation} selectedBodyId={selectedBodyId} selectedViewId={selectedViewId} focusKey={focusKey} paused={paused} />
+        <CameraRig
+          simulation={simulation}
+          selectedBodyId={selectedBodyId}
+          selectedViewId={selectedViewId}
+          focusKey={focusKey}
+          timeRevision={timeRevision}
+          paused={paused}
+          onManualCamera={onManualCamera}
+        />
       </Canvas>
     </div>
   );
@@ -180,6 +189,11 @@ function syncBodyTransform(group: THREE.Group | null, state: BodyState | undefin
   group.rotation.y = state.rotation;
 }
 
+function syncGroupPosition(group: THREE.Group | null, state: BodyState | undefined) {
+  if (!group || !state) return;
+  group.position.set(state.position[0], state.position[1], state.position[2]);
+}
+
 function SceneBridge({ canvasRef }: { canvasRef: React.MutableRefObject<HTMLCanvasElement | null> }) {
   const { gl } = useThree();
 
@@ -205,13 +219,14 @@ function SolarSystem({
   const orbitPoints = useMemo(
     () =>
       bodies
-        .filter((body) => body.id !== "sun")
+        .filter((body) => body.id !== "sun" && body.id !== "moon")
         .map((body) => ({
           id: body.id,
-          points: sampleOrbit(body.id, body.id === "moon" ? 96 : 220)
+          points: sampleOrbit(body.id, 220)
         })),
     []
   );
+  const moonOrbitPoints = useMemo(() => sampleOrbit("moon", 96), []);
 
   return (
     <group>
@@ -225,6 +240,7 @@ function SolarSystem({
           opacity={palette.orbitOpacity}
         />
       ))}
+      <MoonOrbit simulation={simulation} palette={palette} points={moonOrbitPoints} />
 
       {bodies.map((body) => (
         <BodyMesh
@@ -236,6 +252,34 @@ function SolarSystem({
           onSelect={onSelect}
         />
       ))}
+    </group>
+  );
+}
+
+function MoonOrbit({
+  simulation,
+  palette,
+  points
+}: {
+  simulation: SimulationStore;
+  palette: (typeof stylePalettes)[VisualStyleId];
+  points: Vec3[];
+}) {
+  const groupRef = useRef<THREE.Group | null>(null);
+  const earth = simulation.byId.earth;
+  const opacity = Math.min(0.2, palette.orbitOpacity * 0.48);
+
+  useEffect(() => {
+    syncGroupPosition(groupRef.current, earth);
+  }, [earth]);
+
+  useFrame(() => {
+    syncGroupPosition(groupRef.current, simulation.byId.earth);
+  });
+
+  return (
+    <group ref={groupRef}>
+      <Line points={points} color={palette.moonOrbit} lineWidth={0.55} transparent opacity={opacity} />
     </group>
   );
 }
@@ -815,23 +859,39 @@ function CameraRig({
   selectedBodyId,
   selectedViewId,
   focusKey,
-  paused
+  timeRevision,
+  paused,
+  onManualCamera
 }: {
   simulation: SimulationStore;
   selectedBodyId: BodyId;
   selectedViewId: ViewPresetId;
   focusKey: number;
+  timeRevision: number;
   paused: boolean;
+  onManualCamera: () => void;
 }) {
-  const { camera } = useThree();
+  const { camera, size } = useThree();
   const controlsRef = useRef<OrbitControlsImpl | null>(null);
   const flyTo = useRef<{ position: THREE.Vector3; target: THREE.Vector3 } | null>(null);
   const cinematicTimeRef = useRef(0);
+  const manualOverrideRef = useRef(false);
+  const onManualCameraRef = useRef(onManualCamera);
 
   useEffect(() => {
-    const preset = cameraPreset(simulation.states, selectedBodyId, selectedViewId);
+    onManualCameraRef.current = onManualCamera;
+  }, [onManualCamera]);
+
+  useEffect(() => {
+    if (manualOverrideRef.current && selectedViewId === "free") {
+      manualOverrideRef.current = false;
+      flyTo.current = null;
+      return;
+    }
+
+    const preset = cameraPreset(simulation.states, selectedBodyId, selectedViewId, 0, cameraFit(camera, size));
     flyTo.current = preset;
-  }, [focusKey, selectedBodyId, selectedViewId]);
+  }, [camera, focusKey, selectedBodyId, selectedViewId, simulation.states, size, timeRevision]);
 
   useFrame((_, delta) => {
     const controls = controlsRef.current;
@@ -839,22 +899,50 @@ function CameraRig({
 
     if (!paused) cinematicTimeRef.current += Math.min(delta, maxFrameElapsedMs / 1000);
 
-    const targetPreset =
-      selectedViewId === "free" ? flyTo.current : cameraPreset(simulation.states, selectedBodyId, selectedViewId, cinematicTimeRef.current);
+    const targetPreset = selectedViewId === "cinematic" ? cameraPreset(simulation.states, selectedBodyId, selectedViewId, cinematicTimeRef.current, cameraFit(camera, size)) : flyTo.current;
     if (targetPreset) {
       camera.position.lerp(targetPreset.position, 0.055);
       controls.target.lerp(targetPreset.target, 0.07);
       controls.update();
-      if (selectedViewId === "free" && camera.position.distanceTo(targetPreset.position) < 0.08) flyTo.current = null;
+      if (selectedViewId !== "cinematic" && camera.position.distanceTo(targetPreset.position) < 0.08 && controls.target.distanceTo(targetPreset.target) < 0.08) flyTo.current = null;
     } else if (selectedViewId === "cinematic" && !paused) {
       controls.update();
     }
   });
 
-  return <OrbitControls ref={controlsRef} enableDamping dampingFactor={0.08} makeDefault minDistance={0.35} maxDistance={160} />;
+  return (
+    <OrbitControls
+      ref={controlsRef}
+      enableDamping
+      dampingFactor={0.08}
+      enableZoom
+      enableRotate
+      enablePan
+      makeDefault
+      minDistance={0.85}
+      maxDistance={160}
+      onStart={() => {
+        flyTo.current = null;
+        manualOverrideRef.current = true;
+        if (selectedViewId !== "free") onManualCameraRef.current();
+      }}
+    />
+  );
 }
 
-function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPresetId, elapsed = 0) {
+type CameraFit = {
+  fov: number;
+  aspect: number;
+};
+
+function cameraFit(camera: THREE.Camera, size: { width: number; height: number }): CameraFit {
+  return {
+    fov: camera instanceof THREE.PerspectiveCamera ? camera.fov : 52,
+    aspect: size.height > 0 ? size.width / size.height : 1
+  };
+}
+
+function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPresetId, elapsed = 0, fit: CameraFit = { fov: 52, aspect: 1.6 }) {
   const byId = Object.fromEntries(states.map((body) => [body.id, body])) as Record<BodyId, BodyState>;
   const selected = byId[selectedBodyId] ?? byId.earth;
   const earth = byId.earth;
@@ -864,11 +952,11 @@ function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPre
 
   if (view === "overview") return pair([0, 34, 56], [0, 0, 0]);
   if (view === "top") return pair([0, 82, 0.1], [0, 0, 0]);
-  if (view === "sun") return focusBody(sun, new THREE.Vector3(1, 0.55, 1.15));
-  if (view === "earth") return focusBody(earth, vec(earth.position).sub(vec(sun.position)).add(new THREE.Vector3(0.8, 0.35, 0.45)));
-  if (view === "moon") return focusBody(moon, vec(moon.position).sub(vec(earth.position)).add(new THREE.Vector3(0.45, 0.35, 0.7)));
-  if (view === "earthToMoon") return between(earth, moon, 0.55);
-  if (view === "moonToEarth") return between(moon, earth, 0.45);
+  if (view === "sun") return focusBody(sun, new THREE.Vector3(1, 0.55, 1.15), fit);
+  if (view === "earth") return focusBody(earth, vec(earth.position).sub(vec(sun.position)).add(new THREE.Vector3(0.8, 0.35, 0.45)), fit);
+  if (view === "moon") return focusBody(moon, vec(moon.position).sub(vec(earth.position)).add(new THREE.Vector3(0.45, 0.35, 0.7)), fit);
+  if (view === "earthToMoon") return between(earth, moon, 0.45, fit);
+  if (view === "moonToEarth") return between(moon, earth, 0.5, fit);
   if (view === "cinematic") {
     const angle = elapsed * 0.11;
     return {
@@ -877,13 +965,17 @@ function cameraPreset(states: BodyState[], selectedBodyId: BodyId, view: ViewPre
     };
   }
 
-  return focusBody(selected, bodyTarget.clone().normalize().add(new THREE.Vector3(0.9, 0.45, 1.15)));
+  return focusBody(selected, bodyTarget.clone().normalize().add(new THREE.Vector3(0.9, 0.45, 1.15)), fit);
 }
 
-function focusBody(body: BodyState, direction: THREE.Vector3) {
+function focusBody(body: BodyState, direction: THREE.Vector3, fit: CameraFit) {
   const target = vec(body.position);
   const safeDirection = direction.lengthSq() > 0.0001 ? direction.clone().normalize() : new THREE.Vector3(1, 0.35, 1).normalize();
-  const distance = THREE.MathUtils.clamp(body.visualRadius * (body.id === "sun" ? 4.2 : 6.2), body.id === "moon" ? 1.45 : 2.1, body.id === "sun" ? 16 : 12);
+  const radiusBudget = body.visualRadius * (body.id === "sun" ? 1.42 : 1.72);
+  const fill = body.id === "sun" ? 0.44 : body.id === "moon" ? 0.5 : 0.48;
+  const minimum = body.id === "moon" ? 1.9 : body.id === "sun" ? 12 : 2.8;
+  const maximum = body.id === "sun" ? 28 : body.visualRadius > 1.4 ? 22 : 16;
+  const distance = THREE.MathUtils.clamp(fitDistanceForRadius(radiusBudget, fit, fill), minimum, maximum);
 
   return {
     target,
@@ -891,19 +983,39 @@ function focusBody(body: BodyState, direction: THREE.Vector3) {
   };
 }
 
-function between(origin: BodyState, target: BodyState, clearance: number) {
+function between(origin: BodyState, target: BodyState, clearance: number, fit: CameraFit) {
   const originVec = vec(origin.position);
   const targetVec = vec(target.position);
-  const direction = targetVec.clone().sub(originVec).normalize();
+  const direction = targetVec.clone().sub(originVec);
+  if (direction.lengthSq() < 0.0001) return focusBody(target, new THREE.Vector3(1, 0.45, 1), fit);
+  direction.normalize();
   const span = originVec.distanceTo(targetVec);
-  const maxOffset = Math.max(origin.visualRadius + 0.2, span - target.visualRadius - 0.2);
-  const offset = Math.min(origin.visualRadius + clearance, maxOffset);
-  const lift = Math.max(0.12, origin.visualRadius * 0.32);
+  const targetDistance = fitDistanceForRadius(target.visualRadius * 1.68, fit, target.id === "earth" ? 0.42 : 0.5);
+  const originClearance = origin.visualRadius * 1.45 + clearance;
+  const distanceFromTarget = Math.max(targetDistance, span + originClearance);
+  const up = new THREE.Vector3(0, 1, 0);
+  const side = new THREE.Vector3().crossVectors(direction, up);
+  if (side.lengthSq() < 0.0001) side.set(1, 0, 0);
+  side.normalize();
+  const lift = Math.max(0.22, Math.max(origin.visualRadius, target.visualRadius) * 0.46);
+  const sideOffset = Math.max(0.18, target.visualRadius * 0.28);
 
   return {
-    target: targetVec,
-    position: originVec.add(direction.multiplyScalar(offset)).add(new THREE.Vector3(0, lift, 0))
+    target: targetVec.clone().add(up.clone().multiplyScalar(target.visualRadius * 0.08)),
+    position: targetVec
+      .clone()
+      .sub(direction.multiplyScalar(distanceFromTarget))
+      .add(up.multiplyScalar(lift))
+      .add(side.multiplyScalar(sideOffset))
   };
+}
+
+function fitDistanceForRadius(radius: number, fit: CameraFit, fill: number) {
+  const verticalFov = THREE.MathUtils.degToRad(fit.fov);
+  const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(0.1, fit.aspect));
+  const limitingFov = Math.min(verticalFov, horizontalFov);
+  const safeFill = THREE.MathUtils.clamp(fill, 0.24, 0.68);
+  return radius / Math.tan((limitingFov * safeFill) / 2);
 }
 
 function pair(position: Vec3, target: Vec3) {

@@ -84,28 +84,34 @@
 }
 
 .heroCopy {
-  left: clamp(456px, 31vw, 560px);
-  bottom: clamp(132px, 16vh, 190px);
-  width: min(620px, calc(100vw - 950px));
+  left: 22px;
+  top: calc(76px + env(safe-area-inset-top));
+  width: min(360px, 28vw);
+  border: 1px solid rgba(245, 240, 220, 0.13);
+  border-radius: 8px;
+  padding: 0.78rem 0.9rem;
+  background: rgba(4, 8, 15, 0.34);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
   pointer-events: none;
 }
 
 .heroCopy p {
-  margin: 0 0 0.72rem;
+  margin: 0 0 0.42rem;
   color: #9de8c1;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
 .heroCopy h1 {
   margin: 0;
   color: #fff7db;
-  font-size: clamp(2.8rem, 5.4vw, 6.1rem);
-  line-height: 0.92;
-  text-wrap: balance;
-  text-shadow: 0 28px 80px rgba(0, 0, 0, 0.78);
+  font-size: clamp(1.1rem, 1.6vw, 1.8rem);
+  line-height: 1.12;
+  text-wrap: pretty;
+  text-shadow: 0 18px 50px rgba(0, 0, 0, 0.68);
 }
 
 .leftPanel,
@@ -124,6 +130,8 @@
   left: 22px;
   bottom: 22px;
   width: min(410px, calc(100vw - 44px));
+  max-height: calc(100svh - 168px);
+  overflow: auto;
   padding: 1rem;
 }
 
@@ -210,6 +218,8 @@
 .selectedStyle:focus-visible,
 .viewButton:focus-visible,
 .activeView:focus-visible,
+.eventButton:focus-visible,
+.eventSource:focus-visible,
 .primaryButton:focus-visible,
 .exportButton:focus-visible,
 .brand:focus-visible {
@@ -253,6 +263,119 @@
   align-items: center;
   justify-content: center;
   gap: 0.42rem;
+}
+
+.eventNote {
+  margin: -0.22rem 0 0;
+  color: rgba(243, 240, 223, 0.58);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.eventList {
+  display: grid;
+  max-height: 268px;
+  gap: 0.58rem;
+  overflow: auto;
+  padding-right: 0.12rem;
+}
+
+.eventCard {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid rgba(244, 238, 214, 0.13);
+  border-radius: 8px;
+  padding: 0.68rem;
+  background: rgba(2, 6, 12, 0.46);
+}
+
+.eventHeader,
+.eventActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eventHeader {
+  justify-content: space-between;
+}
+
+.eventHeader strong {
+  min-width: 0;
+  color: #fff6dc;
+  font-size: 0.82rem;
+}
+
+.solarBadge,
+.lunarBadge {
+  flex: 0 0 auto;
+  border: 1px solid rgba(244, 238, 214, 0.2);
+  border-radius: 999px;
+  padding: 0.18rem 0.48rem;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.solarBadge {
+  color: #ffe0a6;
+  background: rgba(255, 176, 76, 0.16);
+}
+
+.lunarBadge {
+  color: #d7e7ff;
+  background: rgba(102, 181, 255, 0.14);
+}
+
+.eventTime,
+.eventPlace,
+.eventDescription,
+.eventVisibility {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.42;
+}
+
+.eventTime {
+  color: rgba(255, 247, 219, 0.86);
+  font-weight: 800;
+}
+
+.eventPlace {
+  color: #9de8c1;
+  font-weight: 800;
+}
+
+.eventDescription,
+.eventVisibility {
+  color: rgba(243, 240, 223, 0.68);
+}
+
+.eventActions {
+  justify-content: space-between;
+  margin-top: 0.08rem;
+}
+
+.eventButton {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.34rem;
+  border: 1px solid rgba(255, 188, 92, 0.46);
+  border-radius: 999px;
+  padding: 0 0.62rem;
+  color: #fff8e3;
+  background: rgba(255, 188, 92, 0.16);
+  font-size: 0.72rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.eventSource {
+  color: rgba(243, 240, 223, 0.62);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-decoration: none;
 }
 
 .primaryButton:hover,
@@ -434,12 +557,23 @@
 
   .heroCopy {
     display: block;
-    margin: 1rem 0;
+    margin: 0.75rem 0 0.2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
     pointer-events: auto;
   }
 
+  .heroCopy p {
+    margin-bottom: 0.38rem;
+    font-size: 0.68rem;
+  }
+
   .heroCopy h1 {
-    font-size: clamp(2.25rem, 11vw, 4.4rem);
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    line-height: 1.06;
   }
 
   .leftPanel,
@@ -448,6 +582,10 @@
     margin-top: 0.8rem;
     max-height: none;
     overflow: visible;
+  }
+
+  .eventList {
+    max-height: none;
   }
 
   .viewRail {

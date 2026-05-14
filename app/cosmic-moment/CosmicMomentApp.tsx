@@ -6,10 +6,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { UniverseCanvas, type UniverseHandle } from "./components/UniverseCanvas";
 import styles from "./cosmic.module.css";
 import { bodies } from "./lib/bodies";
+import { celestialEvents } from "./lib/celestialEvents";
 import { getSolarSystemState, moonPhaseName } from "./lib/orbits";
 import { composePoster, downloadBlob, outputSize, ratioSizes } from "./lib/poster";
 import { fromDatetimeLocal, speeds, toDatetimeLocal } from "./lib/time";
-import type { BatchRow, BodyId, PosterConfig, RatioId, ViewPresetId, VisualStyleId } from "./lib/types";
+import type { BatchRow, BodyId, CelestialEvent, PosterConfig, RatioId, ViewPresetId, VisualStyleId } from "./lib/types";
 
 const views: { id: ViewPresetId; label: string }[] = [
   { id: "free", label: "自由" },
@@ -93,6 +94,18 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
     setTimeRevision((revision) => revision + 1);
   }
 
+  function jumpToEvent(event: CelestialEvent) {
+    const eventDate = new Date(event.peaksAt ?? event.startsAt);
+    if (Number.isNaN(eventDate.getTime())) return;
+
+    setPaused(true);
+    seekDate(eventDate);
+    setSelectedBodyId(event.type === "lunarEclipse" ? "moon" : "earth");
+    setSelectedViewId(event.recommendedView);
+    setFocusKey((key) => key + 1);
+    setStatus(`已跳到${event.title}：${event.timeLabel}`);
+  }
+
   async function generatePoster(config = poster, date = currentDate, view = selectedViewId, suffix = "single") {
     try {
       setStatus("正在渲染海报...");
@@ -140,6 +153,9 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
         paused={paused}
         visualStyleId={visualStyleId}
         onDateChange={handleCanvasDateChange}
+        onManualCamera={() => {
+          setSelectedViewId("free");
+        }}
         onSelect={(bodyId) => {
           setSelectedBodyId(bodyId);
           setSelectedViewId("free");
@@ -208,6 +224,34 @@ export default function CosmicMomentApp({ initialIso }: { initialIso: string }) 
         <p className={styles.readout}>
           当前聚焦：{selectedBody?.name}。月相由场景光照实时呈现，不使用静态帧贴图。
         </p>
+
+        <PanelTitle icon={<Sparkles size={16} />} title="特殊天象" />
+        <p className={styles.eventNote}>日期和可见地区来自预置资料；3D 构图为简化太阳系模型示意。</p>
+        <div className={styles.eventList}>
+          {celestialEvents.map((event) => (
+            <article className={styles.eventCard} key={event.id}>
+              <div className={styles.eventHeader}>
+                <span className={event.type === "solarEclipse" ? styles.solarBadge : styles.lunarBadge}>{event.type === "solarEclipse" ? "日食" : "月食"}</span>
+                <strong>{event.title}</strong>
+              </div>
+              <p className={styles.eventTime}>{event.timeLabel}</p>
+              <p className={styles.eventPlace}>{event.locationSummary}</p>
+              <p className={styles.eventDescription}>{event.description}</p>
+              <p className={styles.eventVisibility}>{event.visibility}</p>
+              <div className={styles.eventActions}>
+                <button className={styles.eventButton} type="button" onClick={() => jumpToEvent(event)}>
+                  <Clock3 size={14} />
+                  跳到时刻
+                </button>
+                {event.sourceUrl && (
+                  <a className={styles.eventSource} href={event.sourceUrl} target="_blank" rel="noreferrer">
+                    {event.sourceLabel ?? "来源"}
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className={styles.viewRail} aria-label="视角预设">
