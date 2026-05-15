@@ -1,4 +1,4 @@
-import { moonPhases } from "../lib/moonPhases";
+import { formatPhaseDisplayNumber, moonPhases } from "../lib/moonPhases";
 import styles from "../poster-lab.module.css";
 
 type MoonPhaseSelectorProps = {
@@ -16,10 +16,10 @@ export function MoonPhaseSelector({ selectedIndex, computedIndex, onSelect }: Mo
           className={phase.index === selectedIndex ? styles.phaseButtonActive : styles.phaseButton}
           type="button"
           onClick={() => onSelect(phase.index)}
-          aria-label={`${phase.nameZh} ${phase.lunarDayLabel}`}
+          aria-label={`${phase.nameZh} 相位 ${formatPhaseDisplayNumber(phase.index)}`}
         >
           <img src={phase.assetPath} alt="" loading="lazy" />
-          <span>{String(phase.index).padStart(2, "0")}</span>
+          <span>{formatPhaseDisplayNumber(phase.index)}</span>
           <strong>{phase.nameZh}</strong>
           {phase.index === computedIndex && <em>日期</em>}
         </button>

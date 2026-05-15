@@ -1,10 +1,10 @@
-import { parseDatetimeLocal } from "../../lib/time";
+import { parseBeijingDateAtEvening, parseDatetimeLocal } from "../../lib/time";
 import { moonPhaseFromDate, resolvePhaseToken } from "./moonPhases";
 import type { ParsedBatch } from "./types";
 
 function parseBatchDate(value: string) {
   const trimmed = value.trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return parseDatetimeLocal(`${trimmed}T00:00`);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return parseBeijingDateAtEvening(trimmed);
   return parseDatetimeLocal(trimmed.replace(" ", "T"));
 }
 

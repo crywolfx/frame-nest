@@ -27,6 +27,7 @@ export type MoonPosterConfig = {
   width: number;
   height: number;
   infoModules: MoonPosterInfoModules;
+  infoGap: number;
   backgroundStyle: BackgroundStyleId;
   moonScale: number;
   moonY: number;

@@ -44,7 +44,7 @@ export function formatBeijingDateTimeLabel(value: Date | string | number) {
 
 export function toDatetimeLocal(date: Date) {
   const parts = beijingParts(date);
-  return `${parts.year}-${pad(parts.month)}-${pad(parts.date)}T${pad(parts.hours)}:${pad(parts.minutes)}:${pad(parts.seconds)}`;
+  return `${parts.year}-${pad(parts.month)}-${pad(parts.date)}T${pad(parts.hours)}:${pad(parts.minutes)}`;
 }
 
 export function parseDatetimeLocal(value: string) {
@@ -54,6 +54,18 @@ export function parseDatetimeLocal(value: string) {
   const [, year, month, day, hours, minutes, seconds = "00"] = match;
   const parsed = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hours) - 8, Number(minutes), Number(seconds)));
   return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+export function parseBeijingDate(value: string, hour = 20, minute = 0, second = 0) {
+  const match = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+
+  const [, year, month, day] = match;
+  return parseDatetimeLocal(`${year}-${month}-${day}T${pad(hour)}:${pad(minute)}:${pad(second)}`);
+}
+
+export function parseBeijingDateAtEvening(value: string) {
+  return parseBeijingDate(value, 20);
 }
 
 export function fromDatetimeLocal(value: string) {
