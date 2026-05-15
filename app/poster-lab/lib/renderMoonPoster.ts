@@ -1,6 +1,7 @@
 import { formatBeijingDate, formatBeijingDateTimeLabel } from "../../lib/time";
 import { downloadBlob, outputSize, posterFontFamily, wrapLines } from "../../lib/posterCore";
-import { formatMoonAgeLabel, formatPhaseDisplayNumber, formatPhasePosition, moonPhaseFromDate, phaseByIndex } from "./moonPhases";
+import { formatLunarDate, moonPhaseNameFromDate } from "./lunar";
+import { formatPhaseDisplayNumber, formatPhasePosition, moonPhaseFromDate, phaseByIndex } from "./moonPhases";
 import type { MoonPosterConfig } from "./types";
 
 const imageCache = new Map<number, Promise<HTMLImageElement>>();
@@ -14,7 +15,7 @@ async function waitForPosterFonts(config: MoonPosterConfig) {
   const family = posterFontFamily(config.font);
   await Promise.allSettled([
     document.fonts.load(`800 72px ${family}`, config.text || "月相观测记录"),
-    document.fonts.load(`600 22px ${family}`, "月相：满月 · 月龄约 14.8 天 · 北京时间 2026-05-17 · 相位 16/30")
+    document.fonts.load(`600 22px ${family}`, "月相：满月 · 农历 四月十五 · 北京时间 2026-05-17 · 相位 16/30")
   ]);
   await document.fonts.ready;
 }
@@ -190,24 +191,26 @@ export async function exportMoonPoster(config: MoonPosterConfig, suffix = `phase
 }
 
 export function metadataStatus(config: MoonPosterConfig) {
-  const phase = phaseByIndex(resolvedPhaseIndex(config));
-  const phaseInfo = moonPhaseFromDate(config.date);
-  return `${formatBeijingDateTimeLabel(config.date)} · ${phase.nameZh} · ${formatMoonAgeLabel(phaseInfo.phaseAgeDays)}`;
+  return `${formatBeijingDateTimeLabel(config.date)} · ${formatLunarDate(config.date)} · ${displayPhaseName(config)}`;
 }
 
 export function posterInfoLine(config: MoonPosterConfig) {
-  const phase = phaseByIndex(resolvedPhaseIndex(config));
   const phaseInfo = moonPhaseFromDate(config.date);
   const modules = config.infoModules;
   const parts: string[] = [];
 
-  if (modules.phaseName) parts.push(`月相：${phase.nameZh}`);
-  if (modules.lunarAge) parts.push(formatMoonAgeLabel(phaseInfo.phaseAgeDays));
+  if (modules.phaseName) parts.push(`月相：${displayPhaseName(config)}`);
+  if (modules.lunarDate) parts.push(formatLunarDate(config.date));
   if (modules.date) parts.push(`北京时间 ${formatBeijingDate(config.date)}`);
-  if (modules.phaseIndex) parts.push(`相位 ${formatPhasePosition(phase.index)}`);
+  if (modules.phaseIndex) parts.push(`相位 ${formatPhasePosition(resolvedPhaseIndex(config))}`);
   if (modules.illumination) {
     parts.push(`光照 ${Math.round(phaseInfo.illumination * 100)}%`);
   }
 
   return parts.join(" · ");
+}
+
+export function displayPhaseName(config: MoonPosterConfig) {
+  if (config.phaseMode === "date") return moonPhaseNameFromDate(config.date);
+  return phaseByIndex(resolvedPhaseIndex(config)).nameZh;
 }

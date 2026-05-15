@@ -1,4 +1,5 @@
 import { parseBeijingDateAtEvening, parseDatetimeLocal } from "../../lib/time";
+import { moonPhaseNameFromDate } from "./lunar";
 import { moonPhaseFromDate, resolvePhaseToken } from "./moonPhases";
 import type { ParsedBatch } from "./types";
 
@@ -39,7 +40,7 @@ export function parseBatchRows(value: string): ParsedBatch {
         date,
         phaseMode: resolved.phaseMode,
         phaseIndex: phase.index,
-        phaseLabel: phase.nameZh,
+        phaseLabel: resolved.phaseMode === "date" ? moonPhaseNameFromDate(date) : phase.nameZh,
         text,
         status: "等待" as const
       }];

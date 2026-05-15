@@ -1,6 +1,7 @@
 import { Download, Maximize2, RefreshCw } from "lucide-react";
 import type { RefObject } from "react";
 import { outputSize } from "../../lib/posterCore";
+import { metadataStatus } from "../lib/renderMoonPoster";
 import type { MoonPosterConfig } from "../lib/types";
 import styles from "../poster-lab.module.css";
 
@@ -40,7 +41,7 @@ export function PosterPreview({ canvasRef, config, status, exporting, onRefresh,
       <button className={styles.previewCanvasButton} type="button" onClick={onZoom} aria-label="放大查看海报预览">
         <canvas ref={canvasRef} style={{ aspectRatio: `${size.width} / ${size.height}` }} />
       </button>
-      <p className={styles.previewStatus}>{status}</p>
+      <p className={styles.previewStatus}>{status} · {metadataStatus(config)}</p>
     </section>
   );
 }

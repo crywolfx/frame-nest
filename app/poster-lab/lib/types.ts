@@ -6,7 +6,7 @@ export type BackgroundStyleId = "observatory" | "instrument" | "deepBlack";
 
 export type MoonPosterLayout = "lowerLeft" | "center" | "upperRight" | "caption";
 
-export type InfoModuleId = "phaseName" | "lunarAge" | "date" | "phaseIndex" | "illumination";
+export type InfoModuleId = "phaseName" | "lunarDate" | "date" | "phaseIndex" | "illumination";
 
 export type MoonPosterInfoModules = Record<InfoModuleId, boolean>;
 

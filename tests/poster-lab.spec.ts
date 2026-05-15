@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { formatBeijingDateTime, parseBeijingDateAtEvening } from "../app/lib/time";
 import { parseBatchRows } from "../app/poster-lab/lib/batch";
+import { lunarDateFromDate, moonPhaseNameFromDate, moonPhaseNameFromLunarDay, standardMoonPhaseNames } from "../app/poster-lab/lib/lunar";
 import { moonPhaseFromDate, phaseByIndex, resolvePhaseToken } from "../app/poster-lab/lib/moonPhases";
 import { posterInfoLine } from "../app/poster-lab/lib/renderMoonPoster";
 import type { MoonPosterConfig } from "../app/poster-lab/lib/types";
@@ -47,23 +48,25 @@ test("批量日期只写日期时按北京时间当天晚上 20:00", () => {
 });
 
 test("月相展示名称归并为 8 个标准名称，编号按 1-based 显示", () => {
-  const visibleNames = new Set(["新月", "蛾眉月", "上弦月", "盈凸月", "满月", "亏凸月", "下弦月", "残月"]);
+  const visibleNames = new Set(standardMoonPhaseNames);
 
   for (const phase of Array.from({ length: 30 }, (_, index) => phaseByIndex(index))) {
     expect(visibleNames).toContain(phase.nameZh);
-    expect(phase.nameZh).not.toMatch(/盈凸月 01|亏凸月 01|上弦前|近下弦月/);
+    expect(phase.id).toBe(`phase-${String(phase.index + 1).padStart(2, "0")}`);
+    expect(phase.nameZh).not.toMatch(/盈凸月 01|亏凸月 01|上弦前|近下弦月|亏蛾眉月|晦月|近上弦月/);
   }
 
   const date = parseBeijingDateAtEvening("2026-05-23");
   expect(date).not.toBeNull();
-  expect(resolvePhaseToken("盈凸月 01", date!).phase.nameZh).toBe("盈凸月");
-  expect(resolvePhaseToken("亏凸月 01", date!).phase.nameZh).toBe("亏凸月");
+  expect(resolvePhaseToken("phase-00", date!).phaseMode).toBe("date");
+  expect(resolvePhaseToken("phase-00", date!).warning).toContain("未识别");
+  expect(resolvePhaseToken("0", date!).phaseMode).toBe("date");
 
   const infoConfig: MoonPosterConfig = {
     templateId: "moonPhase",
     date: date!,
-    phaseMode: "manual",
-    phaseIndex: 8,
+    phaseMode: "date",
+    phaseIndex: 7,
     text: "月相观测记录",
     font: "sans",
     color: "#fff6dc",
@@ -75,7 +78,7 @@ test("月相展示名称归并为 8 个标准名称，编号按 1-based 显示",
     ratio: "4:5",
     width: 1080,
     height: 1350,
-    infoModules: { phaseName: true, lunarAge: true, date: true, phaseIndex: true, illumination: false },
+    infoModules: { phaseName: true, lunarDate: true, date: true, phaseIndex: true, illumination: false },
     infoGap: 1.35,
     backgroundStyle: "observatory",
     moonScale: 0.88,
@@ -84,9 +87,29 @@ test("月相展示名称归并为 8 个标准名称，编号按 1-based 显示",
 
   const infoLine = posterInfoLine(infoConfig);
   expect(infoLine).toContain("月相：上弦月");
-  expect(infoLine).toContain("月龄约 ");
+  expect(infoLine).toContain("农历 四月初七");
   expect(infoLine).toContain("相位 09/30");
-  expect(infoLine).not.toMatch(/月龄 0[0-9]|相位 00\/29|盈凸月 01|亏凸月 01/);
+  expect(infoLine).not.toMatch(/月龄约|月龄 0[0-9]|相位 00\/29|盈凸月 01|亏凸月 01/);
+});
+
+test("农历日范围映射到 8 个固定月相名称", () => {
+  const cases = [
+    { lunarDay: 1, expected: "新月" },
+    { lunarDay: 2, expected: "蛾眉月" },
+    { lunarDay: 7, expected: "上弦月" },
+    { lunarDay: 9, expected: "盈凸月" },
+    { lunarDay: 15, expected: "满月" },
+    { lunarDay: 17, expected: "亏凸月" },
+    { lunarDay: 22, expected: "下弦月" },
+    { lunarDay: 24, expected: "残月" }
+  ] as const;
+
+  for (const item of cases) {
+    const date = findBeijingDateForLunarDay(item.lunarDay);
+    expect(moonPhaseNameFromLunarDay(item.lunarDay)).toBe(item.expected);
+    expect(lunarDateFromDate(date).day).toBe(item.lunarDay);
+    expect(moonPhaseNameFromDate(date)).toBe(item.expected);
+  }
 });
 
 test("海报实验室渲染月相预览并可切换相位", async ({ page }) => {
@@ -96,7 +119,7 @@ test("海报实验室渲染月相预览并可切换相位", async ({ page }) => 
   await expect(page.getByRole("button", { name: "导出 PNG" }).first()).toBeVisible();
   await expect(page.getByLabel("海报编辑器").getByText("信息标注")).toBeVisible();
   await expect(page.getByLabel("海报编辑器").getByText("显示月相名称")).toBeVisible();
-  await expect(page.getByLabel("海报编辑器").getByText("显示月龄")).toBeVisible();
+  await expect(page.getByLabel("海报编辑器").getByText("显示农历日期")).toBeVisible();
   await expect(page.getByLabel("海报编辑器").getByText("显示日期")).toBeVisible();
   await expect(page.getByLabel("海报编辑器").getByText("显示相位编号")).toBeVisible();
   await expect(page.getByText("事实信息")).toHaveCount(0);
@@ -108,11 +131,12 @@ test("海报实验室渲染月相预览并可切换相位", async ({ page }) => 
   await expect(page.getByText("auto、phase-01 到 phase-30、1 到 30")).toBeVisible();
   await expect(page.getByText("太阳/月亮几何相位估算")).toBeVisible();
   await expect(page.getByText("标注距离")).toBeVisible();
-  await expect(page.getByText(/盈凸月 01|亏凸月 01|相位 00\/29/)).toHaveCount(0);
+  await expect(page.getByText(/农历 [正二三四五六七八九十冬腊闰]+月/).first()).toBeVisible();
+  await expect(page.getByText(/盈凸月 01|亏凸月 01|相位 00\/29|近上弦月|亏蛾眉月|晦月/)).toHaveCount(0);
 
   const dateInput = page.getByLabel("北京时间日期时间");
   await expect(dateInput).toBeVisible();
-  expect(await dateInput.inputValue()).toMatch(/^\d{4}-\d{2}-\d{2}T20:00$/);
+  expect(await dateInput.inputValue()).toMatch(/^\d{4}-\d{2}-\d{2} 20:00$/);
 
   const viewport = page.viewportSize();
   if (!viewport || viewport.width >= 900) {
@@ -124,9 +148,21 @@ test("海报实验室渲染月相预览并可切换相位", async ({ page }) => 
     expect(dateInputReceivesPointer).toBe(true);
   }
 
-  await dateInput.fill("2026-05-23T21:30");
-  await expect(dateInput).toHaveValue("2026-05-23T21:30");
-  await expect(page.getByText(/2026-05-23 21:30:00.*日期相位 (蛾眉月|上弦月)/)).toBeVisible();
+  await dateInput.click();
+  await expect(page.locator(".react-datepicker")).toBeVisible();
+  await expect(page.locator(".react-datepicker__time-container")).toBeVisible();
+
+  const dayButton = page.locator(".react-datepicker__day--023:not(.react-datepicker__day--outside-month)");
+  await expect(dayButton).toHaveCount(1);
+  await dayButton.click();
+
+  const timeOption = page.locator(".react-datepicker__time-list-item", { hasText: "21:30" });
+  await expect(timeOption).toHaveCount(1);
+  await timeOption.click();
+  await expect(dateInput).toHaveValue("2026-05-23 21:30");
+  await expect(page.getByText(/2026-05-23 21:30:00.*农历 四月初七.*日期月相 上弦月/)).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".react-datepicker")).toHaveCount(0);
 
   const canvas = page.locator("canvas").first();
   await expect(canvas).toBeVisible();
@@ -174,4 +210,16 @@ async function canvasBrightness(page: { evaluate: <T>(fn: () => T) => Promise<T>
 
     return { width: source.clientWidth, height: source.clientHeight, brightness };
   });
+}
+
+function findBeijingDateForLunarDay(lunarDay: number) {
+  const start = parseBeijingDateAtEvening("2026-05-17");
+  expect(start).not.toBeNull();
+
+  for (let offset = 0; offset < 40; offset += 1) {
+    const date = new Date(start!.getTime() + offset * 86_400_000);
+    if (lunarDateFromDate(date).day === lunarDay) return date;
+  }
+
+  throw new Error(`未找到农历 ${lunarDay} 对应的测试日期`);
 }

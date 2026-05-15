@@ -17,15 +17,17 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { outputSize, ratioSizes, type RatioId } from "../lib/posterCore";
-import { formatBeijingDate, formatBeijingDateTimeLabel, parseBeijingDateAtEvening, parseDatetimeLocal, toDatetimeLocal } from "../lib/time";
+import { formatBeijingDate, formatBeijingDateTimeLabel, parseBeijingDateAtEvening } from "../lib/time";
+import { BeijingDateTimePicker } from "./components/BeijingDateTimePicker";
 import { BatchPanel } from "./components/BatchPanel";
 import { MoonPhaseSelector } from "./components/MoonPhaseSelector";
 import { PanelTitle } from "./components/PanelTitle";
 import { PosterPreview } from "./components/PosterPreview";
 import { alignments, fonts } from "./lib/fonts";
 import { parseBatchRows } from "./lib/batch";
-import { formatMoonAgeLabel, formatPhaseDisplayNumber, moonPhaseFromDate, phaseByIndex } from "./lib/moonPhases";
-import { exportMoonPoster, metadataStatus, renderMoonPosterPreview, resolvedPhaseIndex } from "./lib/renderMoonPoster";
+import { formatLunarDate, moonPhaseNameFromDate } from "./lib/lunar";
+import { formatPhaseDisplayNumber, moonPhaseFromDate, phaseByIndex } from "./lib/moonPhases";
+import { displayPhaseName, exportMoonPoster, metadataStatus, renderMoonPosterPreview, resolvedPhaseIndex } from "./lib/renderMoonPoster";
 import type { BatchRow, InfoModuleId, MoonPosterConfig, MoonPosterLayout } from "./lib/types";
 import styles from "./poster-lab.module.css";
 
@@ -37,12 +39,12 @@ const layoutPresets: { id: MoonPosterLayout; label: string; x: number; y: number
 ];
 
 const defaultBatch = `2026-05-15 | auto | 月相观测记录
-2026-05-16 | phase-09 | 上弦月记录
+2026-05-16 | phase-08 | 上弦月记录
 2026-05-17 | 满月 | 满月记录`;
 
 const infoModules: { id: InfoModuleId; label: string }[] = [
   { id: "phaseName", label: "显示月相名称" },
-  { id: "lunarAge", label: "显示月龄" },
+  { id: "lunarDate", label: "显示农历日期" },
   { id: "date", label: "显示日期" },
   { id: "phaseIndex", label: "显示相位编号" },
   { id: "illumination", label: "显示光照比例" }
@@ -70,7 +72,7 @@ function defaultConfig(initialIso: string): MoonPosterConfig {
     height: 1350,
     infoModules: {
       phaseName: true,
-      lunarAge: true,
+      lunarDate: true,
       date: true,
       phaseIndex: true,
       illumination: false
@@ -95,7 +97,10 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
   const [batchStatus, setBatchStatus] = useState("等待批量任务。");
   const [batchRunning, setBatchRunning] = useState(false);
   const computedPhase = useMemo(() => moonPhaseFromDate(config.date), [config.date]);
-  const activePhase = phaseByIndex(resolvedPhaseIndex(config));
+  const activePhaseIndex = resolvedPhaseIndex(config);
+  const activePhase = phaseByIndex(activePhaseIndex);
+  const visiblePhaseName = displayPhaseName(config);
+  const lunarDateLabel = formatLunarDate(config.date);
   const size = outputSize(config);
 
   useEffect(() => {
@@ -159,12 +164,6 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
     }));
   }
 
-  function handleDateInputChange(value: string) {
-    const parsed = parseDatetimeLocal(value);
-    if (!parsed) return;
-    updateConfig({ date: parsed, phaseMode: "date" });
-  }
-
   async function handleExport() {
     try {
       setExporting(true);
@@ -222,7 +221,7 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
         <div className={styles.navLinks}>
           <Link href="/cosmic-moment">宇宙此刻</Link>
           <span>月相模板</span>
-          <span>{activePhase.nameZh}</span>
+          <span>{visiblePhaseName}</span>
         </div>
       </motion.nav>
 
@@ -239,10 +238,7 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
           </div>
 
           <PanelTitle icon={<CalendarDays size={16} />} title="日期与相位" />
-          <label className={styles.field}>
-            <span>北京时间日期时间</span>
-            <input type="datetime-local" step={60} value={toDatetimeLocal(config.date)} onChange={(event) => handleDateInputChange(event.target.value)} />
-          </label>
+          <BeijingDateTimePicker value={config.date} onChange={(date) => updateConfig({ date, phaseMode: "date" })} />
           <div className={styles.segmented}>
             <button className={config.phaseMode === "date" ? styles.segmentActive : styles.segment} type="button" onClick={() => updateConfig({ phaseMode: "date" })}>
               按日期计算
@@ -252,7 +248,7 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
             </button>
           </div>
           <p className={styles.readout}>
-            {formatBeijingDateTimeLabel(config.date)} · 默认按当天晚上 20:00 观测，手动修改时分后按输入的北京时间 · 太阳/月亮几何相位估算 · 日期相位 {computedPhase.phase.nameZh} · {formatMoonAgeLabel(computedPhase.phaseAgeDays)} · 光照 {Math.round(computedPhase.illumination * 100)}%
+            {formatBeijingDateTimeLabel(config.date)} · {lunarDateLabel} · 默认按当天晚上 20:00 观测，手动修改时分后按输入的北京时间 · 太阳/月亮几何相位估算 · 日期月相 {moonPhaseNameFromDate(config.date)} · 几何档位 {formatPhaseDisplayNumber(computedPhase.phaseIndex)}/30 · 光照 {Math.round(computedPhase.illumination * 100)}%
           </p>
           <MoonPhaseSelector
             selectedIndex={activePhase.index}

@@ -15,7 +15,7 @@ function normalizeDate(value: Date | string | number) {
   return Number.isNaN(date.getTime()) ? new Date() : date;
 }
 
-function beijingParts(value: Date | string | number) {
+export function beijingParts(value: Date | string | number) {
   const date = normalizeDate(value);
   const beijingTime = new Date(date.getTime() + 8 * 60 * 60 * 1000);
   return {
@@ -45,6 +45,16 @@ export function formatBeijingDateTimeLabel(value: Date | string | number) {
 export function toDatetimeLocal(date: Date) {
   const parts = beijingParts(date);
   return `${parts.year}-${pad(parts.month)}-${pad(parts.date)}T${pad(parts.hours)}:${pad(parts.minutes)}`;
+}
+
+export function utcInstantToBeijingPickerDate(date: Date) {
+  const parts = beijingParts(date);
+  return new Date(parts.year, parts.month - 1, parts.date, parts.hours, parts.minutes, parts.seconds);
+}
+
+export function beijingPickerDateToUtcInstant(date: Date) {
+  const parsed = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 8, date.getMinutes(), date.getSeconds()));
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 export function parseDatetimeLocal(value: string) {

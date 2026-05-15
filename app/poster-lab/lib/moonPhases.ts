@@ -7,7 +7,7 @@ export type MoonPhase = {
   index: number;
   nameZh: string;
   aliases: readonly string[];
-  lunarDayLabel: string;
+  slotLabel: string;
   assetPath: string;
   expectedLitSide: string;
   expectedIllumination: number;
@@ -26,46 +26,46 @@ export type ComputedMoonPhase = {
 };
 
 const phaseRows = [
-  ["moon-phase-00-new-moon.webp", "新月", "月龄 01", "无明显亮面", ["新月"]],
-  ["moon-phase-01-waxing-crescent-01.webp", "蛾眉月", "月龄 02", "右侧", ["细盈蛾眉月"]],
-  ["moon-phase-02-waxing-crescent-02.webp", "蛾眉月", "月龄 03", "右侧", ["盈蛾眉月 02"]],
-  ["moon-phase-03-waxing-crescent-03.webp", "蛾眉月", "月龄 04", "右侧", ["盈蛾眉月 03"]],
-  ["moon-phase-04-waxing-crescent-04.webp", "蛾眉月", "月龄 05", "右侧", ["盈蛾眉月 04"]],
-  ["moon-phase-05-waxing-moon-05.webp", "蛾眉月", "月龄 06", "右侧", ["盈月 05"]],
-  ["moon-phase-06-near-first-quarter.webp", "蛾眉月", "月龄 07", "右侧", ["近上弦月"]],
-  ["moon-phase-07-before-first-quarter.webp", "蛾眉月", "月龄 08", "右侧", ["上弦前"]],
-  ["moon-phase-08-first-quarter.webp", "上弦月", "月龄 09", "右半", ["上弦月"]],
-  ["moon-phase-09-waxing-gibbous-01.webp", "盈凸月", "月龄 10", "右侧为主", ["盈凸月 01"]],
-  ["moon-phase-10-waxing-gibbous-02.webp", "盈凸月", "月龄 11", "右侧为主", ["盈凸月 02"]],
-  ["moon-phase-11-waxing-gibbous-03.webp", "盈凸月", "月龄 12", "右侧为主", ["盈凸月 03"]],
-  ["moon-phase-12-waxing-gibbous-04.webp", "盈凸月", "月龄 13", "右侧为主", ["盈凸月 04"]],
-  ["moon-phase-13-near-full-01.webp", "盈凸月", "月龄 14", "右侧为主", ["近满月 01"]],
-  ["moon-phase-14-near-full-02.webp", "盈凸月", "月龄 15", "右侧为主", ["近满月 02"]],
-  ["moon-phase-15-full-moon.webp", "满月", "月龄 16", "全亮", ["满月"]],
-  ["moon-phase-16-waning-gibbous-01.webp", "亏凸月", "月龄 17", "左侧为主", ["亏凸月 01"]],
-  ["moon-phase-17-waning-gibbous-02.webp", "亏凸月", "月龄 18", "左侧为主", ["亏凸月 02"]],
-  ["moon-phase-18-waning-gibbous-03.webp", "亏凸月", "月龄 19", "左侧为主", ["亏凸月 03"]],
-  ["moon-phase-19-waning-gibbous-04.webp", "亏凸月", "月龄 20", "左侧为主", ["亏凸月 04"]],
-  ["moon-phase-20-waning-gibbous-05.webp", "亏凸月", "月龄 21", "左侧为主", ["亏凸月 05"]],
-  ["moon-phase-21-near-last-quarter.webp", "亏凸月", "月龄 22", "左侧", ["近下弦月"]],
-  ["moon-phase-22-before-last-quarter.webp", "亏凸月", "月龄 23", "左侧", ["下弦前"]],
-  ["moon-phase-23-last-quarter.webp", "下弦月", "月龄 24", "左半", ["下弦月"]],
-  ["moon-phase-24-after-last-quarter.webp", "残月", "月龄 25", "左侧", ["下弦后"]],
-  ["moon-phase-25-waning-crescent-01.webp", "残月", "月龄 26", "左侧", ["亏蛾眉月 01"]],
-  ["moon-phase-26-waning-crescent-02.webp", "残月", "月龄 27", "左侧", ["亏蛾眉月 02"]],
-  ["moon-phase-27-waning-crescent-03.webp", "残月", "月龄 28", "左侧", ["亏蛾眉月 03"]],
-  ["moon-phase-28-old-crescent.webp", "残月", "月龄 29", "左侧", ["残月"]],
-  ["moon-phase-29-dark-moon.webp", "残月", "月龄 30", "极细左侧或近暗", ["晦月"]]
+  ["moon-phase-00-new-moon.webp", "新月", "档位 01", "无明显亮面", []],
+  ["moon-phase-01-waxing-crescent-01.webp", "蛾眉月", "档位 02", "右侧", []],
+  ["moon-phase-02-waxing-crescent-02.webp", "蛾眉月", "档位 03", "右侧", []],
+  ["moon-phase-03-waxing-crescent-03.webp", "蛾眉月", "档位 04", "右侧", []],
+  ["moon-phase-04-waxing-crescent-04.webp", "蛾眉月", "档位 05", "右侧", []],
+  ["moon-phase-05-waxing-moon-05.webp", "蛾眉月", "档位 06", "右侧", []],
+  ["moon-phase-06-near-first-quarter.webp", "上弦月", "档位 07", "右侧", []],
+  ["moon-phase-07-before-first-quarter.webp", "上弦月", "档位 08", "右侧", []],
+  ["moon-phase-08-first-quarter.webp", "盈凸月", "档位 09", "右半", []],
+  ["moon-phase-09-waxing-gibbous-01.webp", "盈凸月", "档位 10", "右侧为主", []],
+  ["moon-phase-10-waxing-gibbous-02.webp", "盈凸月", "档位 11", "右侧为主", []],
+  ["moon-phase-11-waxing-gibbous-03.webp", "盈凸月", "档位 12", "右侧为主", []],
+  ["moon-phase-12-waxing-gibbous-04.webp", "盈凸月", "档位 13", "右侧为主", []],
+  ["moon-phase-13-near-full-01.webp", "盈凸月", "档位 14", "右侧为主", []],
+  ["moon-phase-14-near-full-02.webp", "满月", "档位 15", "右侧为主", []],
+  ["moon-phase-15-full-moon.webp", "满月", "档位 16", "全亮", []],
+  ["moon-phase-16-waning-gibbous-01.webp", "亏凸月", "档位 17", "左侧为主", []],
+  ["moon-phase-17-waning-gibbous-02.webp", "亏凸月", "档位 18", "左侧为主", []],
+  ["moon-phase-18-waning-gibbous-03.webp", "亏凸月", "档位 19", "左侧为主", []],
+  ["moon-phase-19-waning-gibbous-04.webp", "亏凸月", "档位 20", "左侧为主", []],
+  ["moon-phase-20-waning-gibbous-05.webp", "亏凸月", "档位 21", "左侧为主", []],
+  ["moon-phase-21-near-last-quarter.webp", "下弦月", "档位 22", "左侧", []],
+  ["moon-phase-22-before-last-quarter.webp", "下弦月", "档位 23", "左侧", []],
+  ["moon-phase-23-last-quarter.webp", "残月", "档位 24", "左半", []],
+  ["moon-phase-24-after-last-quarter.webp", "残月", "档位 25", "左侧", []],
+  ["moon-phase-25-waning-crescent-01.webp", "残月", "档位 26", "左侧", []],
+  ["moon-phase-26-waning-crescent-02.webp", "残月", "档位 27", "左侧", []],
+  ["moon-phase-27-waning-crescent-03.webp", "残月", "档位 28", "左侧", []],
+  ["moon-phase-28-old-crescent.webp", "残月", "档位 29", "左侧", []],
+  ["moon-phase-29-dark-moon.webp", "残月", "档位 30", "极细左侧或近暗", []]
 ] as const;
 
-export const moonPhases: MoonPhase[] = phaseRows.map(([filename, nameZh, lunarDayLabel, expectedLitSide, aliases], index) => {
+export const moonPhases: MoonPhase[] = phaseRows.map(([filename, nameZh, slotLabel, expectedLitSide, aliases], index) => {
   const phaseAngleDeg = (index / 30) * 360;
   return {
-    id: `phase-${String(index).padStart(2, "0")}`,
+    id: `phase-${String(index + 1).padStart(2, "0")}`,
     index,
     nameZh,
     aliases,
-    lunarDayLabel,
+    slotLabel,
     assetPath: `/poster-lab/moon-phases/${filename}`,
     expectedLitSide,
     phaseAngleDeg,
@@ -144,10 +144,6 @@ export function moonPhaseFromDate(date: Date): ComputedMoonPhase {
   };
 }
 
-export function formatMoonAgeLabel(phaseAgeDays: number) {
-  return `月龄约 ${phaseAgeDays.toFixed(1)} 天`;
-}
-
 export function phaseByIndex(index: number) {
   return moonPhases[((Math.round(index) % moonPhases.length) + moonPhases.length) % moonPhases.length];
 }
@@ -178,7 +174,7 @@ export function resolvePhaseToken(token: string, date: Date) {
     return { phase: phaseByIndex(numericValue - 1), phaseMode: "manual" as const, warning: "" };
   }
 
-  const matched = moonPhases.find((phase) => phase.nameZh === value || phase.lunarDayLabel === value || phase.aliases.includes(value));
+  const matched = moonPhases.find((phase) => phase.nameZh === value || phase.slotLabel === value || phase.aliases.includes(value));
   if (matched) return { phase: matched, phaseMode: "manual" as const, warning: "" };
 
   const computed = moonPhaseFromDate(date).phase;

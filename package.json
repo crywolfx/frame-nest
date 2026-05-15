@@ -16,9 +16,11 @@
     "@react-three/fiber": "^9.6.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.14.0",
+    "lunar-javascript": "^1.7.7",
     "motion": "^12.38.0",
     "next": "16.2.4",
     "react": "19.2.5",
+    "react-datepicker": "^9.1.0",
     "react-dom": "19.2.5",
     "react-parallax-tilt": "^1.7.324",
     "three": "^0.184.0"
