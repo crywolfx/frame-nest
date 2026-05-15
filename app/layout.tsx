@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import "antd/dist/reset.css";
 import "leaflet/dist/leaflet.css";
-import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

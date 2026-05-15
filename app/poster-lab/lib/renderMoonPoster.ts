@@ -15,7 +15,7 @@ async function waitForPosterFonts(config: MoonPosterConfig) {
   const family = posterFontFamily(config.font);
   await Promise.allSettled([
     document.fonts.load(`800 72px ${family}`, config.text || "月相观测记录"),
-    document.fonts.load(`600 22px ${family}`, "月相：满月 · 农历 四月十五 · 北京时间 2026-05-17 · 相位 16/30")
+    document.fonts.load(`600 22px ${family}`, "月相：满月 · 农历 四月十五 · 北京时间 2026-05-17 · 相位 十五（图片档位 15）")
   ]);
   await document.fonts.ready;
 }
@@ -185,7 +185,7 @@ export async function composeMoonPoster(config: MoonPosterConfig) {
   });
 }
 
-export async function exportMoonPoster(config: MoonPosterConfig, suffix = `phase-${formatPhaseDisplayNumber(resolvedPhaseIndex(config))}`) {
+export async function exportMoonPoster(config: MoonPosterConfig, suffix = `lunar-day-${formatPhaseDisplayNumber(resolvedPhaseIndex(config))}`) {
   const blob = await composeMoonPoster(config);
   downloadBlob(blob, config.date, suffix, "poster-lab");
 }

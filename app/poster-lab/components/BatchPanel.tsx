@@ -19,7 +19,7 @@ export function BatchPanel({ value, rows, status, running, onChange, onGenerate 
       <div className={styles.batchHelp}>
         <strong>每行：日期 | 月相 | 文案</strong>
         <span>只写 YYYY-MM-DD 时按北京时间当天 20:00；写 YYYY-MM-DD HH:mm 或 YYYY-MM-DDTHH:mm 时按输入的北京时间。</span>
-        <span>月相可填 auto、phase-01 到 phase-30、1 到 30，或中文月相名如 满月。</span>
+        <span>月相可填 auto、phase-01 到 phase-30、1 到 30，表示农历日对应的图片档位；也可填中文月相名如 满月。</span>
         <code>2026-05-17 | auto | 月相观测记录</code>
         <code>2026-05-17 21:30 | auto | 晚间观测记录</code>
         <code>2026-05-17 | 满月 | 满月记录</code>

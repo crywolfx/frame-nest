@@ -84,7 +84,7 @@ export function moonPhaseName(states: BodyState[]) {
   const phase = (1 - dot / (a * b)) / 2;
 
   if (phase < 0.04) return "新月";
-  if (phase < 0.22) return "娥眉月";
+  if (phase < 0.22) return "蛾眉月";
   if (phase < 0.32) return "上弦月";
   if (phase < 0.48) return "盈凸月";
   if (phase < 0.56) return "满月";

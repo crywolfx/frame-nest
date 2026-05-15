@@ -25,7 +25,7 @@ import { PanelTitle } from "./components/PanelTitle";
 import { PosterPreview } from "./components/PosterPreview";
 import { alignments, fonts } from "./lib/fonts";
 import { parseBatchRows } from "./lib/batch";
-import { formatLunarDate, moonPhaseNameFromDate } from "./lib/lunar";
+import { lunarDateFromDate, moonPhaseNameFromDate } from "./lib/lunar";
 import { formatPhaseDisplayNumber, moonPhaseFromDate, phaseByIndex } from "./lib/moonPhases";
 import { displayPhaseName, exportMoonPoster, metadataStatus, renderMoonPosterPreview, resolvedPhaseIndex } from "./lib/renderMoonPoster";
 import type { BatchRow, InfoModuleId, MoonPosterConfig, MoonPosterLayout } from "./lib/types";
@@ -46,7 +46,7 @@ const infoModules: { id: InfoModuleId; label: string }[] = [
   { id: "phaseName", label: "显示月相名称" },
   { id: "lunarDate", label: "显示农历日期" },
   { id: "date", label: "显示日期" },
-  { id: "phaseIndex", label: "显示相位编号" },
+  { id: "phaseIndex", label: "显示相位/农历日" },
   { id: "illumination", label: "显示光照比例" }
 ];
 
@@ -96,11 +96,12 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
   const [batchRows, setBatchRows] = useState<BatchRow[]>([]);
   const [batchStatus, setBatchStatus] = useState("等待批量任务。");
   const [batchRunning, setBatchRunning] = useState(false);
+  const lunarDate = useMemo(() => lunarDateFromDate(config.date), [config.date]);
   const computedPhase = useMemo(() => moonPhaseFromDate(config.date), [config.date]);
   const activePhaseIndex = resolvedPhaseIndex(config);
   const activePhase = phaseByIndex(activePhaseIndex);
   const visiblePhaseName = displayPhaseName(config);
-  const lunarDateLabel = formatLunarDate(config.date);
+  const lunarDateLabel = lunarDate.label;
   const size = outputSize(config);
 
   useEffect(() => {
@@ -200,7 +201,7 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
 
       try {
         setBatchStatus(`批量 ${index + 1}/${parsed.rows.length}：${row.phaseLabel}`);
-        await exportMoonPoster(rowConfig, `batch-${index + 1}-phase-${formatPhaseDisplayNumber(row.phaseIndex)}`);
+        await exportMoonPoster(rowConfig, `batch-${index + 1}-lunar-day-${formatPhaseDisplayNumber(row.phaseIndex)}`);
         setBatchRows((rows) => rows.map((item) => item.id === row.id ? { ...item, status: "已完成" } : item));
       } catch (error) {
         setBatchRows((rows) => rows.map((item) => item.id === row.id ? { ...item, status: "失败", message: error instanceof Error ? error.message : "生成失败" } : item));
@@ -231,8 +232,8 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
           <div className={styles.templateButton}>
             <ImageIcon size={18} />
             <div>
-              <strong>月相</strong>
-              <span>30 个相位档位</span>
+              <strong>农历月相</strong>
+              <span>本月 {lunarDate.monthDayCount} 天</span>
             </div>
             <CheckCircle2 size={16} />
           </div>
@@ -248,11 +249,12 @@ export default function PosterLabApp({ initialIso }: { initialIso: string }) {
             </button>
           </div>
           <p className={styles.readout}>
-            {formatBeijingDateTimeLabel(config.date)} · {lunarDateLabel} · 默认按当天晚上 20:00 观测，手动修改时分后按输入的北京时间 · 太阳/月亮几何相位估算 · 日期月相 {moonPhaseNameFromDate(config.date)} · 几何档位 {formatPhaseDisplayNumber(computedPhase.phaseIndex)}/30 · 光照 {Math.round(computedPhase.illumination * 100)}%
+            {formatBeijingDateTimeLabel(config.date)} · {lunarDateLabel} · 日期月相 {moonPhaseNameFromDate(config.date)} · 本月 {lunarDate.monthDayCount} 天 · 当前农历日 {computedPhase.lunarDayName}
           </p>
           <MoonPhaseSelector
             selectedIndex={activePhase.index}
             computedIndex={computedPhase.phaseIndex}
+            monthDayCount={lunarDate.monthDayCount}
             onSelect={(phaseIndex) => updateConfig({ phaseMode: "manual", phaseIndex })}
           />
         </motion.aside>
