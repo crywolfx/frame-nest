@@ -4,9 +4,9 @@
   overflow: hidden;
   color: #f5f2e8;
   background:
-    radial-gradient(circle at 18% 18%, rgba(157, 232, 193, 0.12), transparent 30rem),
-    radial-gradient(circle at 82% 12%, rgba(102, 181, 255, 0.18), transparent 28rem),
-    linear-gradient(180deg, #02050a 0%, #040812 58%, #02050a 100%);
+    radial-gradient(circle at 18% 14%, rgba(255, 188, 92, 0.14), transparent 27rem),
+    radial-gradient(circle at 86% 18%, rgba(157, 232, 193, 0.14), transparent 29rem),
+    linear-gradient(180deg, #02050a 0%, #071018 54%, #02050a 100%);
   font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
 
@@ -15,18 +15,18 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px);
-  background-size: 78px 78px;
-  mask-image: radial-gradient(circle at 50% 18%, black 0 28%, transparent 72%);
-  opacity: 0.72;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(circle at 50% 16%, black 0 32%, transparent 74%);
+  opacity: 0.7;
 }
 
 .nav {
   position: relative;
   z-index: 2;
   display: flex;
-  width: min(1240px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 32px));
   min-height: 72px;
   align-items: center;
   justify-content: space-between;
@@ -36,9 +36,7 @@
 }
 
 .brand,
-.navLinks a,
-.primaryAction,
-.secondaryAction {
+.navLinks a {
   display: inline-flex;
   min-height: 42px;
   align-items: center;
@@ -49,6 +47,10 @@
   color: #fff6dc;
   text-decoration: none;
   backdrop-filter: blur(16px);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
 }
 
 .brand {
@@ -65,30 +67,30 @@
 }
 
 .navLinks a {
-  padding: 0 0.78rem;
-  color: rgba(245, 242, 232, 0.72);
-  font-size: 0.76rem;
+  padding: 0 0.82rem;
+  color: rgba(245, 242, 232, 0.78);
+  font-size: 0.78rem;
   font-weight: 850;
+}
+
+.navLinks a:hover,
+.toolCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(157, 232, 193, 0.5);
+  background-color: rgba(18, 35, 42, 0.62);
 }
 
 .hero {
   position: relative;
   z-index: 1;
-  display: grid;
-  width: min(1240px, calc(100% - 32px));
-  min-height: clamp(400px, 48svh, 520px);
-  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.78fr);
-  gap: clamp(2rem, 7vw, 6rem);
-  align-items: center;
+  width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
-  padding: clamp(1.8rem, 4vw, 3.5rem) 0 clamp(1.4rem, 3vw, 2.6rem);
+  padding: clamp(2.3rem, 7vw, 5.8rem) 0 clamp(1.6rem, 4vw, 3.2rem);
 }
 
 .heroCopy {
-  position: relative;
-  z-index: 2;
   display: grid;
-  gap: 1.1rem;
+  gap: 0.82rem;
 }
 
 .eyebrow {
@@ -101,238 +103,49 @@
 }
 
 .hero h1 {
+  max-width: 820px;
   margin: 0;
-  max-width: 760px;
   color: #fff7db;
-  font-size: clamp(3.2rem, 10vw, 8.6rem);
-  line-height: 0.9;
+  font-size: clamp(3.1rem, 10vw, 7.8rem);
+  line-height: 0.92;
   letter-spacing: 0;
 }
 
-.heroText,
-.expansionPanel p {
-  max-width: 720px;
+.heroText {
   margin: 0;
   color: rgba(245, 242, 232, 0.72);
-  font-size: clamp(1rem, 1.8vw, 1.18rem);
-  line-height: 1.78;
+  font-size: clamp(1rem, 1.8vw, 1.16rem);
+  line-height: 1.5;
 }
 
-.heroActions {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  gap: 0.7rem;
-  flex-wrap: wrap;
-  margin-top: 0.3rem;
-}
-
-.primaryAction,
-.secondaryAction {
-  gap: 0.42rem;
-  padding: 0 1rem;
-  font-weight: 900;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease;
-}
-
-.primaryAction {
-  border-color: rgba(255, 188, 92, 0.72);
-  background: linear-gradient(135deg, rgba(255, 188, 92, 0.28), rgba(102, 181, 255, 0.14));
-}
-
-.secondaryAction {
-  color: rgba(245, 242, 232, 0.78);
-}
-
-.navLinks a:hover,
-.primaryAction:hover,
-.secondaryAction:hover,
-.routeCard:hover {
-  transform: translateY(-2px);
-  border-color: rgba(157, 232, 193, 0.45);
-  background-color: rgba(18, 35, 42, 0.62);
-}
-
-.controlVisual {
+.toolSection {
   position: relative;
   z-index: 1;
-  min-height: 430px;
-  overflow: hidden;
-  border: 1px solid rgba(244, 238, 214, 0.17);
-  border-radius: 8px;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(102, 181, 255, 0.22), transparent 32%),
-    linear-gradient(180deg, rgba(9, 16, 26, 0.82), rgba(5, 9, 16, 0.58));
-  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(18px);
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 0 0 clamp(2.2rem, 6vw, 5rem);
 }
 
-.controlVisual::before {
-  content: "";
-  position: absolute;
-  inset: 22px;
-  border: 1px solid rgba(157, 232, 193, 0.16);
-  border-radius: 999px;
-}
-
-.orbitRing {
-  position: absolute;
-  left: 50%;
-  top: 52%;
-  width: min(78%, 390px);
-  aspect-ratio: 1;
-  border: 1px dashed rgba(255, 188, 92, 0.38);
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-  animation: rotateRing 28s linear infinite;
-}
-
-.orbitRing::after {
-  content: "";
-  position: absolute;
-  right: 12%;
-  top: 11%;
-  width: 14px;
-  aspect-ratio: 1;
-  border-radius: 999px;
-  background: #ffbc5c;
-  box-shadow: 0 0 24px rgba(255, 188, 92, 0.64);
-}
-
-.visualHeader {
-  position: absolute;
-  left: 1.1rem;
-  right: 1.1rem;
-  top: 1.1rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  color: rgba(245, 242, 232, 0.76);
-  font-size: 0.72rem;
-  font-weight: 900;
-}
-
-.visualHeader span {
-  color: #9de8c1;
-  letter-spacing: 0.14em;
-}
-
-.visualGrid {
-  position: absolute;
-  inset: auto 1.1rem 1.1rem;
+.toolGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
+  gap: clamp(1rem, 2vw, 1.35rem);
 }
 
-.visualGrid span {
-  min-height: 48px;
-  border: 1px solid rgba(244, 238, 214, 0.15);
-  border-radius: 8px;
-  padding: 0.8rem;
-  background: rgba(2, 7, 13, 0.6);
-  color: rgba(245, 242, 232, 0.78);
-  font-size: 0.78rem;
-  font-weight: 850;
-  animation: pulseCard 4s ease-in-out infinite;
-  animation-delay: var(--delay);
-}
-
-.signalLine {
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  top: 47%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #9de8c1, #66b5ff, transparent);
-  transform: rotate(-18deg);
-  opacity: 0.8;
-}
-
-.metrics,
-.routeSection,
-.categorySection,
-.expansionPanel {
+.toolCard {
   position: relative;
-  z-index: 1;
-  width: min(1240px, calc(100% - 32px));
-  margin: 0 auto;
-}
-
-.metrics {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.8rem;
-  padding-bottom: clamp(1.1rem, 2.4vw, 2rem);
-}
-
-.metrics div,
-.routeCard,
-.categoryCard,
-.expansionPanel {
+  min-height: clamp(430px, 50vw, 560px);
+  overflow: hidden;
   border: 1px solid rgba(244, 238, 214, 0.16);
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(9, 16, 26, 0.76), rgba(5, 9, 16, 0.56));
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(18px);
-}
-
-.metrics div {
-  display: grid;
-  gap: 0.2rem;
-  padding: 1rem;
-}
-
-.metrics span {
-  color: #ffbc5c;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 2rem;
-  font-weight: 900;
-}
-
-.metrics strong {
-  color: rgba(245, 242, 232, 0.72);
-  font-size: 0.82rem;
-}
-
-.routeSection,
-.categorySection {
-  display: grid;
-  gap: 0.65rem;
-  padding: 0 0 clamp(2rem, 5vw, 4rem);
-}
-
-.sectionHeader {
-  display: grid;
-  gap: 0.32rem;
-}
-
-.sectionHeader h2,
-.expansionPanel h2 {
-  margin: 0;
-  color: #fff7db;
-  font-size: clamp(1.8rem, 4vw, 3.2rem);
-  line-height: 1;
-}
-
-.routeGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.routeCard {
-  position: relative;
-  display: grid;
-  min-height: 214px;
-  align-content: start;
-  gap: 0.42rem;
-  padding: 0.85rem;
   color: inherit;
   text-decoration: none;
+  background:
+    radial-gradient(circle at 18% 18%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 18rem),
+    linear-gradient(180deg, rgba(9, 16, 26, 0.82), rgba(5, 9, 16, 0.62));
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -340,211 +153,337 @@
     box-shadow 180ms ease;
 }
 
-.routeIcon {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border: 1px solid rgba(157, 232, 193, 0.28);
-  border-radius: 999px;
-  color: #9de8c1;
-  background: rgba(3, 11, 16, 0.7);
+.toolCard::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(245, 242, 232, 0.1);
+  border-radius: 8px;
+  pointer-events: none;
 }
 
-.routeMeta {
-  color: #9de8c1;
+.toolCard:hover {
+  box-shadow: 0 38px 120px rgba(0, 0, 0, 0.52);
+}
+
+.status {
+  position: absolute;
+  z-index: 3;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  border: 1px solid rgba(245, 242, 232, 0.14);
+  border-radius: 999px;
+  padding: 0 0.72rem;
+  color: rgba(245, 242, 232, 0.78);
+  background: rgba(2, 7, 13, 0.58);
   font-size: 0.72rem;
   font-weight: 900;
+  backdrop-filter: blur(12px);
 }
 
-.routeCard h3,
-.categoryCard h3 {
+.preview {
+  position: relative;
+  min-height: 292px;
+  overflow: hidden;
+}
+
+.preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(180deg, black 0, transparent 86%);
+}
+
+.sun,
+.orbitOne,
+.orbitTwo,
+.orbitThree,
+.planetA,
+.planetB,
+.planetC,
+.posterSheet,
+.moonDisc,
+.posterLineA,
+.posterLineB,
+.posterGrid {
+  position: absolute;
+  display: block;
+}
+
+.sun {
+  left: 50%;
+  top: 49%;
+  width: 82px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #ffbc5c;
+  box-shadow:
+    0 0 36px rgba(255, 188, 92, 0.82),
+    0 0 110px rgba(255, 188, 92, 0.32);
+  transform: translate(-50%, -50%);
+}
+
+.orbitOne,
+.orbitTwo,
+.orbitThree {
+  left: 50%;
+  top: 50%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(245, 242, 232, 0.18);
+  border-radius: 999px;
+  transform: translate(-50%, -50%) rotate(-18deg);
+}
+
+.orbitOne {
+  width: 190px;
+}
+
+.orbitTwo {
+  width: 290px;
+  border-style: dashed;
+  border-color: rgba(157, 232, 193, 0.32);
+}
+
+.orbitThree {
+  width: 390px;
+  border-color: rgba(102, 181, 255, 0.22);
+}
+
+.planetA {
+  left: calc(50% + 76px);
+  top: calc(49% - 72px);
+  width: 16px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #66b5ff;
+  box-shadow: 0 0 20px rgba(102, 181, 255, 0.58);
+}
+
+.planetB {
+  left: calc(50% - 158px);
+  top: calc(49% + 45px);
+  width: 12px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #9de8c1;
+  box-shadow: 0 0 18px rgba(157, 232, 193, 0.54);
+}
+
+.planetC {
+  left: calc(50% + 180px);
+  top: calc(49% + 82px);
+  width: 10px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #fff7db;
+}
+
+.posterSheet {
+  left: 50%;
+  top: 30px;
+  width: min(58%, 238px);
+  height: 248px;
+  border: 1px solid rgba(245, 242, 232, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 247, 219, 0.13), rgba(255, 247, 219, 0.04)),
+    rgba(2, 7, 13, 0.68);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+  transform: translateX(-50%) rotate(-2deg);
+}
+
+.moonDisc {
+  left: 50%;
+  top: 70px;
+  width: 118px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 62% 42%, rgba(245, 242, 232, 0.95) 0 35%, rgba(245, 242, 232, 0.08) 36% 100%),
+    #050912;
+  box-shadow:
+    inset -18px 0 0 rgba(2, 7, 13, 0.78),
+    0 0 44px rgba(157, 232, 193, 0.32);
+  transform: translateX(-50%);
+}
+
+.posterLineA,
+.posterLineB {
+  left: calc(50% - 74px);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(245, 242, 232, 0.72);
+}
+
+.posterLineA {
+  top: 214px;
+  width: 148px;
+}
+
+.posterLineB {
+  top: 234px;
+  width: 92px;
+  opacity: 0.48;
+}
+
+.posterGrid {
+  left: calc(50% - 92px);
+  top: 258px;
+  width: 184px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(157, 232, 193, 0.74), transparent);
+}
+
+.cardBody {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-self: end;
+  gap: 0.42rem;
+  padding: 1.15rem;
+}
+
+.cardIcon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 999px;
+  color: var(--accent);
+  background: rgba(3, 11, 16, 0.72);
+}
+
+.cardBody p {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.cardBody h2 {
   margin: 0;
   color: #fff7db;
-  font-size: 1.35rem;
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  line-height: 0.92;
+  letter-spacing: 0;
 }
 
-.routeCard strong {
-  color: rgba(255, 188, 92, 0.9);
-  font-size: 0.9rem;
+.cardBody strong {
+  max-width: 420px;
+  color: rgba(245, 242, 232, 0.72);
+  font-size: 0.98rem;
+  line-height: 1.55;
 }
 
-.routeCard p,
-.categoryCard p {
-  margin: 0;
-  color: rgba(245, 242, 232, 0.66);
-  font-size: 0.88rem;
-  line-height: 1.62;
-}
-
-.routeCard em {
-  position: absolute;
-  left: 0.85rem;
-  bottom: 0.85rem;
+.cardBody em {
   display: inline-flex;
+  width: fit-content;
+  min-height: 38px;
   align-items: center;
-  gap: 0.32rem;
-  color: rgba(245, 242, 232, 0.84);
-  font-size: 0.78rem;
-  font-style: normal;
-  font-weight: 900;
-}
-
-.categoryGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.categoryCard {
-  display: grid;
-  min-height: 178px;
-  align-content: start;
-  gap: 0.62rem;
-  padding: 1rem;
-}
-
-.categoryCard span {
-  color: #66b5ff;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.82rem;
-  font-weight: 900;
-}
-
-.expansionPanel {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(300px, 0.65fr);
-  gap: clamp(1rem, 4vw, 3rem);
-  align-items: center;
-  margin-bottom: 3rem;
-  padding: clamp(1rem, 3vw, 1.5rem);
-}
-
-.expansionPanel > div:first-child {
-  display: grid;
-  gap: 0.7rem;
-}
-
-.expansionTags {
-  display: flex;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.expansionTags span {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  border: 1px solid rgba(244, 238, 214, 0.15);
+  gap: 0.36rem;
+  margin-top: 0.4rem;
+  border: 1px solid rgba(245, 242, 232, 0.14);
   border-radius: 999px;
-  padding: 0 0.78rem;
-  color: rgba(245, 242, 232, 0.78);
-  background: rgba(2, 7, 13, 0.52);
-  font-size: 0.8rem;
-  font-weight: 850;
+  padding: 0 0.84rem;
+  color: #fff7db;
+  background: rgba(2, 7, 13, 0.58);
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 950;
 }
 
 .brand:focus-visible,
 .navLinks a:focus-visible,
-.primaryAction:focus-visible,
-.secondaryAction:focus-visible,
-.routeCard:focus-visible {
+.toolCard:focus-visible {
   outline: 2px solid rgba(157, 232, 193, 0.72);
   outline-offset: 3px;
 }
 
-@keyframes rotateRing {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-@keyframes pulseCard {
-  0%,
-  100% {
-    border-color: rgba(244, 238, 214, 0.15);
-  }
-  50% {
-    border-color: rgba(157, 232, 193, 0.36);
-  }
-}
-
-@media (max-width: 1080px) {
-  .hero {
+@media (max-width: 900px) {
+  .toolGrid {
     grid-template-columns: 1fr;
-    min-height: auto;
   }
 
-  .controlVisual {
-    min-height: 420px;
-  }
-
-  .routeGrid,
-  .categoryGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .toolCard {
+    min-height: 480px;
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .shell {
     overflow: auto;
+  }
+
+  .nav,
+  .hero,
+  .toolSection {
+    width: min(100% - 24px, 1180px);
   }
 
   .nav {
     min-height: 64px;
   }
 
-  .navLinks a:not(:last-child) {
-    display: none;
+  .navLinks a {
+    min-height: 38px;
+    padding: 0 0.68rem;
   }
 
   .hero {
-    width: min(100% - 24px, 1240px);
     padding-top: 1.5rem;
   }
 
   .hero h1 {
-    font-size: clamp(3rem, 18vw, 4.8rem);
+    font-size: clamp(3rem, 18vw, 4.6rem);
   }
 
-  .controlVisual {
-    min-height: 360px;
+  .toolCard {
+    min-height: 442px;
   }
 
-  .visualGrid {
-    grid-template-columns: 1fr;
+  .preview {
+    min-height: 244px;
   }
 
-  .metrics,
-  .routeGrid,
-  .categoryGrid,
-  .expansionPanel {
-    grid-template-columns: 1fr;
+  .orbitThree {
+    width: 330px;
   }
 
-  .metrics,
-  .routeSection,
-  .categorySection,
-  .expansionPanel {
-    width: min(100% - 24px, 1240px);
+  .posterSheet {
+    width: min(70%, 218px);
+    height: 220px;
   }
 
-  .expansionTags {
-    justify-content: flex-start;
+  .moonDisc {
+    top: 62px;
+    width: 100px;
+  }
+
+  .posterLineA {
+    top: 194px;
+  }
+
+  .posterLineB {
+    top: 214px;
+  }
+
+  .posterGrid {
+    top: 236px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orbitRing,
-  .visualGrid span {
-    animation: none;
-  }
-
+  .brand,
   .navLinks a,
-  .primaryAction,
-  .secondaryAction,
-  .routeCard {
+  .toolCard {
     transition-duration: 1ms;
   }
 }
