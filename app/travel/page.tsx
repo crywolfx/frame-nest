@@ -2,6 +2,12 @@ import Link from "next/link";
 
 const guides = [
   {
+    title: "东京 5 日旅行攻略",
+    href: "/travel/tokyo",
+    meta: "2026.08.14 - 08.18",
+    summary: "银座为基点，围绕东京塔、涩谷和东东京三条城市轴；包含实时天气、价格、餐厅备选与可调整地图。"
+  },
+  {
     title: "香港澳门 5 日旅行攻略",
     href: "/travel/hong-kong",
     meta: "2026.04.28 - 05.02",
@@ -17,6 +23,7 @@ export default function TravelPage() {
           首页
         </Link>
         <div className="nav-links">
+          <Link href="/travel/tokyo">东京攻略</Link>
           <Link href="/travel/hong-kong">港澳攻略</Link>
         </div>
       </nav>
