@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const guides = [
+  { title: "普吉岛与曼谷 7 日慢旅行", href: "/travel/phuket-bangkok-2026", meta: "2026.09.27 - 10.03", summary: "两个人的海岛假期：芭东、海景泳池别墅与曼谷。含每日时间轴、餐厅备选、活动比较、地图导航与行李清单。" },
   {
     title: "东京 5 日旅行攻略",
     href: "/travel/tokyo",

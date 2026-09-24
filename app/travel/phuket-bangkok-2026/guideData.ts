@@ -1,0 +1,111 @@
+import placesData from '../../../guides/phuket-bangkok-2026/data/places-final.json';
+export const places = placesData;
+export const asset = (name: string) => `/travel/phuket-bangkok-2026/${name}.webp`;
+export const map = (query: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+export const hotels = [
+  {zh:'普吉岛格雷斯兰水疗度假酒店',en:'Phuket Graceland Resort & Spa',dates:'9.27 — 9.29 · 2晚',area:'芭东海滩 · Patong',image:'graceland-1',address:'190 Thaweewong Road, Patong',description:'把第一站留在芭东。出海前后都住这里，晚餐和按摩步行就能抵达。',url:'https://www.phuketgraceland.com/'},
+  {zh:'卡塔坦尼海岸泳池别墅',en:'The Shore at Katathani',dates:'9.29 — 10.02 · 3晚',area:'小卡塔海滩 · Kata Noi',image:'shore-2',address:'14 Kata Noi Road, Karon',description:'15:00入住，12:00退房。留一整个下午给泳池、海景和房间里的慢时光。',url:'https://www.theshorephuket.com/'},
+  {zh:'曼谷日航酒店',en:'Hotel Nikko Bangkok',dates:'10.02 — 10.03 · 1晚',area:'通罗 · Thonglor',image:'nikko-bangkok-1',address:'27 Thong Lo Road, Sukhumvit 55',description:'通罗站附近的城市落脚点。周末早餐06:00–10:30，返程日行李寄存在酒店。',url:'https://www.nikkobangkok.com/'}
+];
+export type Stop = {time:string;title:string;en?:string;type:string;body:string;query?:string;optional?:boolean};
+export type Day = {date:string;weekday:string;title:string;english:string;intro:string;image:string;imageCaption:string;hotel:number;weather:string;temp:string;wind:string;wave:string;weatherNote:string;meals:string;mealIds:string[];rain:string;note:string;stops:Stop[]};
+export const days:Day[] = [
+{date:'09.27',weekday:'周日',title:'抵达海岛',english:'HELLO, PHUKET',intro:'从杭州出发，把晚上的第一顿饭留给芭东。',image:'graceland-1',imageCaption:'格雷斯兰酒店 · 芭东海边的第一站',hotel:0,temp:'25–30°',weather:'风较大 · 间歇降雨',wind:'西南偏西风 40–50 km/h',wave:'区域浪高 2.5–3.5 m',weatherNote:'落地后留雨天车程，海边只散步。',meals:'晚餐 · 芭东5选1',mealIds:['P2','P1','P3','P4','P5'],rain:'选择酒店附近餐厅，打车往返；晚饭后直接回房休息。',note:'中国比泰国快1小时。航班时刻均为出发/到达地当地时间；泰国行程时间均为泰国时间。',stops:[
+{time:'07:00',title:'杭州包车出发',type:'接送已定',body:'前往上海浦东机场T2，目标10:00到达；途中留一处短休息。'},
+{time:'12:10 → 16:30',title:'上海浦东 → 普吉',en:'Spring Airlines · 9C8663',type:'航班已定',body:'春秋航空。12:10为中国时间，16:30为泰国时间。'},
+{time:'17:09',title:'普吉机场接机',en:'Phuket International Airport',type:'接送已定',body:'出2号门向左，在AOT牌子下与接机人员核对订单。办理入境、取行李后联系司机，按实际落地协调等待。',query:'Phuket International Airport'},
+{time:'18:30–19:15',title:'到芭东，办理入住',type:'酒店',body:'机场到酒店预留75–105分钟；入住后先冲澡、换衣服。',query:hotels[0].en},
+{time:'19:30–20:45',title:'烤肋排晚餐，或逛马林夜市',type:'二选一',body:'首选巴厘风味烤猪肋排餐厅（Naughty Nuri’s Phuket）；想边逛边吃就去芭东马林夜市（Malin Plaza Patong），车程10–20分钟，人均฿300–550≈¥60–110。',query:'Naughty Nuris Phuket'},
+{time:'20:45–21:15',title:'芭东海边短散步',en:'Patong Beach',type:'轻松可选',body:'沿酒店附近海滨走15–30分钟，买水后回房。累了就跳过。',query:'Patong Beach Phuket Graceland',optional:true}
+]},
+{date:'09.28',weekday:'周一',title:'去海上玩一天',english:'ISLAND HOPPING',intro:'珊瑚岛、皇帝岛，浮潜、海钓和甲板上的风。',image:'shore-1',imageCaption:'普吉海岸实景 · 出海路线为珊瑚岛与皇帝岛',hotel:0,temp:'25–31°',weather:'晨间阵雨 · 多云',wind:'西南风 40–50 km/h',wave:'区域浪高 2.5–3.5 m',weatherNote:'区域风浪预报偏大。出发前一晚及当天早上联系船商，按港务通知和船型确认开航、改线及退款规则。',meals:'晚餐 · 芭东5选1',mealIds:['P3','P2','P1','P4','P5'],rain:'遇停航，改为酒店休息、芭东午餐和轻柔按摩；不临时追其他小船出海。',note:'码头往返Grab/Bolt预算每车每程฿450–750≈¥90–150；两人同车。平台即时价格可能上涨。',stops:[
+{time:'07:00–08:00',title:'早餐、整理出海包',type:'酒店',body:'泳衣、防晒衣、毛巾、干衣、防水袋和少量现金。08:00开始叫车。'},
+{time:'08:15–09:30',title:'酒店 → 查龙码头',en:'Chalong Pier',type:'自行叫车',body:'预留45–70分钟车程，加集合缓冲。地图参考18.2公里；把船商集合图钉发给司机。',query:'Chalong Pier Phuket'},
+{time:'10:00–18:00',title:'珊瑚岛 → 皇帝岛拼船',en:'Coral Island / Koh Hey · Racha Yai',type:'出海已定',body:'默认珊瑚岛先上岛并午餐，下午皇帝岛海域玩水、不登岛。船上有浮潜、海钓、桨板；按风浪和船长安排选择活动。'},
+{time:'18:00–19:15',title:'查龙码头 → 芭东酒店',type:'返程',body:'上岸后到船商指定的码头外7-Eleven图钉叫车，先回酒店洗澡。'},
+{time:'19:30–20:30',title:'一小时足部按摩',en:"Let's Relax Beyond Patong",type:'放松可选',body:'超越芭东酒店分店按摩水疗，足部60分钟฿800≈¥160/人。提前预约；饥饿或疲劳时先吃饭、取消按摩。',query:'Lets Relax Beyond Patong',optional:true},
+{time:'20:45–21:45',title:'晚餐后早点休息',type:'晚餐',body:'选拉普拉亚芭东西餐厅（La Playa – Patong Beach）或巴厘风味烤猪肋排餐厅；不按摩则19:30吃饭。',query:'La Playa Patong Beach 19/12'}
+]},
+{date:'09.29',weekday:'周二',title:'住进海景里',english:'THE ART OF DOING NOTHING',intro:'从芭东搬到小卡塔，把下午完整留给泳池别墅。',image:'shore-2',imageCaption:'The Shore官网海景泳池别墅展示图',hotel:1,temp:'25–32°',weather:'早间可能雷雨 · 多云',wind:'西南风 20–30 km/h',wave:'区域浪高 1–1.5 m',weatherNote:'雷雨时暂停泳池和海边活动；红旗时不游海。',meals:'午餐5选1 · 晚餐6选1',mealIds:['K2','K3','K4','K5','K6','K1'],rain:'房间休息、酒店下午茶和海景晚餐，保留完整的躺平下午。',note:'午餐优先与司机约好等候，让行李留车内；若无法约到等候车，先到新酒店寄存，再短程车去午餐。',stops:[
+{time:'09:00–11:00',title:'睡到自然醒，吃早餐',type:'酒店',body:'慢慢收拾行李，检查充电器、护照和泳衣。'},
+{time:'11:30–12:15',title:'退房，前往卡塔',type:'换酒店',body:'包车或Grab出发，芭东到卡塔午餐点预留35–55分钟；行李留车需事先约好等候费用。'},
+{time:'12:15–13:30',title:'卡塔炭火烧烤餐厅午餐',en:'Kata On Fire Bar & Grill',type:'泰餐与烧烤',body:'点泰式烤物、炒河粉和芒果糯米饭，人均฿350–650≈¥70–130。',query:'Kata On Fire Bar Grill'},
+{time:'13:45–15:00',title:'抵达卡塔坦尼海岸泳池别墅',en:'The Shore at Katathani',type:'酒店',body:'到酒店寄存行李、在公共休息区等候；正式入住时间15:00。',query:hotels[1].en},
+{time:'15:00–18:00',title:'泳池、海景与下午茶',type:'留白时间',body:'天气好就在泳池和海边躺椅休息。海港海景餐厅（The Harbor）15:30–17:00供应下午茶，不再为拍照位奔波。'},
+{time:'18:30–20:00',title:'伊萨拉精致餐厅晚餐',en:'Issara Restaurant & Bar – Kata Beach',type:'预约晚餐',body:'车程5–10分钟。两人分享蟹饼、猪五花包与牛排，吃完直接回酒店。',query:'Issara Restaurant Bar Kata Beach'}
+]},
+{date:'09.30',weekday:'周三',title:'潜入另一种蓝',english:'UNDER THE SURFACE',intro:'两次无证体验潜。白天交给海洋，晚上只管休息。',image:'shore-1',imageCaption:'普吉海岸实景 · 潜点由潜店依海况安排',hotel:1,temp:'24–34°',weather:'局地雷雨 · 午后阵雨',wind:'西南偏西风 20–30 km/h',wave:'区域浪高 1–1.5 m',weatherNote:'区域浪高不能代表实际潜点；前一晚向潜店确认船期、接送和潜点。',meals:'晚餐 · 酒店及附近6选1',mealIds:['K6','K1','K2','K3','K4','K5'],rain:'潜店取消或改线时以其通知为准。把当天改成酒店休息，不叠加体力活动。',note:'船上包含早餐、午餐。晚上优先酒店用餐，外出餐厅都是备选，不需要全部打卡。',stops:[
+{time:'06:30',title:'泳衣打底，带好出海包',type:'准备',body:'带干衣、毛巾、防滑鞋、防水袋和订单。按潜店要求提前完成健康问卷。'},
+{time:'07:00',title:'司机到酒店接人',type:'接送已定',body:'报完整酒店英文名The Shore at Katathani，提前10分钟在大堂等候。'},
+{time:'白天',title:'两次无证体验潜',en:'Discover Scuba Diving',type:'潜水已定',body:'船上吃早餐和午餐；跟随教练完成讲解、练习和下潜。不适时立即告诉教练，随时可以停止。'},
+{time:'17:00–18:00',title:'回到码头，司机送回酒店',type:'返程',body:'加上车程，预计18:00–19:00回到房间。冲澡、补水、休息。'},
+{time:'19:00–20:00',title:'海港海景餐厅晚餐',en:'The Harbor',type:'酒店内晚餐',body:'无需坐车，人均预算฿900–1,800≈¥180–360。想换口味再选附近泰餐。',query:'The Harbor The Shore at Katathani'}
+]},
+{date:'10.01',weekday:'周四',title:'在雨林里飞一会儿',english:'A LITTLE ADVENTURE',intro:'上午海景飞跃，下午只选一个短体验，早点回酒店。',image:'erawan-1',imageCaption:'飞象芭东海景丛林飞跃 · Erawan',hotel:1,temp:'26–32°',weather:'早间零星雷雨 · 多云',wind:'以当天气象预警为准',wave:'区域海况预报尚未覆盖',weatherNote:'优先上午场；遇雷电或大风按园区通知停玩。',meals:'午餐5选1 · 晚餐6选1',mealIds:['K3','K2','K4','K5','K6','K1'],rain:'飞跃遇雷电停开时，保留卡塔午餐、酒店休息；下午项目可单独保留。',note:'预约目标为09:30开始的EP2。下午射击与喂象二选一；不把三个项目塞满一天。',stops:[
+{time:'07:00–07:45',title:'早餐后出发',type:'酒店',body:'穿包脚运动鞋和便于活动的衣服，带防晒、防蚊和雨具。'},
+{time:'07:45–09:00',title:'酒店 → 飞象芭东海景园区',en:'Erawan Patong Seaview Zipline',type:'提前预约',body:'车程45–65分钟，加10分钟缓冲；使用运营方发来的游玩园区图钉。',query:'Erawan Patong Seaview Zipline Phuket'},
+{time:'09:00–11:30',title:'EP2海景丛林飞跃',type:'20平台 · 8滑索',body:'09:00登记、穿装备；目标09:30–11:00体验，留30分钟离场缓冲。成人฿2,400≈¥480/人。'},
+{time:'12:30–13:30',title:'回卡塔吃午饭',en:'Eightfold',type:'八方家常泰餐',body:'离园到卡塔预留45–60分钟。点咖喱、脆皮猪肉和米饭，人均฿350–600≈¥70–120。',query:'Eightfold Restaurant Kata'},
+{time:'14:00–15:00',title:'普吉射击场短体验',en:'Phuket Shooting Range',type:'下午二选一',body:'卡塔出发20–30分钟，现场停留30–60分钟。十发项目฿1,090起≈¥218起；听从教练安排。或改为14:00布吉大象营90分钟喂象体验。',query:'Phuket Shooting Range Patak Road',optional:true},
+{time:'15:40之后',title:'回酒店，享受最后一个海岛傍晚',type:'休息与晚餐',body:'射击路线约15:40回酒店；喂象路线约16:30–17:00回。晚餐选伊萨拉、萨瓦迪或酒店海港餐厅。'}
+]},
+{date:'10.02',weekday:'周五',title:'下一站，曼谷',english:'FROM SEA TO CITY',intro:'早餐、收拾、飞往曼谷。晚上到伊卡迈边走边吃。',image:'johnny-market-1',imageCaption:'伊卡迈强尼美食夜市 · Johnny Market Ekkamai',hotel:2,temp:'25–33°',weather:'曼谷多云 · 少量降雨',wind:'曼谷风速关注当天预报',wave:'城市行程 · 海浪不适用',weatherNote:'普吉26–32°C，偶有降雨及午后雷雨；送机保留充足陆路时间。',meals:'夜市首选 · 雨天5家餐厅',mealIds:['B2','B1','B4','B3','B5'],rain:'改到日航酒店内的坦都里印度餐厅或琥珀主厨寿司餐厅，晚饭后休息。',note:'普吉国内出发 → 廊曼T2抵达。抵达后先开机联系接机司机，16:20为约定接机时间。',stops:[
+{time:'08:00–10:30',title:'早餐、收拾、退房',type:'酒店',body:'上午不外出远游，10:30前把行李准备好。'},
+{time:'11:00',title:'酒店司机接人 → 普吉机场',type:'接送已定',body:'车程约75–105分钟，目标12:15–12:45到国内航站楼；遇大雨提前联系司机。',query:'Phuket International Airport Domestic Terminal'},
+{time:'14:30 → 15:50',title:'普吉 → 曼谷廊曼T2',en:'Thai Lion Air · SL757',type:'航班已定',body:'两地均为泰国时间，国内到达使用T2。'},
+{time:'16:20–18:00',title:'接机 → 曼谷日航酒店',en:'Hotel Nikko Bangkok',type:'接送与入住',body:'周五晚高峰，车程预留60–100分钟，办理入住后短暂休息。',query:hotels[2].en},
+{time:'18:45–20:15',title:'伊卡迈强尼美食夜市',en:'Johnny Market Ekkamai',type:'露天美食夜市',body:'位于Ekkamai汽车东站外，928 Sukhumvit Rd。酒店步行约1.3–1.6公里，或BTS一站到Ekkamai。牛肉船面、烤串、泰奶，人均฿350–650≈¥70–130；有DJ，氛围热闹。',query:'Johnny Market Ekkamai'},
+{time:'20:30',title:'回酒店休息',type:'慢慢收尾',body:'买好明天的饮用水；检查返程机票、护照和行李重量。'}
+]},
+{date:'10.03',weekday:'周六',title:'一座寺，一顿泰北菜',english:'ONE LAST MORNING',intro:'在白色大理石回廊里走一走，再从容去机场。',image:'marble-temple',imageCaption:'云石寺 · Wat Benchamabophit · 泰旅局实景图',hotel:2,temp:'26–35°',weather:'晨间局地雷雨 · 午后降雨',wind:'关注曼谷实时雷雨预警',wave:'城市行程 · 海浪不适用',weatherNote:'暴雨时改室内商场，去机场提前出发。',meals:'午餐 · 通罗5选1',mealIds:['B4','B1','B3','B5','B6'],rain:'10:00后去EM空中花园购物中心（EmQuartier），BTS通罗至Phrom Phong一站，逛1小时后回通罗午餐。',note:'今天从廊曼机场T1国际出发。14:15离开酒店，目标16:00到机场；抵达杭州为10月4日00:15。',stops:[
+{time:'07:30–08:45',title:'早餐，退房寄存行李',type:'酒店',body:'轻装去景点，护照与贵重物品随身带。'},
+{time:'08:45–09:45',title:'酒店 → 云石寺',en:'Wat Benchamabophit',type:'出租车',body:'距通罗约12–15公里，预留35–60分钟。目的地为Dusit区白色大理石寺院。',query:'Wat Benchamabophit Dusitwanaram'},
+{time:'09:45–10:45',title:'看主殿与回廊，慢慢拍照',en:'Wat Benchamabophit · Marble Temple',type:'寺院参观',body:'白色大理石主殿、红金屋顶与52尊佛像回廊。周六08:00–17:00开放；门票预算฿100≈¥20/人，现场购票。着装遮肩过膝，殿内按要求脱鞋。'},
+{time:'10:45–13:15',title:'返回通罗，吃泰北午餐',en:'Krua Jiang Mai',type:'清迈厨房泰北餐厅',body:'回程留一小时。咖喱面、泰北香肠、蘸酱拼盘，人均฿350–650≈¥70–130；13:15前结束午餐。',query:'Krua Jiang Mai Thonglor'},
+{time:'13:15–14:15',title:'回酒店取行李、休息',type:'出发前缓冲',body:'喝水、整理随身包、叫车。若堵车或大雨，提前离店。'},
+{time:'14:15–16:00',title:'酒店 → 廊曼机场T1',en:'Don Mueang International Airport · T1',type:'国际出发',body:'车程预算60–100分钟，目标16:00到机场，留约3小时值机、安检和晚餐。',query:'Don Mueang International Airport Terminal 1'},
+{time:'19:05 → 次日00:15',title:'曼谷廊曼 → 杭州',en:'Thai Lion Air · SL920',type:'航班已定',body:'19:05为泰国时间；10月4日00:15抵达杭州，为中国时间。'}
+]}];
+export type Activity = {id:string;zh:string;en:string;kind:string;rating:string;distance:string;hours:string;price:string;duration:string;packages:string;reason:string;queue:string;scores:number[];score:string;url:string;pick?:boolean};
+export const activities: Activity[] = [
+{id:'Z1',zh:'飞象芭东海景丛林飞跃',en:'Erawan Patong Seaview Zipline',kind:'zipline',rating:'4.9 · 3,081条',distance:'23–28 km · 45–65分钟',hours:'08:30–18:00 · 预约09:30场',price:'฿2,400 ≈ ¥480',duration:'EP2约1.5小时',packages:'EP2：20平台、8滑索，฿2,400。EP1：42平台、20滑索，约2.5小时，฿3,300≈¥660。EP3：12平台，约30分钟，฿1,800≈¥360。',reason:'海景与雨林兼有，EP2时长适中，上午结束后还留得出午餐和休息。',queue:'旅行实访有约15分钟等待的记录；预约早场，另外留30分钟登记和30分钟离园缓冲。',scores:[6,8,9,8,7,9],score:'78.3',url:'https://www.erawanpatongzipline.com/zipline/ep2',pick:true},
+{id:'Z2',zh:'飞翔哈努曼丛林飞跃',en:'Flying Hanuman',kind:'zipline',rating:'4.8 · 2,933条',distance:'26–32 km · 50–70分钟',hours:'日间预约场次 · 17:00前',price:'฿2,490 ≈ ¥498',duration:'FH2约1–2小时',packages:'FH2：28平台、7滑索，฿2,490。FH1：42平台、14滑索，2–3小时，฿3,290≈¥658。FH3+Canopy：12平台，0.5–1小时，฿1,990≈¥398。',reason:'成熟的雨林路线，适合更喜欢森林景观的人。台阶和步行段仍需要体力。',queue:'历史评价有较少等待的体验；现场按分组开团，提前预约。',scores:[6,8,9,7,7,8],score:'75.0',url:'https://flyinghanuman.com/'},
+{id:'Z3',zh:'哈努曼世界丛林飞跃',en:'Hanuman World',kind:'zipline',rating:'4.7 · 9,835条',distance:'18–23 km · 35–50分钟',hours:'按预约时段入场',price:'฿2,990 ≈ ¥598',duration:'B+约2小时',packages:'B+：18平台，฿2,990。A+：32平台、滑索过山车、空中步道，约3小时，฿3,490≈¥698。C+：10平台，约1.5小时，฿2,490≈¥498；滑车加购฿800≈¥160。',reason:'项目最丰富，适合把大半天都留给乐园；此次轻松行程优先其他园区。',queue:'近期游客有3小时行程拉长到7小时的反馈，热门组合排队风险较高。',scores:[7,6,8,3,6,9],score:'65.0',url:'https://hanumanworldphuket.com/'},
+{id:'Z4',zh:'天际飞行丛林飞跃',en:'Skyline Adventure · Rawai',kind:'zipline',rating:'4.0 · 589条',distance:'5–7 km · 15–25分钟',hours:'08:00–18:00',price:'฿1,590 ≈ ¥318',duration:'约1–2小时',packages:'B2：18平台、8滑索，฿1,590。A2：33平台、15滑索，฿2,290≈¥458。选择纯飞跃套餐。',reason:'离酒店最近、票价较低；上坡和装备体验的反馈不一，舒适度优先时不作为首选。',queue:'无稳定的排队时长数据；上坡、穿装备与分组时间另留。',scores:[9,8,6,6,9,7],score:'75.0',url:'https://skylineadventurephuket.com/package/'},
+{id:'S1',zh:'普吉射击场',en:'Phuket Shooting Range',kind:'shooting',rating:'4.4 · 713条',distance:'8–10 km · 20–30分钟',hours:'18:00前到访',price:'฿1,090起 ≈ ¥218起',duration:'停留30–60分钟',packages:'十发项目：.22 ฿1,090；9mm / .38 / .45 ฿1,280≈¥256；霰弹฿1,300≈¥260。',reason:'靠近卡塔和查龙，午饭后安排顺路，短体验后就能回酒店。',queue:'现场排队随到访人数变化，预留一小时；场地较热，随身带水。',scores:[9,9,9,6,8,8],score:'81.7',url:'https://www.phuketshooting.com/',pick:true},
+{id:'S2',zh:'普吉射手射击场',en:'Phuket Shooters',kind:'shooting',rating:'4.8 · 145条',distance:'13–16 km · 30–40分钟',hours:'09:00–18:00',price:'฿1,050起 ≈ ¥210起',duration:'停留45–60分钟',packages:'十发项目：.22 ฿1,050；9mm / .38 / .45 ฿1,250≈¥250；霰弹฿1,450≈¥290。三项目฿3,100≈¥620。',reason:'官方价格清晰，评分高，但评价样本较少。地址33/54 Soi Palai，查龙。',queue:'少量实访反馈称组织有序、等待不长；高峰仍留缓冲。',scores:[7,9,9,7,8,8],score:'80.0',url:'https://www.phuketshooters.com/prices'},
+{id:'S3',zh:'芭东海滩射击场',en:'Patong Beach Shooting Range',kind:'shooting',rating:'4.7 · 258条',distance:'15–18 km · 35–50分钟',hours:'营业至00:00',price:'预算฿1,200–1,800 ≈ ¥240–360',duration:'停留45–60分钟',packages:'到店选择短体验项目，按现场价目付费。',reason:'位于80 Soi Dr. Watthana，更适合住芭东期间；若飞跃后就近体验，可把午餐一起留在芭东。',queue:'按现场人数排队，预留一小时。',scores:[5,8,5,5,5,8],score:'60.0',url:'https://www.patongbeachshootingrange.com/'},
+{id:'S4',zh:'芭东百丽宫射击场',en:'Patong Paragon Gun',kind:'shooting',rating:'4.6 · 335条',distance:'16–18 km · 35–50分钟',hours:'营业至23:30',price:'预算฿1,200–1,800 ≈ ¥240–360',duration:'停留45–60分钟',packages:'到店选择短体验项目，按现场价目付费。',reason:'邦拉路70号附近，晚间方便；从卡塔专门往返较费时间。',queue:'夜间人流较多，不与夜市安排挤在同一小时内。',scores:[5,8,4,5,5,8],score:'58.3',url:'https://paragongun.com/'},
+{id:'S5',zh:'卡图射击场',en:'Kathu Shooting Range',kind:'shooting',rating:'3.7 · 381条',distance:'23–28 km · 45–65分钟',hours:'营业至18:00',price:'以现场价目为准',duration:'预留60分钟',packages:'不纳入本次活动预算。',reason:'46/158 Moo6 Phrabaramee Rd。评分较低且距离远，本次不推荐前往。',queue:'没有可靠的近期等待时长。',scores:[4,7,3,4,4,8],score:'50.0',url:map('Kathu Shooting Range 46/158')},
+{id:'E1',zh:'布吉大象营',en:'Bukit Elephant Park',kind:'elephant',rating:'4.8 · 2,111条',distance:'13.1 km · 计划40分钟',hours:'预约14:00场',price:'฿1,400 ≈ ¥280',duration:'Mini约90分钟',packages:'迷你大象自然体验（Mini Elephant Nature）฿1,400；Walk & Feed约90分钟฿1,600≈¥320。',reason:'适合替换下午射击。14:00开始、15:30结束，约16:30–17:00回酒店。78/10 Moo6 Chalong。',queue:'有团客较多、拍照等待及暴晒反馈；预约时选小组并问清人数，带帽子和水。',scores:[9,6,8,4,6,3],score:'66',url:'https://bukitelephantpark.com/product-category/package/',pick:true},
+{id:'E2',zh:'大象丛林保护营 · 卡图分营',en:'Elephant Jungle Sanctuary Kathu',kind:'elephant',rating:'4.7 · 7,015条',distance:'26–32 km · 50–70分钟',hours:'09:00–16:00 · 提前至少2小时预约',price:'฿799起 ≈ ¥160起',duration:'Feed Me约60分钟',packages:'Feed Me短喂食项目，不含免费接送。指定2/12 Kathu分营。',reason:'单项喂食体验性价比较好；适合飞跃后直接留在卡图一带，午餐和返程一起调整。',queue:'按实际预约时段到场，来回车程比查龙营地长。',scores:[5,8,9,5,8,4],score:'70',url:'https://elephantjunglesanctuary.com/phuket/feed-me/'},
+{id:'E3',zh:'普吉大象照护营 · 洛克棕榈分营',en:'Phuket Elephant Care · Loch Palm',kind:'elephant',rating:'',distance:'28–33 km · 55–75分钟',hours:'08 / 09 / 10 / 13 / 14 / 15点',price:'฿1,250 ≈ ¥250',duration:'喂食约60分钟',packages:'Feed the Elephant，喂食与观察，含小纪念品。',reason:'套餐明确，但离卡塔较远，适合专门留出半天体验。',queue:'分时预约，等待取决于分组人数。',scores:[4,8,9,5,6,4],score:'64',url:'https://phuketelephant.care/Programs/Feed-the-Elephant'},
+{id:'E4',zh:'野生大象保护营',en:'Elephant Wildlife Sanctuary',kind:'elephant',rating:'4.5 · 718条',distance:'36–43 km · 65–90分钟',hours:'08 / 09 / 10 / 11 / 13 / 14 / 15 / 16点',price:'฿1,000 ≈ ¥200',duration:'纯喂食约30分钟',packages:'Feeding Program 30 mins。地点6 Soi Choeng Thale 1，Thalang。',reason:'活动短，但从卡塔往返时间很长，本次不作主选。',queue:'预约分时入场；交通耗时大于体验时间。',scores:[3,9,9,5,5,3],score:'62',url:'https://www.elephantwildlifesanctuaryphuket.com/tourprogram/feeding-program-30-mins/'},
+{id:'E5',zh:'普吉大象保护区',en:'Phuket Elephant Sanctuary',kind:'elephant',rating:'4.8 · 3,238条',distance:'40–50 km · 75–100分钟',hours:'预约导览，提前15–30分钟集合',price:'฿1,900起 ≈ ¥380起',duration:'树冠步道约90分钟',packages:'Canopy Walkway ฿1,900起；半日观察฿3,000起≈¥600起。',reason:'适合在步道上观察大象。2026年4月起不提供游客喂食，想喂象应选其他项目。',queue:'按预约场次；位于Paklok，适合独占半天。',scores:[2,6,0,6,6,2],score:'40',url:'https://www.phuketelephantsanctuary.org/canopy-walkway-tour/'}
+];
+export const sources = [
+{label:'日航餐厅营业时间 · 官方',url:'https://www.nikkobangkok.com/en/dining/'},
+{label:'飞翔日料菜单与实访 · Wongnai',url:'https://www.wongnai.com/restaurants/379658bl-hishou'},
+{label:'丛林飞跃套餐 · Erawan',url:'https://www.erawanpatongzipline.com/zipline/ep2'},
+{label:'双园区体验 · 小红书',url:'https://www.xiaohongshu.com/explore/6a77c5b0000000002202ecae'},
+{label:'射击场价格 · 官方',url:'https://www.phuketshooting.com/'},
+{label:'射击场实访 · Tripadvisor',url:'https://www.tripadvisor.com/Attraction_Review-g297934-d2724005-Reviews-Phuket_Shooting_Range-Rawai_Phuket.html'},
+{label:'射击场体验 · 小红书',url:'https://www.xiaohongshu.com/explore/6a990c200000000027017c8a'},
+{label:'大象营套餐 · Bukit',url:'https://bukitelephantpark.com/product-category/package/'},
+{label:'大象营体验 · 小红书',url:'https://www.xiaohongshu.com/explore/69a3e7410000000022039ddc'},
+{label:'马林夜市 · Phuket101',url:'https://www.phuket101.net/malin-plaza-night-market/'},
+{label:'普吉夜市体验 · 小红书',url:'https://www.xiaohongshu.com/explore/68336098000000002100e44d'},
+{label:'强尼夜市 · Friday Bangkok',url:'https://fridaybangkok.com/v/johnny-market'},
+{label:'曼谷夜市体验 · 小红书',url:'https://www.xiaohongshu.com/explore/6a83f8bd000000002500e46b'},
+{label:'云石寺 · 泰国政府旅行指南',url:'https://www.am2026thailand.go.th/explore-bangkok/wat-benchamabophit'},
+{label:'云石寺 · 泰旅局',url:'https://www.thailandtravel.or.jp/wat-benchamabophit/'},
+{label:'云石寺实拍 · 小红书',url:'https://www.xiaohongshu.com/explore/69ce52bd000000001f000119'},
+{label:'EM商圈体验 · 小红书',url:'https://www.xiaohongshu.com/explore/6a634558000000000f03d75c'},
+{label:'海港餐厅 · 酒店餐饮',url:'https://www.theshorephuket.com/the-feast/the-harbor/'},
+{label:'伊萨拉餐厅 · 菜单',url:'https://issaraphuket.com/food-menu-kata-beach/'},
+{label:'超越芭东按摩 · 官方价目',url:'https://letsrelaxspa.com/zh-hant/branches/phuket-beyond-patong/'},
+{label:'普吉区域风浪 · METMalaysia',url:'https://www.met.gov.my/en/forecast/marine/shipping/Sh001/'},
+{label:'泰国西海岸天气 · TMD',url:'https://www5.tmd.go.th/en/weather/region/southernwestcoast'},
+{label:'潜水后乘机 · DAN',url:'https://world.dan.org/health-medicine/health-resources/diseases-conditions/flying-after-diving/'}
+];
+export const packing = ['护照、机票与酒店确认单','官方TDAC入境卡','覆盖体验潜的旅行保险','接送与活动订单离线备份','泳衣、防晒衣、干衣与毛巾','防水袋、防滑鞋与运动鞋','防晒、防蚊、折叠伞','潜水健康问卷与度数面镜需求','少量泰铢现金、银行卡','充电器、充电宝、泰国流量'];
