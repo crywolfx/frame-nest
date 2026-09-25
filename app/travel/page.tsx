@@ -24,7 +24,7 @@ export default function TravelPage() {
           首页
         </Link>
         <div className="nav-links">
-          <Link href="/travel/tokyo">东京攻略</Link>
+          <Link href="/travel/phuket-bangkok-2026">普吉与曼谷</Link><Link href="/travel/tokyo">东京攻略</Link>
           <Link href="/travel/hong-kong">港澳攻略</Link>
         </div>
       </nav>

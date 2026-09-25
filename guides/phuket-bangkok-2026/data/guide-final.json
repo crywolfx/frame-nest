@@ -1,4 +1,5 @@
 {
+  "checkedAt": "2026-09-25",
   "days": [
     {
       "date": "09.27",
@@ -80,7 +81,7 @@
       "image": "shore-1",
       "imageCaption": "普吉海岸实景 · 出海路线为珊瑚岛与皇帝岛",
       "hotel": 0,
-      "temp": "25–31°",
+      "temp": "24–31°",
       "weather": "晨间阵雨 · 多云",
       "wind": "西南风 40–50 km/h",
       "wave": "区域浪高 2.5–3.5 m",
@@ -199,7 +200,7 @@
           "time": "15:00–18:00",
           "title": "泳池、海景与下午茶",
           "type": "留白时间",
-          "body": "天气好就在泳池和海边躺椅休息。海港海景餐厅（The Harbor）15:30–17:00供应下午茶，不再为拍照位奔波。"
+          "body": "天气好就在泳池和海边躺椅休息。海港海景餐厅（The Harbor）15:30–17:00供应下午茶。想换个风景，可在入住前13:30–14:20短坐毯子与枕头海景咖啡馆，或海岬杯咖啡馆；两家只选一家。"
         },
         {
           "time": "18:30–20:00",
@@ -275,71 +276,95 @@
     {
       "date": "10.01",
       "weekday": "周四",
-      "title": "在雨林里飞一会儿",
-      "english": "A LITTLE ADVENTURE",
-      "intro": "上午海景飞跃，下午只选一个短体验，早点回酒店。",
-      "image": "erawan-1",
-      "imageCaption": "飞象芭东海景丛林飞跃 · Erawan",
+      "title": "先见大象，再慢慢吃午饭",
+      "english": "ELEPHANTS & A LONG LUNCH",
+      "intro": "上午喂象、短时射击，午餐认真吃，下午回泳池别墅。",
+      "image": "bukit-elephant",
+      "imageCaption": "布吉大象营 · Bukit Elephant Park官网展示图",
       "hotel": 1,
       "temp": "26–32°",
       "weather": "早间零星雷雨 · 多云",
       "wind": "以当天气象预警为准",
       "wave": "区域海况预报尚未覆盖",
       "weatherNote": "优先上午场；遇雷电或大风按园区通知停玩。",
-      "meals": "午餐5选1 · 晚餐6选1",
+      "meals": "游玩地午餐5选1 · 卡塔晚餐6选1",
       "mealIds": [
-        "K3",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "K1",
         "K2",
+        "K3",
         "K4",
         "K5",
-        "K6",
-        "K1"
+        "K6"
       ],
-      "rain": "飞跃遇雷电停开时，保留卡塔午餐、酒店休息；下午项目可单独保留。",
-      "note": "预约目标为09:30开始的EP2。下午射击与喂象二选一；不把三个项目塞满一天。",
+      "rain": "小雨按营地安排；雷暴或园区取消时改为12:30 Fresca午餐与酒店休息。射击只在场馆正常开放、身体状态良好时参加。",
+      "note": "提前预订Bukit上午Mini Elephant Nature，成人฿1,400≈¥280。官网接送含卡塔区域，但本日继续去射击与午餐，预约时约定单程到园，或自行叫车。行程预留09:00–11:00完整场次；不叠加丛林飞跃。",
       "stops": [
         {
-          "time": "07:00–07:45",
-          "title": "早餐后出发",
-          "type": "酒店",
-          "body": "穿包脚运动鞋和便于活动的衣服，带防晒、防蚊和雨具。"
+          "time": "07:15–08:00",
+          "title": "酒店早餐，轻装出发",
+          "type": "准备",
+          "body": "穿运动鞋，带防蚊、防晒、伞、水和小毛巾。08:00离开酒店，避免为了赶场压缩早餐。"
         },
         {
-          "time": "07:45–09:00",
-          "title": "酒店 → 飞象芭东海景园区",
-          "en": "Erawan Patong Seaview Zipline",
-          "type": "提前预约",
-          "body": "车程45–65分钟，加10分钟缓冲；使用运营方发来的游玩园区图钉。",
-          "query": "Erawan Patong Seaview Zipline Phuket"
+          "time": "08:00–08:45",
+          "title": "酒店 → 布吉大象营",
+          "en": "Bukit Elephant Park",
+          "type": "预约上午场",
+          "body": "地图13.1公里约26分钟，实际预留35–45分钟；08:45登记。司机使用营地78/10 Moo 6的地图点。",
+          "query": "Bukit Elephant Park Phuket"
         },
         {
-          "time": "09:00–11:30",
-          "title": "EP2海景丛林飞跃",
-          "type": "20平台 · 8滑索",
-          "body": "09:00登记、穿装备；目标09:30–11:00体验，留30分钟离场缓冲。成人฿2,400≈¥480/人。"
+          "time": "09:00–11:00",
+          "title": "喂香蕉、近距离观察大象",
+          "en": "Mini Elephant Nature",
+          "type": "大象体验 · 优先安排",
+          "body": "成人฿1,400≈¥280/人，两人฿2,800≈¥560。喂食、观察和讲解，含橡胶加工展示；官网体验约90分钟，按09:00–11:00时段留足集合与离园时间。喂食是其中一环，并非全程连续喂象。",
+          "query": "Bukit Elephant Park Phuket"
         },
         {
-          "time": "12:30–13:30",
-          "title": "回卡塔吃午饭",
-          "en": "Eightfold",
-          "type": "八方家常泰餐",
-          "body": "离园到卡塔预留45–60分钟。点咖喱、脆皮猪肉和米饭，人均฿350–600≈¥70–120。",
-          "query": "Eightfold Restaurant Kata"
-        },
-        {
-          "time": "14:00–15:00",
-          "title": "普吉射击场短体验",
+          "time": "11:00–11:30",
+          "title": "布吉大象营 → 普吉射击场",
           "en": "Phuket Shooting Range",
-          "type": "下午二选一",
-          "body": "卡塔出发20–30分钟，现场停留30–60分钟。十发项目฿1,090起≈¥218起；听从教练安排。或改为14:00布吉大象营90分钟喂象体验。",
+          "type": "短程接驳",
+          "body": "地图8.0公里约17分钟，预留25–30分钟。饿了先吃随身小点心，不硬撑。",
+          "query": "Phuket Shooting Range Patak Road"
+        },
+        {
+          "time": "11:30–12:15",
+          "title": "一场短时射击体验",
+          "en": "Phuket Shooting Range",
+          "type": "射击 · 可跳过",
+          "body": "现场停留30–45分钟，十发.22项目฿1,090≈¥218；9mm十发฿1,280≈¥256。按教练讲解使用护目镜与耳罩；不饮酒。排队超过30分钟或累了，直接去午餐。",
           "query": "Phuket Shooting Range Patak Road",
           "optional": true
         },
         {
-          "time": "15:40之后",
-          "title": "回酒店，享受最后一个海岛傍晚",
-          "type": "休息与晚餐",
-          "body": "射击路线约15:40回酒店；喂象路线约16:30–17:00回。晚餐选伊萨拉、萨瓦迪或酒店海港餐厅。"
+          "time": "12:30–14:00",
+          "title": "弗雷斯卡餐厅，慢慢吃午饭",
+          "en": "Fresca Kitchens & Deli",
+          "type": "品质午餐首选",
+          "body": "射击场到餐厅4.4公里约10分钟，预留15分钟。选炭烤牛肉、披萨或海鲜意面，人均฿800–1,400≈¥160–280。预约12:30室内舒适座位，午餐保留90分钟。",
+          "query": "Fresca Kitchens Deli Rawai"
+        },
+        {
+          "time": "14:00–14:35",
+          "title": "回到海景泳池别墅",
+          "en": "The Shore at Katathani",
+          "type": "下午留白",
+          "body": "餐厅至酒店9.5公里约19分钟，预留25–35分钟。下午泳池、午睡和海边休息；若想外出，改去一家海景咖啡，约16:00–16:30回房。",
+          "query": "The Shore at Katathani"
+        },
+        {
+          "time": "18:30–20:00",
+          "title": "卡塔晚餐，舒服收尾",
+          "type": "晚餐6选1",
+          "body": "伊萨拉精致餐厅、萨瓦迪泰餐，或酒店海港餐厅；卡塔餐厅六选一。",
+          "query": "Issara Restaurant Bar Kata Beach"
         }
       ]
     },
@@ -421,7 +446,7 @@
       "image": "marble-temple",
       "imageCaption": "云石寺 · Wat Benchamabophit · 泰旅局实景图",
       "hotel": 2,
-      "temp": "26–35°",
+      "temp": "25–33°",
       "weather": "晨间局地雷雨 · 午后降雨",
       "wind": "关注曼谷实时雷雨预警",
       "wave": "城市行程 · 海浪不适用",
@@ -490,6 +515,349 @@
       ]
     }
   ],
+  "alternativeOctoberDay": {
+    "date": "10.01",
+    "weekday": "周四",
+    "title": "在雨林里飞一会儿",
+    "english": "A LITTLE ADVENTURE",
+    "intro": "上午海景飞跃，下午只选一个短体验，早点回酒店。",
+    "image": "erawan-1",
+    "imageCaption": "飞象芭东海景丛林飞跃 · Erawan",
+    "hotel": 1,
+    "temp": "26–32°",
+    "weather": "早间零星雷雨 · 多云",
+    "wind": "以当天气象预警为准",
+    "wave": "区域海况预报尚未覆盖",
+    "weatherNote": "优先上午场；遇雷电或大风按园区通知停玩。",
+    "meals": "午餐5选1 · 晚餐6选1",
+    "mealIds": [
+      "K3",
+      "K2",
+      "K4",
+      "K5",
+      "K6",
+      "K1"
+    ],
+    "rain": "飞跃遇雷电停开时，保留卡塔午餐、酒店休息；下午项目可单独保留。",
+    "note": "预约目标为09:30开始的EP2。下午射击与喂象二选一；不把三个项目塞满一天。",
+    "stops": [
+      {
+        "time": "07:00–07:45",
+        "title": "早餐后出发",
+        "type": "酒店",
+        "body": "穿包脚运动鞋和便于活动的衣服，带防晒、防蚊和雨具。"
+      },
+      {
+        "time": "07:45–09:00",
+        "title": "酒店 → 飞象芭东海景园区",
+        "en": "Erawan Patong Seaview Zipline",
+        "type": "提前预约",
+        "body": "车程45–65分钟，加10分钟缓冲；使用运营方发来的游玩园区图钉。",
+        "query": "Erawan Patong Seaview Zipline Phuket"
+      },
+      {
+        "time": "09:00–11:30",
+        "title": "EP2海景丛林飞跃",
+        "type": "20平台 · 8滑索",
+        "body": "09:00登记、穿装备；目标09:30–11:00体验，留30分钟离场缓冲。成人฿2,400≈¥480/人。"
+      },
+      {
+        "time": "12:30–13:30",
+        "title": "回卡塔吃午饭",
+        "en": "Eightfold",
+        "type": "八方家常泰餐",
+        "body": "离园到卡塔预留45–60分钟。点咖喱、脆皮猪肉和米饭，人均฿350–600≈¥70–120。",
+        "query": "Eightfold Restaurant Kata"
+      },
+      {
+        "time": "14:00–15:00",
+        "title": "普吉射击场短体验",
+        "en": "Phuket Shooting Range",
+        "type": "下午二选一",
+        "body": "卡塔出发20–30分钟，现场停留30–60分钟。十发项目฿1,090起≈¥218起；听从教练安排。或改为14:00布吉大象营90分钟喂象体验。",
+        "query": "Phuket Shooting Range Patak Road",
+        "optional": true
+      },
+      {
+        "time": "15:40之后",
+        "title": "回酒店，享受最后一个海岛傍晚",
+        "type": "休息与晚餐",
+        "body": "射击路线约15:40回酒店；喂象路线约16:30–17:00回。晚餐选伊萨拉、萨瓦迪或酒店海港餐厅。"
+      }
+    ]
+  },
+  "routeChoices": [
+    {
+      "title": "品质午餐路线",
+      "en": "FRESCA LUNCH",
+      "sequence": [
+        "泳池别墅",
+        "布吉大象营",
+        "普吉射击场",
+        "Fresca午餐",
+        "返回酒店"
+      ],
+      "distance": "35.0公里 · 地图约75分钟",
+      "note": "为更完整的餐饮与服务体验，多开约6.8公里、15分钟。全天实际车程留100–130分钟。",
+      "waypoints": "Bukit Elephant Park|Phuket Shooting Range|Fresca Kitchens Deli Rawai"
+    },
+    {
+      "title": "海鲜午餐路线",
+      "en": "CHALONG BAY LUNCH",
+      "sequence": [
+        "泳池别墅",
+        "布吉大象营",
+        "干英码头午餐",
+        "普吉射击场",
+        "返回酒店"
+      ],
+      "distance": "28.2公里 · 地图约60分钟",
+      "note": "11:30–13:00码头边吃海鲜，13:15–14:00射击，约14:30回酒店。实际车程留85–110分钟。",
+      "waypoints": "Bukit Elephant Park|Kan Eang at Pier|Phuket Shooting Range"
+    }
+  ],
+  "cafes": [
+    {
+      "id": "C1",
+      "zh": "桑摩尔海景花园咖啡馆",
+      "en": "Summore Day Cafe",
+      "kind": "海景咖啡 · 花园露台与室内座位",
+      "rating": 4.6,
+      "reviews": 1222,
+      "rank": "综合首选",
+      "price": "฿200–400 ≈ ¥40–80",
+      "distance": "距The Shore约10–13公里，25–35分钟",
+      "address": "94 Wiset Road，Promthep Cape / 神仙半岛与雅努伊海滩之间",
+      "hours": "10:00–20:00；咖啡与餐食建议19:00前点单",
+      "why": "海湾与小岛同框，座位层次丰富，可进室内避暑。景色、坐着休息的舒适度和饮品选择较均衡，愿意多坐一会车时最值得。",
+      "order": "冷萃咖啡、玫瑰茶；想加餐可选酸面包牛肉三明治。",
+      "when": "10/1午餐后14:30–15:30可选；咖啡后约16:00–16:30回酒店。只去这一家，取代部分酒店休息时间。",
+      "crowd": "10:00–12:00更安静；14:00后逐渐热闹。小红书评论明确提到日落露台排队，不安排17:00–18:30热门时段。",
+      "threshold": "Google符合原筛选；不承诺全天人少。",
+      "sources": [
+        {
+          "label": "Phuket101场地与餐饮",
+          "url": "https://www.phuket101.net/summore-day-cafe/"
+        },
+        {
+          "label": "Wongnai当地体验",
+          "url": "https://www.wongnai.com/restaurants/2141314DK-summore-day"
+        },
+        {
+          "label": "9月实访与日落排队评论",
+          "url": "https://www.xiaohongshu.com/explore/6aa27af80000000026017850"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "zh": "毯子与枕头海景咖啡馆",
+      "en": "A Blanket & A Pillow",
+      "kind": "林荫海景咖啡 · 多层木平台",
+      "rating": 4.6,
+      "reviews": 1767,
+      "rank": "离酒店较近",
+      "price": "฿150–350 ≈ ¥30–70",
+      "distance": "距The Shore约4–6公里，15–20分钟",
+      "address": "10/1 Laemsai Road, Karon，卡塔与卡伦之间的海岬",
+      "hours": "周二至周日10:30–19:30；周一休息，咖啡与厨房保守按18:00前点单；不接受订座",
+      "why": "树荫、木平台和海面适合坐下来放空，往返成本低。树木会遮住部分海景，饮品评价有分歧，主要为自然环境而来。",
+      "order": "冰美式、泰奶或果汁，加一份薯条分享；饮品约฿100–150，最低消费以门口告示为准。",
+      "when": "9/29到卡塔后可用13:30–14:20替换入住前等待；行李留约好的等候车，或先到酒店寄存。",
+      "crowd": "上午开门后更松弛；下午与日落更忙。仅现场入座，热门秋千不排队，雨天木阶湿滑。",
+      "threshold": "Google符合原筛选；选择普通座位，不以拍照点为目标。",
+      "image": "cafe-blanket",
+      "sources": [
+        {
+          "label": "官网营业与菜单",
+          "url": "https://ablanketandapillow.com/"
+        },
+        {
+          "label": "泰国餐饮平台介绍",
+          "url": "https://www.ryoiireview.com/restaurant/view/18619"
+        },
+        {
+          "label": "两家实测：饮品、营业与环境",
+          "url": "https://www.xiaohongshu.com/explore/6a8e5459000000002503a966"
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "zh": "卡伦山上海景餐厅与咖啡馆",
+      "en": "On The Hill Karon Restaurant & Café",
+      "kind": "海景餐厅 · 咖啡与简餐",
+      "rating": 4.5,
+      "reviews": 898,
+      "rank": "换酒店途中最方便",
+      "price": "฿150–300 ≈ ¥30–60",
+      "distance": "距The Shore约7–9公里，20–30分钟；位于芭东往卡塔的沿海路上",
+      "address": "卡伦北端山坡，Patak Road / On The Hill Karon，使用餐厅地图点",
+      "hours": "Google地点07:00–19:30；咖啡用餐建议08:00后",
+      "why": "直接俯瞰卡伦海湾，普通餐桌也能看海。不需要为特定楼梯拍照位消费，适合换酒店路上短休息。店面朴素，出品与服务稳定性不如度假村餐饮。",
+      "order": "冰咖啡、茶、可颂；饿了可加泰式炒饭。",
+      "when": "9/29约12:00–12:40停一杯，再南下卡塔午餐；仅在愿意推迟午餐时使用，不与第二家咖啡连逛。",
+      "crowd": "小红书实访认可景色；外网有停车困难和拍照客增多反馈。约司机门口接送、避开日落高峰，看到排队就跳过。",
+      "threshold": "Google4.5分；Google为餐厅/住宿综合地点，评分并非纯咖啡评价。",
+      "sources": [
+        {
+          "label": "Wongnai餐厅介绍",
+          "url": "https://www.wongnai.com/restaurants/598441yY-on-the-hill-karon-restaurant-caf%C3%A9"
+        },
+        {
+          "label": "餐饮与拥挤评价",
+          "url": "https://restaurantguru.com/karon-on-the-hill-restaurant-Chalong"
+        },
+        {
+          "label": "三店实访：On The Hill海景",
+          "url": "https://www.xiaohongshu.com/explore/6aa4d59e000000002b01ca8a"
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "zh": "岩盐海滨餐厅与咖啡",
+      "en": "Rock Salt · The Nai Harn",
+      "kind": "酒店海滨餐厅 · 咖啡与甜品",
+      "rating": 4.3,
+      "reviews": 1003,
+      "rank": "重视座位与服务",
+      "price": "฿300–550 ≈ ¥60–110",
+      "distance": "距The Shore约8–10公里，20–30分钟",
+      "address": "23/3 Moo 1, Vises Road，The Nai Harn酒店前的奈汉海滩",
+      "hours": "早餐07:00–10:00；午晚餐12:30–22:00，最后点餐21:30；10:00–12:30不安排",
+      "why": "平视海湾、餐桌式入座，适合喝咖啡配甜点，也能升级成完整午餐。近期Tripadvisor与泰国实访对海景和餐食较积极，但Google仅4.3，保留为舒适海边休息的风格备选。",
+      "order": "卡布奇诺、当日甜点；早餐时段有烘焙点心，午后选择以当日甜点柜为准。",
+      "when": "10/1午餐后14:30–15:30，替代Summore二选一；坐约一小时后回酒店。",
+      "crowd": "白天下午早段优于日落；提前电话询问海边遮阴桌及仅咖啡甜点入座。服务评价有分歧，不保证无等待。",
+      "threshold": "Google4.3分；1,003条。属于供应咖啡的海滨餐厅。",
+      "image": "cafe-rocksalt",
+      "sources": [
+        {
+          "label": "官方开放时间与菜单",
+          "url": "https://www.thenaiharn.com/dining/rock-salt/"
+        },
+        {
+          "label": "Tripadvisor近期咖啡与用餐实访",
+          "url": "https://www.tripadvisor.co.uk/Restaurant_Review-g1231757-d10521879-Reviews-Rock_Salt-Nai_Harn_Rawai_Phuket.html"
+        },
+        {
+          "label": "Wongnai当地早午餐体验",
+          "url": "https://www.wongnai.com/reviews/7fa517e5470a432099f9b7886d1627ed"
+        },
+        {
+          "label": "奈汉海边早餐实访",
+          "url": "https://www.xiaohongshu.com/explore/6a2445d5000000003600344e"
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "zh": "海岬杯悬崖咖啡馆",
+      "en": "Laem Sai Cup Café",
+      "kind": "开放式竹木露台 · 海景咖啡",
+      "rating": 4.4,
+      "reviews": 720,
+      "rank": "开阔海景备选",
+      "price": "฿100–250 ≈ ¥20–50",
+      "distance": "距The Shore约4–6公里，15–20分钟",
+      "address": "8 Laem Sai / Karon，毯子与枕头咖啡馆旁的海岬",
+      "hours": "周一至周六09:00–19:00；周日休息",
+      "why": "视野比林荫平台更开阔，有直面海面的竹木座位。8月两店实访更喜欢这里的咖啡和泰奶；设施简朴、没有空调，适合短坐而非久留。",
+      "order": "冰咖啡、泰奶、果汁；简餐仅作配角。人均最低消费约฿100，以现场为准。",
+      "when": "9/29卡塔午餐后13:30–14:20，和毯子与枕头二选一；行李留等候车或酒店。",
+      "crowd": "09:00–11:00较合适；中午也有拍照排队记录。不要等第一排固定机位，日晒强或没有舒服座位就跳过。",
+      "threshold": "Google4.4分；720条。海景优先、设施和舒适度次于前列。",
+      "sources": [
+        {
+          "label": "Phuket101位置与营业",
+          "url": "https://www.phuket101.net/laem-sai-cup-cafe/"
+        },
+        {
+          "label": "两家实测：海景与饮品",
+          "url": "https://www.xiaohongshu.com/explore/6a8e5459000000002503a966"
+        },
+        {
+          "label": "卡塔海岬咖啡实测",
+          "url": "https://www.xiaohongshu.com/explore/6a676134000000000103280a"
+        }
+      ]
+    }
+  ],
+  "xiaohongshuSources": [
+    {
+      "label": "普吉三大夜市实访",
+      "url": "https://www.xiaohongshu.com/explore/68336098000000002100e44d"
+    },
+    {
+      "label": "双园区丛林飞跃实访",
+      "url": "https://www.xiaohongshu.com/explore/6a77c5b0000000002202ecae"
+    },
+    {
+      "label": "射击场体验与避坑",
+      "url": "https://www.xiaohongshu.com/explore/6a990c200000000027017c8a"
+    },
+    {
+      "label": "Bukit大象营体验",
+      "url": "https://www.xiaohongshu.com/explore/69a3e7410000000022039ddc"
+    },
+    {
+      "label": "Bukit等待与闷热体验",
+      "url": "https://www.xiaohongshu.com/explore/68e2a20b000000000303b63d"
+    },
+    {
+      "label": "大象营到访体验（园区身份不明，仅作阅读参考）",
+      "url": "https://www.xiaohongshu.com/explore/6a68e4ba000000000100d953"
+    },
+    {
+      "label": "卡塔海岬咖啡实测",
+      "url": "https://www.xiaohongshu.com/explore/6a676134000000000103280a"
+    },
+    {
+      "label": "Summore白天体验",
+      "url": "https://www.xiaohongshu.com/explore/6a65ab36000000000100d3cd"
+    },
+    {
+      "label": "EM商圈体验",
+      "url": "https://www.xiaohongshu.com/explore/6a634558000000000f03d75c"
+    },
+    {
+      "label": "曼谷强尼夜市体验",
+      "url": "https://www.xiaohongshu.com/explore/6a83f8bd000000002500e46b"
+    },
+    {
+      "label": "云石寺实拍",
+      "url": "https://www.xiaohongshu.com/explore/69ce52bd000000001f000119"
+    },
+    {
+      "label": "云石寺回廊参观",
+      "url": "https://www.xiaohongshu.com/explore/6a365e18000000001503d7cb"
+    },
+    {
+      "label": "四家飞跃比较（含商业推广，仅作产品背景）",
+      "url": "https://www.xiaohongshu.com/explore/6a84583400000000220145d2"
+    },
+    {
+      "label": "Summore实访及日落排队评论",
+      "url": "https://www.xiaohongshu.com/explore/6aa27af80000000026017850"
+    },
+    {
+      "label": "海景咖啡三店对比",
+      "url": "https://www.xiaohongshu.com/explore/6aa4d59e000000002b01ca8a"
+    },
+    {
+      "label": "毯子与枕头、海岬杯两店对比",
+      "url": "https://www.xiaohongshu.com/explore/6a8e5459000000002503a966"
+    },
+    {
+      "label": "Rock Salt海边早餐实访",
+      "url": "https://www.xiaohongshu.com/explore/6a2445d5000000003600344e"
+    },
+    {
+      "label": "Sundeck餐食与施工视野体验",
+      "url": "https://www.xiaohongshu.com/explore/69f8a5ba000000003700e093"
+    }
+  ],
   "hotels": [
     {
       "zh": "普吉岛格雷斯兰水疗度假酒店",
@@ -539,7 +907,10 @@
       "menu": "泰式炒河粉、咖喱配饭",
       "group": "P",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Julian+Happy+Days+Restaurant+Bar+Cafe+Patong"
+      "map": "https://www.google.com/maps/search/?api=1&query=Julian+Happy+Days+Restaurant+Bar+Cafe+Patong",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "P2",
@@ -557,7 +928,10 @@
       "menu": "烤猪肋排、猪肉沙爹、烤蔬菜",
       "group": "P",
       "featured": true,
-      "map": "https://www.google.com/maps/search/?api=1&query=Naughty+Nuris+Phuket"
+      "map": "https://www.google.com/maps/search/?api=1&query=Naughty+Nuris+Phuket",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "P3",
@@ -575,7 +949,10 @@
       "menu": "鸭腿、三文鱼青酱意面、牛肉塔可",
       "group": "P",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=La+Playa+Patong+Beach+19%2F12"
+      "map": "https://www.google.com/maps/search/?api=1&query=La+Playa+Patong+Beach+19%2F12",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "P4",
@@ -593,7 +970,10 @@
       "menu": "冬阴功海鲜汤、泰式炒河粉、咖喱",
       "group": "P",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Siam+Thai+Restaurant+64%2F40+Soi+Kebsap+Patong"
+      "map": "https://www.google.com/maps/search/?api=1&query=Siam+Thai+Restaurant+64%2F40+Soi+Kebsap+Patong",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "P5",
@@ -611,7 +991,10 @@
       "menu": "咖喱、蔬菜、泰式炒河粉",
       "group": "P",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=EUROTHAI+80%2F10+Patong"
+      "map": "https://www.google.com/maps/search/?api=1&query=EUROTHAI+80%2F10+Patong",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "K1",
@@ -629,7 +1012,10 @@
       "menu": "蟹饼฿420、猪五花包฿340、鸡肉串฿290、Tagliata牛排฿2,190",
       "group": "K",
       "featured": true,
-      "map": "https://www.google.com/maps/search/?api=1&query=Issara+Restaurant+Bar+Kata+Beach"
+      "map": "https://www.google.com/maps/search/?api=1&query=Issara+Restaurant+Bar+Kata+Beach",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "K2",
@@ -647,7 +1033,10 @@
       "menu": "泰式烤物、冬阴功、炒河粉、芒果糯米饭",
       "group": "K",
       "featured": true,
-      "map": "https://www.google.com/maps/search/?api=1&query=Kata+On+Fire+Bar+Grill"
+      "map": "https://www.google.com/maps/search/?api=1&query=Kata+On+Fire+Bar+Grill",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "K3",
@@ -665,7 +1054,10 @@
       "menu": "帕能咖喱、青咖喱、罗勒脆皮猪肉",
       "group": "K",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Eightfold+Restaurant+Kata"
+      "map": "https://www.google.com/maps/search/?api=1&query=Eightfold+Restaurant+Kata",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "K4",
@@ -683,7 +1075,10 @@
       "menu": "泰式套餐、青木瓜沙拉、咖喱",
       "group": "K",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Sawasdee+Thai+Cuisine+Kata"
+      "map": "https://www.google.com/maps/search/?api=1&query=Sawasdee+Thai+Cuisine+Kata",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "K5",
@@ -701,7 +1096,10 @@
       "menu": "牛油果吐司、能量碗、汉堡",
       "group": "K",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Lost+in+Phuket+88%2F25"
+      "map": "https://www.google.com/maps/search/?api=1&query=Lost+in+Phuket+88%2F25",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "K6",
@@ -719,7 +1117,10 @@
       "menu": "海鲜、泰式主菜、当日甜品；下午茶15:30–17:00",
       "group": "K",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=The+Harbor+The+Shore+Katathani"
+      "map": "https://www.google.com/maps/search/?api=1&query=The+Harbor+The+Shore+Katathani",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "B1",
@@ -737,7 +1138,10 @@
       "menu": "当季握寿司、主厨套餐",
       "group": "B",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Kohaku+Omakase+Hotel+Nikko+Bangkok"
+      "map": "https://www.google.com/maps/search/?api=1&query=Kohaku+Omakase+Hotel+Nikko+Bangkok",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "B2",
@@ -755,7 +1159,10 @@
       "menu": "坦都里烤物拼盘、蒜香馕、扁豆咖喱",
       "group": "B",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Tandoori+Junction+Hotel+Nikko+Bangkok"
+      "map": "https://www.google.com/maps/search/?api=1&query=Tandoori+Junction+Hotel+Nikko+Bangkok",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "B3",
@@ -773,7 +1180,10 @@
       "menu": "鸡肉三明治、金枪鱼芝士、烟熏三文鱼",
       "group": "B",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=BARTELS+Thonglor+Market+Place"
+      "map": "https://www.google.com/maps/search/?api=1&query=BARTELS+Thonglor+Market+Place",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "B4",
@@ -791,7 +1201,10 @@
       "menu": "Khao Soi咖喱面、Sai Oua泰北香肠、蘸酱拼盘",
       "group": "B",
       "featured": true,
-      "map": "https://www.google.com/maps/search/?api=1&query=Krua+Jiang+Mai+Thonglor"
+      "map": "https://www.google.com/maps/search/?api=1&query=Krua+Jiang+Mai+Thonglor",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "B5",
@@ -809,7 +1222,10 @@
       "menu": "煎饼、焦糖法式吐司、鸡蛋三明治",
       "group": "B",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Breakfast+Story+Thonglor+154"
+      "map": "https://www.google.com/maps/search/?api=1&query=Breakfast+Story+Thonglor+154",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "M1",
@@ -827,7 +1243,10 @@
       "menu": "足部按摩60分钟；45分钟฿600≈¥120",
       "group": "M",
       "featured": true,
-      "map": "https://www.google.com/maps/search/?api=1&query=Lets+Relax+Beyond+Patong"
+      "map": "https://www.google.com/maps/search/?api=1&query=Lets+Relax+Beyond+Patong",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "M2",
@@ -845,7 +1264,10 @@
       "menu": "热油按摩60分钟",
       "group": "M",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Pure+Serenity+Luxury+Spa+210%2F1+Patong"
+      "map": "https://www.google.com/maps/search/?api=1&query=Pure+Serenity+Luxury+Spa+210%2F1+Patong",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "M3",
@@ -863,7 +1285,10 @@
       "menu": "泰式按摩฿600、招牌泰油฿900、芳香油฿1,000",
       "group": "M",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=De+Flora+Spa+216+Patong"
+      "map": "https://www.google.com/maps/search/?api=1&query=De+Flora+Spa+216+Patong",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "M4",
@@ -881,7 +1306,10 @@
       "menu": "足部或精油按摩，到店选项目",
       "group": "M",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Onbeach+Massage+Spa+54%2F8+Bangla"
+      "map": "https://www.google.com/maps/search/?api=1&query=Onbeach+Massage+Spa+54%2F8+Bangla",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "M5",
@@ -899,7 +1327,10 @@
       "menu": "精油฿800、芳香油฿900、椰子油฿1,000",
       "group": "M",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Lyns+Spa+Massage+Patong+Sansabai"
+      "map": "https://www.google.com/maps/search/?api=1&query=Lyns+Spa+Massage+Patong+Sansabai",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
     },
     {
       "id": "B6",
@@ -917,7 +1348,160 @@
       "menu": "刺身、天妇罗、日式涮锅；套餐以当天菜单为准",
       "group": "B",
       "featured": false,
-      "map": "https://www.google.com/maps/search/?api=1&query=Hishou+Hotel+Nikko+Bangkok"
+      "map": "https://www.google.com/maps/search/?api=1&query=Hishou+Hotel+Nikko+Bangkok",
+      "sources": [],
+      "route": "",
+      "checkedAt": "2026-09-24"
+    },
+    {
+      "id": "L1",
+      "zh": "弗雷斯卡开放式厨房餐厅",
+      "en": "Fresca Kitchens & Deli",
+      "category": "度假村餐厅 · 西餐与炭烤",
+      "rating": 4.7,
+      "reviews": 1996,
+      "address": "STAY Wellbeing & Lifestyle Resort，56/80 Moo 4, Soi Suksan 2, Rawai",
+      "distance": "距The Shore 9.5公里，约25–35分钟；距普吉射击场4.4公里，预留15分钟",
+      "hours": "午餐12:00–17:00；晚餐18:00–00:00，厨房23:00收单",
+      "thb": "฿800–1,400",
+      "cny": "¥160–280",
+      "why": "本日品质午餐首选。四个开放式厨房、炭烤与意餐选择完整，适合坐下来慢慢吃。先完成射击再南下用餐，下午回小卡塔；为这一餐多留约15–25分钟行车预算。",
+      "menu": "Josper炭烤安格斯牛肉、意式披萨、海鲜意面；两人分享前菜与主菜。预算含饮品，不含酒。",
+      "group": "L",
+      "featured": true,
+      "route": "喂象 → 射击 → 12:30 Fresca → 酒店；主路线",
+      "sources": [
+        {
+          "label": "官方午餐时段与菜单",
+          "url": "https://stayphuketresort.com/best-restaurants-in-phuket-fresca/"
+        },
+        {
+          "label": "Tripadvisor近期用餐点评",
+          "url": "https://www.tripadvisor.com/Restaurant_Review-g297934-d17849643-Reviews-Fresca_Kitchens_Deli-Rawai_Phuket.html"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=Fresca%20Kitchens%20%26%20Deli%20Phuket%20STAY%20Wellbeing%20%26%20Lifestyle%20Resort",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L2",
+      "zh": "干英码头海鲜餐厅",
+      "en": "Kan Eang at Pier",
+      "category": "查龙湾海景 · 泰式海鲜",
+      "rating": 4.5,
+      "reviews": 5033,
+      "address": "44/1 Wiset Road, Rawai，查龙码头入口旁",
+      "distance": "距The Shore约9–11公里／25–35分钟；布吉大象营后约5–7公里／15–20分钟",
+      "hours": "每日10:00–23:00；推荐11:30午餐，预订海边有遮阴的位置",
+      "thb": "฿900–1,500",
+      "cny": "¥180–300",
+      "why": "想吃泰式海鲜时首选。海湾视野、成熟服务与南泰菜，比单纯追最高星数更符合度假午餐。位于码头旁的小支路，吃完去射击场很近。",
+      "menu": "香蕉叶海鲜慕斯（Hormok Talay）、蟹肉料理、香蕉花沙拉、炒饭；龙虾按重量计价，先确认总价。",
+      "group": "L",
+      "featured": true,
+      "route": "喂象 → 11:30 干英 → 13:15射击 → 酒店；海鲜路线",
+      "sources": [
+        {
+          "label": "官方菜单",
+          "url": "https://kaneang-pier.com/menu/"
+        },
+        {
+          "label": "Phuket101实访",
+          "url": "https://www.phuket101.net/kan-eang-pier/"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=Kan%20Eang%20at%20Pier%20Phuket%2044/1%20Wiset%20Road%2C%20Rawai",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L3",
+      "zh": "罗索维沃意大利餐厅",
+      "en": "Rossovivo Ristorante",
+      "category": "意大利菜 · 木炉披萨",
+      "rating": 4.7,
+      "reviews": 1163,
+      "address": "5/38 Wiset Road, Rawai，Fisherman Way一带",
+      "distance": "距The Shore约9–11公里／25–35分钟；射击场后约2–3公里／5–10分钟",
+      "hours": "Google商家更新11:30开门；12:00后到店用午餐最稳妥，晚间至23:00",
+      "thb": "฿500–900",
+      "cny": "¥100–180",
+      "why": "品质与顺路兼顾的轻松替代。查龙环岛以南，木炉披萨与手工意面是强项；想要比度假村餐厅更随意的一餐就选这里。",
+      "menu": "木炉披萨、菠菜芝士意式饺子、意大利面、提拉米苏；两人分一张披萨加一份意面。",
+      "group": "L",
+      "featured": false,
+      "route": "喂象 → 射击 → 12:15罗索维沃 → 酒店",
+      "sources": [
+        {
+          "label": "意餐官网",
+          "url": "https://www.rossovivoristorante.com/"
+        },
+        {
+          "label": "Tripadvisor实访与午餐",
+          "url": "https://www.tripadvisor.com/Restaurant_Review-g297934-d2149910-Reviews-Rossovivo_Ristorante_Italiano_E_Pizzeria-Rawai_Phuket.html"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=Rossovivo%20Ristorante%20Phuket%205/38%20Wiset%20Road%2C%20Rawai",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L4",
+      "zh": "布斯特早午餐咖啡馆",
+      "en": "BOOST Café & Restaurant",
+      "category": "精品咖啡 · 早午餐",
+      "rating": 4.8,
+      "reviews": 4680,
+      "address": "39/38 Moo 1, Rawai，奈汉内陆街区",
+      "distance": "距The Shore约8–10公里／20–30分钟；射击场后约6–8公里／15–25分钟",
+      "hours": "官网每日08:00–18:00；适合12:30–14:00午餐",
+      "thb": "฿350–650",
+      "cny": "¥70–130",
+      "why": "更看重咖啡和轻盈主食时选它。菜品覆盖班尼迪克蛋、谷物碗与泰餐，近期Google与独立用餐评价均较好。需要向拉威多开一段，不是最近的一家。",
+      "menu": "班尼迪克蛋、Shakshuka番茄炖蛋、poke bowl、咖啡；可选泰式炒河粉。",
+      "group": "L",
+      "featured": false,
+      "route": "喂象 → 射击 → BOOST → 经奈汉方向回小卡塔",
+      "sources": [
+        {
+          "label": "官网菜单与时间",
+          "url": "https://www.boostcafethailand.com/"
+        },
+        {
+          "label": "Tripadvisor餐饮体验",
+          "url": "https://www.tripadvisor.com/Restaurant_Review-g297934-d19377842-Reviews-BOOST_Phuket-Rawai_Phuket.html"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=BOOST%20Caf%C3%A9%20%26%20Restaurant%20Phuket%2039/38%20Moo%201%2C%20Rawai",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L5",
+      "zh": "维咖啡查法店",
+      "en": "WeCafe – Chaofa",
+      "category": "沙拉 · 花园轻食餐厅",
+      "rating": 4.5,
+      "reviews": 2681,
+      "address": "530 Moo 3, Chao Fah Tawan Tok Road，My Front Yard Community Mall",
+      "distance": "距The Shore约13–16公里／35–45分钟；布吉大象营后约5–7公里／15–20分钟",
+      "hours": "每日10:00–22:00；21:30最后点单",
+      "thb": "฿300–550",
+      "cny": "¥60–110",
+      "why": "想吃蔬菜、沙拉和烤鱼的备选，有空调座位。菜品与休息舒适度不错，但位于主路线北侧，要增加折返；仅在当天特别想吃轻食时选。",
+      "menu": "自选沙拉、鸡肉牛油果沙拉、烤鱼、甜玉米汤。",
+      "group": "L",
+      "featured": false,
+      "route": "喂象 → 11:30 WeCafe → 13:15射击 → 酒店；增加北向绕行",
+      "sources": [
+        {
+          "label": "官方分店与菜单",
+          "url": "https://wecafephuket2012.com/en/"
+        },
+        {
+          "label": "独立菜单与点评汇总",
+          "url": "https://restaurantguru.com/We-Cafe-Chalong"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=WeCafe%20%E2%80%93%20Chaofa%20Phuket%20530%20Moo%203%2C%20Chao%20Fah%20Tawan%20Tok%20Road",
+      "checkedAt": "2026-09-25"
     }
   ],
   "activities": [
@@ -1146,12 +1730,12 @@
       "kind": "elephant",
       "rating": "4.8 · 2,111条",
       "distance": "13.1 km · 计划40分钟",
-      "hours": "预约14:00场",
+      "hours": "优先预约09:00–11:00；飞跃方案可选14:00场",
       "price": "฿1,400 ≈ ¥280",
       "duration": "Mini约90分钟",
       "packages": "迷你大象自然体验（Mini Elephant Nature）฿1,400；Walk & Feed约90分钟฿1,600≈¥320。",
-      "reason": "适合替换下午射击。14:00开始、15:30结束，约16:30–17:00回酒店。78/10 Moo6 Chalong。",
-      "queue": "有团客较多、拍照等待及暴晒反馈；预约时选小组并问清人数，带帽子和水。",
+      "reason": "上午喂食与观察后，前往查龙射击、午餐，14:35左右回酒店。飞跃方案可改选14:00下午场。78/10 Moo6 Chalong。",
+      "queue": "有团客较多、拍照等待及暴晒反馈；预约时问清同场人数与分组方式，带帽子和水。",
       "scores": [
         9,
         6,

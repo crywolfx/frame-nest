@@ -131,3 +131,27 @@
 [泰旅局图片来源](https://www.thailandtravel.or.jp/wat-benchamabophit/)
 
 ![云石寺主殿与回廊](images/marble-temple.jpg)
+
+## 毯子与枕头海景咖啡馆 · A Blanket & A Pillow
+
+[官方图片来源](https://ablanketandapillow.com/) · 2026-09-25下载；场所展示图，不代表预订席位、当天光线或套餐。
+
+![毯子与枕头海景咖啡馆 · A Blanket & A Pillow](images/cafe-blanket.jpg)
+
+## 岩盐海滨餐厅 · Rock Salt
+
+[官方图片来源](https://www.thenaiharn.com/dining/rock-salt/) · 2026-09-25下载；场所展示图，不代表预订席位、当天光线或套餐。
+
+![岩盐海滨餐厅 · Rock Salt](images/cafe-rocksalt.jpg)
+
+## 布吉大象营上午自然体验 · Bukit Elephant Park
+
+[官方图片来源](https://bukitelephantpark.com/product/mini-elephant-nature-9-11/) · 2026-09-25下载；场所展示图，不代表预订席位、当天光线或套餐。
+
+![布吉大象营上午自然体验 · Bukit Elephant Park](images/bukit-elephant.webp)
+
+## 弗雷斯卡餐厅 · Fresca Kitchens & Deli
+
+[官方图片来源](https://stayphuketresort.com/best-restaurants-in-phuket-fresca/) · 2026-09-25下载；场所展示图，不代表预订席位、当天光线或套餐。
+
+![弗雷斯卡餐厅 · Fresca Kitchens & Deli](images/fresca-lunch.jpg)

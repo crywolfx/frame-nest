@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ArrowRight, Moon, Orbit } from "lucide-react";
+import { ArrowRight, ArrowUpRight, MapPin, Moon, Orbit } from "lucide-react";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import styles from "./home.module.css";
@@ -41,20 +41,33 @@ export default function HomeHub() {
           Frame Nest
         </Link>
         <div className={styles.navLinks}>
-          <Link href="/cosmic-moment">太阳系</Link>
+          <Link href="#journeys">旅行攻略</Link><Link href="#tools">创作工具</Link>
           <Link href="/poster-lab">月相</Link>
         </div>
       </motion.nav>
 
       <section className={styles.hero} aria-labelledby="home-title">
         <motion.div className={styles.heroCopy} initial={{ y: 26, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.55, delay: 0.05 }}>
-          <p className={styles.eyebrow}>Frame Nest</p>
-          <h1 id="home-title">精密工具入口</h1>
-          <p className={styles.heroText}>选择一个工具开始。</p>
+          <p className={styles.eyebrow}>THE DIRECTORY / 旅行与灵感目录</p>
+          <h1 id="home-title">下一站，想去哪里？</h1>
+          <p className={styles.heroText}>把计划收好，把时间留给沿途。旅行攻略与创作工具，都在这里。</p>
         </motion.div>
       </section>
 
-      <section className={styles.toolSection} aria-label="工具">
+      <section id="journeys" className={styles.journeys} aria-label="旅行攻略目录">
+        <div className={styles.directoryHeading}><div><span>01 / JOURNEYS</span><h2>已整理的旅程</h2></div><Link href="/travel">全部旅行攻略 <ArrowUpRight size={16}/></Link></div>
+        <Link href="/travel/phuket-bangkok-2026" className={styles.featuredJourney}>
+          <img src="/travel/phuket-bangkok-2026/shore-1.webp" alt="普吉小卡塔海湾与海景泳池别墅" fetchPriority="high"/>
+          <div className={styles.journeyShade}/><span className={styles.journeyBadge}>即将出发 · 7 DAYS</span>
+          <div className={styles.journeyContent}><span>2026.09.27 — 10.03</span><h2>普吉岛 <i>→</i> 曼谷</h2><p>五晚海岛，一晚城市。喂大象、潜入海底，也留时间喝一杯海景咖啡。</p><div><span><MapPin size={14}/> 芭东 · 小卡塔 · 通罗</span><strong>打开攻略 <ArrowUpRight size={19}/></strong></div></div>
+        </Link>
+        <div className={styles.otherJourneys}>
+          <Link href="/travel/tokyo"><span className={styles.journeySerial}>02</span><div><small>JAPAN / 2026.08.14 — 08.18</small><h3>东京，五日城市漫游</h3><p>银座、东京塔、涩谷与东东京。每日路线与可调整地图。</p></div><ArrowUpRight size={24}/></Link>
+          <Link href="/travel/hong-kong"><span className={styles.journeySerial}>03</span><div><small>HONG KONG & MACAU / 2026.04.28 — 05.02</small><h3>香港与澳门，沿街慢走</h3><p>五日双城。公共交通、街区散步与顺路吃饭。</p></div><ArrowUpRight size={24}/></Link>
+        </div>
+      </section>
+
+      <section id="tools" className={styles.toolSection} aria-label="工具"><div className={styles.directoryHeading}><div><span>02 / CREATIVE TOOLS</span><h2>留住一些此刻</h2></div><p>太阳系与月相的可视化实验</p></div>
         <div className={styles.toolGrid}>
           {tools.map((tool, index) => {
             const Icon = tool.icon;

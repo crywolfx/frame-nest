@@ -3,7 +3,8 @@
 2026.09.27—10.03 · 两位成人
 
 - [完整攻略](攻略.md)
-- 网页：`/travel/phuket-bangkok-2026`
+- [攻略网页](https://f.wxin.site/travel/phuket-bangkok-2026)
+- [站点目录](https://f.wxin.site/)
 - [路线导航](maps/routes.md)
 - [图片索引](assets/README.md)
 

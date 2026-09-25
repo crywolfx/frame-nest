@@ -1,5 +1,14 @@
 import placesData from '../../../guides/phuket-bangkok-2026/data/places-final.json';
-export const places = placesData;
+import additions from '../../../guides/phuket-bangkok-2026/data/curated-additions.json';
+export const places = [...placesData.map(p => ({...p, sources: [] as {label:string;url:string}[], route: '', checkedAt: '2026-09-24'})), ...additions.lunches];
+export const cafes = additions.cafes;
+export const xiaohongshuSources = additions.xiaohongshu;
+export const routeChoices = [
+ {title:'品质午餐路线',en:'FRESCA LUNCH',sequence:['泳池别墅','布吉大象营','普吉射击场','Fresca午餐','返回酒店'],distance:'35.0公里 · 地图约75分钟',note:'为更完整的餐饮与服务体验，多开约6.8公里、15分钟。全天实际车程留100–130分钟。',waypoints:'Bukit Elephant Park|Phuket Shooting Range|Fresca Kitchens Deli Rawai'},
+ {title:'海鲜午餐路线',en:'CHALONG BAY LUNCH',sequence:['泳池别墅','布吉大象营','干英码头午餐','普吉射击场','返回酒店'],distance:'28.2公里 · 地图约60分钟',note:'11:30–13:00码头边吃海鲜，13:15–14:00射击，约14:30回酒店。实际车程留85–110分钟。',waypoints:'Bukit Elephant Park|Kan Eang at Pier|Phuket Shooting Range'}
+];
+export const routeLink = (waypoints:string) => `https://www.google.com/maps/dir/?api=1&origin=The+Shore+at+Katathani&destination=The+Shore+at+Katathani&waypoints=${encodeURIComponent(waypoints)}&travelmode=driving`;
+
 export const asset = (name: string) => `/travel/phuket-bangkok-2026/${name}.webp`;
 export const map = (query: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 export const hotels = [
@@ -18,7 +27,7 @@ export const days:Day[] = [
 {time:'19:30–20:45',title:'烤肋排晚餐，或逛马林夜市',type:'二选一',body:'首选巴厘风味烤猪肋排餐厅（Naughty Nuri’s Phuket）；想边逛边吃就去芭东马林夜市（Malin Plaza Patong），车程10–20分钟，人均฿300–550≈¥60–110。',query:'Naughty Nuris Phuket'},
 {time:'20:45–21:15',title:'芭东海边短散步',en:'Patong Beach',type:'轻松可选',body:'沿酒店附近海滨走15–30分钟，买水后回房。累了就跳过。',query:'Patong Beach Phuket Graceland',optional:true}
 ]},
-{date:'09.28',weekday:'周一',title:'去海上玩一天',english:'ISLAND HOPPING',intro:'珊瑚岛、皇帝岛，浮潜、海钓和甲板上的风。',image:'shore-1',imageCaption:'普吉海岸实景 · 出海路线为珊瑚岛与皇帝岛',hotel:0,temp:'25–31°',weather:'晨间阵雨 · 多云',wind:'西南风 40–50 km/h',wave:'区域浪高 2.5–3.5 m',weatherNote:'区域风浪预报偏大。出发前一晚及当天早上联系船商，按港务通知和船型确认开航、改线及退款规则。',meals:'晚餐 · 芭东5选1',mealIds:['P3','P2','P1','P4','P5'],rain:'遇停航，改为酒店休息、芭东午餐和轻柔按摩；不临时追其他小船出海。',note:'码头往返Grab/Bolt预算每车每程฿450–750≈¥90–150；两人同车。平台即时价格可能上涨。',stops:[
+{date:'09.28',weekday:'周一',title:'去海上玩一天',english:'ISLAND HOPPING',intro:'珊瑚岛、皇帝岛，浮潜、海钓和甲板上的风。',image:'shore-1',imageCaption:'普吉海岸实景 · 出海路线为珊瑚岛与皇帝岛',hotel:0,temp:'24–31°',weather:'晨间阵雨 · 多云',wind:'西南风 40–50 km/h',wave:'区域浪高 2.5–3.5 m',weatherNote:'区域风浪预报偏大。出发前一晚及当天早上联系船商，按港务通知和船型确认开航、改线及退款规则。',meals:'晚餐 · 芭东5选1',mealIds:['P3','P2','P1','P4','P5'],rain:'遇停航，改为酒店休息、芭东午餐和轻柔按摩；不临时追其他小船出海。',note:'码头往返Grab/Bolt预算每车每程฿450–750≈¥90–150；两人同车。平台即时价格可能上涨。',stops:[
 {time:'07:00–08:00',title:'早餐、整理出海包',type:'酒店',body:'泳衣、防晒衣、毛巾、干衣、防水袋和少量现金。08:00开始叫车。'},
 {time:'08:15–09:30',title:'酒店 → 查龙码头',en:'Chalong Pier',type:'自行叫车',body:'预留45–70分钟车程，加集合缓冲。地图参考18.2公里；把船商集合图钉发给司机。',query:'Chalong Pier Phuket'},
 {time:'10:00–18:00',title:'珊瑚岛 → 皇帝岛拼船',en:'Coral Island / Koh Hey · Racha Yai',type:'出海已定',body:'默认珊瑚岛先上岛并午餐，下午皇帝岛海域玩水、不登岛。船上有浮潜、海钓、桨板；按风浪和船长安排选择活动。'},
@@ -31,7 +40,7 @@ export const days:Day[] = [
 {time:'11:30–12:15',title:'退房，前往卡塔',type:'换酒店',body:'包车或Grab出发，芭东到卡塔午餐点预留35–55分钟；行李留车需事先约好等候费用。'},
 {time:'12:15–13:30',title:'卡塔炭火烧烤餐厅午餐',en:'Kata On Fire Bar & Grill',type:'泰餐与烧烤',body:'点泰式烤物、炒河粉和芒果糯米饭，人均฿350–650≈¥70–130。',query:'Kata On Fire Bar Grill'},
 {time:'13:45–15:00',title:'抵达卡塔坦尼海岸泳池别墅',en:'The Shore at Katathani',type:'酒店',body:'到酒店寄存行李、在公共休息区等候；正式入住时间15:00。',query:hotels[1].en},
-{time:'15:00–18:00',title:'泳池、海景与下午茶',type:'留白时间',body:'天气好就在泳池和海边躺椅休息。海港海景餐厅（The Harbor）15:30–17:00供应下午茶，不再为拍照位奔波。'},
+{time:'15:00–18:00',title:'泳池、海景与下午茶',type:'留白时间',body:'天气好就在泳池和海边躺椅休息。海港海景餐厅（The Harbor）15:30–17:00供应下午茶。想换个风景，可在入住前13:30–14:20短坐毯子与枕头海景咖啡馆，或海岬杯咖啡馆；两家只选一家。'},
 {time:'18:30–20:00',title:'伊萨拉精致餐厅晚餐',en:'Issara Restaurant & Bar – Kata Beach',type:'预约晚餐',body:'车程5–10分钟。两人分享蟹饼、猪五花包与牛排，吃完直接回酒店。',query:'Issara Restaurant Bar Kata Beach'}
 ]},
 {date:'09.30',weekday:'周三',title:'潜入另一种蓝',english:'UNDER THE SURFACE',intro:'两次无证体验潜。白天交给海洋，晚上只管休息。',image:'shore-1',imageCaption:'普吉海岸实景 · 潜点由潜店依海况安排',hotel:1,temp:'24–34°',weather:'局地雷雨 · 午后阵雨',wind:'西南偏西风 20–30 km/h',wave:'区域浪高 1–1.5 m',weatherNote:'区域浪高不能代表实际潜点；前一晚向潜店确认船期、接送和潜点。',meals:'晚餐 · 酒店及附近6选1',mealIds:['K6','K1','K2','K3','K4','K5'],rain:'潜店取消或改线时以其通知为准。把当天改成酒店休息，不叠加体力活动。',note:'船上包含早餐、午餐。晚上优先酒店用餐，外出餐厅都是备选，不需要全部打卡。',stops:[
@@ -57,7 +66,7 @@ export const days:Day[] = [
 {time:'18:45–20:15',title:'伊卡迈强尼美食夜市',en:'Johnny Market Ekkamai',type:'露天美食夜市',body:'位于Ekkamai汽车东站外，928 Sukhumvit Rd。酒店步行约1.3–1.6公里，或BTS一站到Ekkamai。牛肉船面、烤串、泰奶，人均฿350–650≈¥70–130；有DJ，氛围热闹。',query:'Johnny Market Ekkamai'},
 {time:'20:30',title:'回酒店休息',type:'慢慢收尾',body:'买好明天的饮用水；检查返程机票、护照和行李重量。'}
 ]},
-{date:'10.03',weekday:'周六',title:'一座寺，一顿泰北菜',english:'ONE LAST MORNING',intro:'在白色大理石回廊里走一走，再从容去机场。',image:'marble-temple',imageCaption:'云石寺 · Wat Benchamabophit · 泰旅局实景图',hotel:2,temp:'26–35°',weather:'晨间局地雷雨 · 午后降雨',wind:'关注曼谷实时雷雨预警',wave:'城市行程 · 海浪不适用',weatherNote:'暴雨时改室内商场，去机场提前出发。',meals:'午餐 · 通罗5选1',mealIds:['B4','B1','B3','B5','B6'],rain:'10:00后去EM空中花园购物中心（EmQuartier），BTS通罗至Phrom Phong一站，逛1小时后回通罗午餐。',note:'今天从廊曼机场T1国际出发。14:15离开酒店，目标16:00到机场；抵达杭州为10月4日00:15。',stops:[
+{date:'10.03',weekday:'周六',title:'一座寺，一顿泰北菜',english:'ONE LAST MORNING',intro:'在白色大理石回廊里走一走，再从容去机场。',image:'marble-temple',imageCaption:'云石寺 · Wat Benchamabophit · 泰旅局实景图',hotel:2,temp:'25–33°',weather:'晨间局地雷雨 · 午后降雨',wind:'关注曼谷实时雷雨预警',wave:'城市行程 · 海浪不适用',weatherNote:'暴雨时改室内商场，去机场提前出发。',meals:'午餐 · 通罗5选1',mealIds:['B4','B1','B3','B5','B6'],rain:'10:00后去EM空中花园购物中心（EmQuartier），BTS通罗至Phrom Phong一站，逛1小时后回通罗午餐。',note:'今天从廊曼机场T1国际出发。14:15离开酒店，目标16:00到机场；抵达杭州为10月4日00:15。',stops:[
 {time:'07:30–08:45',title:'早餐，退房寄存行李',type:'酒店',body:'轻装去景点，护照与贵重物品随身带。'},
 {time:'08:45–09:45',title:'酒店 → 云石寺',en:'Wat Benchamabophit',type:'出租车',body:'距通罗约12–15公里，预留35–60分钟。目的地为Dusit区白色大理石寺院。',query:'Wat Benchamabophit Dusitwanaram'},
 {time:'09:45–10:45',title:'看主殿与回廊，慢慢拍照',en:'Wat Benchamabophit · Marble Temple',type:'寺院参观',body:'白色大理石主殿、红金屋顶与52尊佛像回廊。周六08:00–17:00开放；门票预算฿100≈¥20/人，现场购票。着装遮肩过膝，殿内按要求脱鞋。'},
@@ -67,6 +76,23 @@ export const days:Day[] = [
 {time:'19:05 → 次日00:15',title:'曼谷廊曼 → 杭州',en:'Thai Lion Air · SL920',type:'航班已定',body:'19:05为泰国时间；10月4日00:15抵达杭州，为中国时间。'}
 ]}];
 export type Activity = {id:string;zh:string;en:string;kind:string;rating:string;distance:string;hours:string;price:string;duration:string;packages:string;reason:string;queue:string;scores:number[];score:string;url:string;pick?:boolean};
+export const elephantDay:Day = {
+ ...days[4], title:'先见大象，再慢慢吃午饭', english:'ELEPHANTS & A LONG LUNCH',
+ intro:'上午喂象、短时射击，午餐认真吃，下午回泳池别墅。', image:'bukit-elephant',imageCaption:'布吉大象营 · Bukit Elephant Park官网展示图',
+ meals:'游玩地午餐5选1 · 卡塔晚餐6选1',mealIds:['L1','L2','L3','L4','L5','K1','K2','K3','K4','K5','K6'],
+ note:'提前预订Bukit上午Mini Elephant Nature，成人฿1,400≈¥280。官网接送含卡塔区域，但本日继续去射击与午餐，预约时约定单程到园，或自行叫车。行程预留09:00–11:00完整场次；不叠加丛林飞跃。',
+ rain:'小雨按营地安排；雷暴或园区取消时改为12:30 Fresca午餐与酒店休息。射击只在场馆正常开放、身体状态良好时参加。',
+ stops:[
+ {time:'07:15–08:00',title:'酒店早餐，轻装出发',type:'准备',body:'穿运动鞋，带防蚊、防晒、伞、水和小毛巾。08:00离开酒店，避免为了赶场压缩早餐。'},
+ {time:'08:00–08:45',title:'酒店 → 布吉大象营',en:'Bukit Elephant Park',type:'预约上午场',body:'地图13.1公里约26分钟，实际预留35–45分钟；08:45登记。司机使用营地78/10 Moo 6的地图点。',query:'Bukit Elephant Park Phuket'},
+ {time:'09:00–11:00',title:'喂香蕉、近距离观察大象',en:'Mini Elephant Nature',type:'大象体验 · 优先安排',body:'成人฿1,400≈¥280/人，两人฿2,800≈¥560。喂食、观察和讲解，含橡胶加工展示；官网体验约90分钟，按09:00–11:00时段留足集合与离园时间。喂食是其中一环，并非全程连续喂象。',query:'Bukit Elephant Park Phuket'},
+ {time:'11:00–11:30',title:'布吉大象营 → 普吉射击场',en:'Phuket Shooting Range',type:'短程接驳',body:'地图8.0公里约17分钟，预留25–30分钟。饿了先吃随身小点心，不硬撑。',query:'Phuket Shooting Range Patak Road'},
+ {time:'11:30–12:15',title:'一场短时射击体验',en:'Phuket Shooting Range',type:'射击 · 可跳过',body:'现场停留30–45分钟，十发.22项目฿1,090≈¥218；9mm十发฿1,280≈¥256。按教练讲解使用护目镜与耳罩；不饮酒。排队超过30分钟或累了，直接去午餐。',query:'Phuket Shooting Range Patak Road',optional:true},
+ {time:'12:30–14:00',title:'弗雷斯卡餐厅，慢慢吃午饭',en:'Fresca Kitchens & Deli',type:'品质午餐首选',body:'射击场到餐厅4.4公里约10分钟，预留15分钟。选炭烤牛肉、披萨或海鲜意面，人均฿800–1,400≈¥160–280。预约12:30室内舒适座位，午餐保留90分钟。',query:'Fresca Kitchens Deli Rawai'},
+ {time:'14:00–14:35',title:'回到海景泳池别墅',en:'The Shore at Katathani',type:'下午留白',body:'餐厅至酒店9.5公里约19分钟，预留25–35分钟。下午泳池、午睡和海边休息；若想外出，改去一家海景咖啡，约16:00–16:30回房。',query:hotels[1].en},
+ {time:'18:30–20:00',title:'卡塔晚餐，舒服收尾',type:'晚餐6选1',body:'伊萨拉精致餐厅、萨瓦迪泰餐，或酒店海港餐厅；卡塔餐厅六选一。',query:'Issara Restaurant Bar Kata Beach'}
+ ]
+};
 export const activities: Activity[] = [
 {id:'Z1',zh:'飞象芭东海景丛林飞跃',en:'Erawan Patong Seaview Zipline',kind:'zipline',rating:'4.9 · 3,081条',distance:'23–28 km · 45–65分钟',hours:'08:30–18:00 · 预约09:30场',price:'฿2,400 ≈ ¥480',duration:'EP2约1.5小时',packages:'EP2：20平台、8滑索，฿2,400。EP1：42平台、20滑索，约2.5小时，฿3,300≈¥660。EP3：12平台，约30分钟，฿1,800≈¥360。',reason:'海景与雨林兼有，EP2时长适中，上午结束后还留得出午餐和休息。',queue:'旅行实访有约15分钟等待的记录；预约早场，另外留30分钟登记和30分钟离园缓冲。',scores:[6,8,9,8,7,9],score:'78.3',url:'https://www.erawanpatongzipline.com/zipline/ep2',pick:true},
 {id:'Z2',zh:'飞翔哈努曼丛林飞跃',en:'Flying Hanuman',kind:'zipline',rating:'4.8 · 2,933条',distance:'26–32 km · 50–70分钟',hours:'日间预约场次 · 17:00前',price:'฿2,490 ≈ ¥498',duration:'FH2约1–2小时',packages:'FH2：28平台、7滑索，฿2,490。FH1：42平台、14滑索，2–3小时，฿3,290≈¥658。FH3+Canopy：12平台，0.5–1小时，฿1,990≈¥398。',reason:'成熟的雨林路线，适合更喜欢森林景观的人。台阶和步行段仍需要体力。',queue:'历史评价有较少等待的体验；现场按分组开团，提前预约。',scores:[6,8,9,7,7,8],score:'75.0',url:'https://flyinghanuman.com/'},
@@ -77,7 +103,7 @@ export const activities: Activity[] = [
 {id:'S3',zh:'芭东海滩射击场',en:'Patong Beach Shooting Range',kind:'shooting',rating:'4.7 · 258条',distance:'15–18 km · 35–50分钟',hours:'营业至00:00',price:'预算฿1,200–1,800 ≈ ¥240–360',duration:'停留45–60分钟',packages:'到店选择短体验项目，按现场价目付费。',reason:'位于80 Soi Dr. Watthana，更适合住芭东期间；若飞跃后就近体验，可把午餐一起留在芭东。',queue:'按现场人数排队，预留一小时。',scores:[5,8,5,5,5,8],score:'60.0',url:'https://www.patongbeachshootingrange.com/'},
 {id:'S4',zh:'芭东百丽宫射击场',en:'Patong Paragon Gun',kind:'shooting',rating:'4.6 · 335条',distance:'16–18 km · 35–50分钟',hours:'营业至23:30',price:'预算฿1,200–1,800 ≈ ¥240–360',duration:'停留45–60分钟',packages:'到店选择短体验项目，按现场价目付费。',reason:'邦拉路70号附近，晚间方便；从卡塔专门往返较费时间。',queue:'夜间人流较多，不与夜市安排挤在同一小时内。',scores:[5,8,4,5,5,8],score:'58.3',url:'https://paragongun.com/'},
 {id:'S5',zh:'卡图射击场',en:'Kathu Shooting Range',kind:'shooting',rating:'3.7 · 381条',distance:'23–28 km · 45–65分钟',hours:'营业至18:00',price:'以现场价目为准',duration:'预留60分钟',packages:'不纳入本次活动预算。',reason:'46/158 Moo6 Phrabaramee Rd。评分较低且距离远，本次不推荐前往。',queue:'没有可靠的近期等待时长。',scores:[4,7,3,4,4,8],score:'50.0',url:map('Kathu Shooting Range 46/158')},
-{id:'E1',zh:'布吉大象营',en:'Bukit Elephant Park',kind:'elephant',rating:'4.8 · 2,111条',distance:'13.1 km · 计划40分钟',hours:'预约14:00场',price:'฿1,400 ≈ ¥280',duration:'Mini约90分钟',packages:'迷你大象自然体验（Mini Elephant Nature）฿1,400；Walk & Feed约90分钟฿1,600≈¥320。',reason:'适合替换下午射击。14:00开始、15:30结束，约16:30–17:00回酒店。78/10 Moo6 Chalong。',queue:'有团客较多、拍照等待及暴晒反馈；预约时选小组并问清人数，带帽子和水。',scores:[9,6,8,4,6,3],score:'66',url:'https://bukitelephantpark.com/product-category/package/',pick:true},
+{id:'E1',zh:'布吉大象营',en:'Bukit Elephant Park',kind:'elephant',rating:'4.8 · 2,111条',distance:'13.1 km · 计划40分钟',hours:'优先预约09:00–11:00；飞跃方案可选14:00场',price:'฿1,400 ≈ ¥280',duration:'Mini约90分钟',packages:'迷你大象自然体验（Mini Elephant Nature）฿1,400；Walk & Feed约90分钟฿1,600≈¥320。',reason:'上午喂食与观察后，前往查龙射击、午餐，14:35左右回酒店。飞跃方案可改选14:00下午场。78/10 Moo6 Chalong。',queue:'有团客较多、拍照等待及暴晒反馈；预约时问清同场人数与分组方式，带帽子和水。',scores:[9,6,8,4,6,3],score:'66',url:'https://bukitelephantpark.com/product-category/package/',pick:true},
 {id:'E2',zh:'大象丛林保护营 · 卡图分营',en:'Elephant Jungle Sanctuary Kathu',kind:'elephant',rating:'4.7 · 7,015条',distance:'26–32 km · 50–70分钟',hours:'09:00–16:00 · 提前至少2小时预约',price:'฿799起 ≈ ¥160起',duration:'Feed Me约60分钟',packages:'Feed Me短喂食项目，不含免费接送。指定2/12 Kathu分营。',reason:'单项喂食体验性价比较好；适合飞跃后直接留在卡图一带，午餐和返程一起调整。',queue:'按实际预约时段到场，来回车程比查龙营地长。',scores:[5,8,9,5,8,4],score:'70',url:'https://elephantjunglesanctuary.com/phuket/feed-me/'},
 {id:'E3',zh:'普吉大象照护营 · 洛克棕榈分营',en:'Phuket Elephant Care · Loch Palm',kind:'elephant',rating:'',distance:'28–33 km · 55–75分钟',hours:'08 / 09 / 10 / 13 / 14 / 15点',price:'฿1,250 ≈ ¥250',duration:'喂食约60分钟',packages:'Feed the Elephant，喂食与观察，含小纪念品。',reason:'套餐明确，但离卡塔较远，适合专门留出半天体验。',queue:'分时预约，等待取决于分组人数。',scores:[4,8,9,5,6,4],score:'64',url:'https://phuketelephant.care/Programs/Feed-the-Elephant'},
 {id:'E4',zh:'野生大象保护营',en:'Elephant Wildlife Sanctuary',kind:'elephant',rating:'4.5 · 718条',distance:'36–43 km · 65–90分钟',hours:'08 / 09 / 10 / 11 / 13 / 14 / 15 / 16点',price:'฿1,000 ≈ ¥200',duration:'纯喂食约30分钟',packages:'Feeding Program 30 mins。地点6 Soi Choeng Thale 1，Thalang。',reason:'活动短，但从卡塔往返时间很长，本次不作主选。',queue:'预约分时入场；交通耗时大于体验时间。',scores:[3,9,9,5,5,3],score:'62',url:'https://www.elephantwildlifesanctuaryphuket.com/tourprogram/feeding-program-30-mins/'},

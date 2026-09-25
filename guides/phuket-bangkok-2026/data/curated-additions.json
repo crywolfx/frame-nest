@@ -1,0 +1,397 @@
+{
+  "checkedAt": "2026-09-25",
+  "lunches": [
+    {
+      "id": "L1",
+      "zh": "弗雷斯卡开放式厨房餐厅",
+      "en": "Fresca Kitchens & Deli",
+      "category": "度假村餐厅 · 西餐与炭烤",
+      "rating": 4.7,
+      "reviews": 1996,
+      "address": "STAY Wellbeing & Lifestyle Resort，56/80 Moo 4, Soi Suksan 2, Rawai",
+      "distance": "距The Shore 9.5公里，约25–35分钟；距普吉射击场4.4公里，预留15分钟",
+      "hours": "午餐12:00–17:00；晚餐18:00–00:00，厨房23:00收单",
+      "thb": "฿800–1,400",
+      "cny": "¥160–280",
+      "why": "本日品质午餐首选。四个开放式厨房、炭烤与意餐选择完整，适合坐下来慢慢吃。先完成射击再南下用餐，下午回小卡塔；为这一餐多留约15–25分钟行车预算。",
+      "menu": "Josper炭烤安格斯牛肉、意式披萨、海鲜意面；两人分享前菜与主菜。预算含饮品，不含酒。",
+      "group": "L",
+      "featured": true,
+      "route": "喂象 → 射击 → 12:30 Fresca → 酒店；主路线",
+      "sources": [
+        {
+          "label": "官方午餐时段与菜单",
+          "url": "https://stayphuketresort.com/best-restaurants-in-phuket-fresca/"
+        },
+        {
+          "label": "Tripadvisor近期用餐点评",
+          "url": "https://www.tripadvisor.com/Restaurant_Review-g297934-d17849643-Reviews-Fresca_Kitchens_Deli-Rawai_Phuket.html"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=Fresca%20Kitchens%20%26%20Deli%20Phuket%20STAY%20Wellbeing%20%26%20Lifestyle%20Resort",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L2",
+      "zh": "干英码头海鲜餐厅",
+      "en": "Kan Eang at Pier",
+      "category": "查龙湾海景 · 泰式海鲜",
+      "rating": 4.5,
+      "reviews": 5033,
+      "address": "44/1 Wiset Road, Rawai，查龙码头入口旁",
+      "distance": "距The Shore约9–11公里／25–35分钟；布吉大象营后约5–7公里／15–20分钟",
+      "hours": "每日10:00–23:00；推荐11:30午餐，预订海边有遮阴的位置",
+      "thb": "฿900–1,500",
+      "cny": "¥180–300",
+      "why": "想吃泰式海鲜时首选。海湾视野、成熟服务与南泰菜，比单纯追最高星数更符合度假午餐。位于码头旁的小支路，吃完去射击场很近。",
+      "menu": "香蕉叶海鲜慕斯（Hormok Talay）、蟹肉料理、香蕉花沙拉、炒饭；龙虾按重量计价，先确认总价。",
+      "group": "L",
+      "featured": true,
+      "route": "喂象 → 11:30 干英 → 13:15射击 → 酒店；海鲜路线",
+      "sources": [
+        {
+          "label": "官方菜单",
+          "url": "https://kaneang-pier.com/menu/"
+        },
+        {
+          "label": "Phuket101实访",
+          "url": "https://www.phuket101.net/kan-eang-pier/"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=Kan%20Eang%20at%20Pier%20Phuket%2044/1%20Wiset%20Road%2C%20Rawai",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L3",
+      "zh": "罗索维沃意大利餐厅",
+      "en": "Rossovivo Ristorante",
+      "category": "意大利菜 · 木炉披萨",
+      "rating": 4.7,
+      "reviews": 1163,
+      "address": "5/38 Wiset Road, Rawai，Fisherman Way一带",
+      "distance": "距The Shore约9–11公里／25–35分钟；射击场后约2–3公里／5–10分钟",
+      "hours": "Google商家更新11:30开门；12:00后到店用午餐最稳妥，晚间至23:00",
+      "thb": "฿500–900",
+      "cny": "¥100–180",
+      "why": "品质与顺路兼顾的轻松替代。查龙环岛以南，木炉披萨与手工意面是强项；想要比度假村餐厅更随意的一餐就选这里。",
+      "menu": "木炉披萨、菠菜芝士意式饺子、意大利面、提拉米苏；两人分一张披萨加一份意面。",
+      "group": "L",
+      "featured": false,
+      "route": "喂象 → 射击 → 12:15罗索维沃 → 酒店",
+      "sources": [
+        {
+          "label": "意餐官网",
+          "url": "https://www.rossovivoristorante.com/"
+        },
+        {
+          "label": "Tripadvisor实访与午餐",
+          "url": "https://www.tripadvisor.com/Restaurant_Review-g297934-d2149910-Reviews-Rossovivo_Ristorante_Italiano_E_Pizzeria-Rawai_Phuket.html"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=Rossovivo%20Ristorante%20Phuket%205/38%20Wiset%20Road%2C%20Rawai",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L4",
+      "zh": "布斯特早午餐咖啡馆",
+      "en": "BOOST Café & Restaurant",
+      "category": "精品咖啡 · 早午餐",
+      "rating": 4.8,
+      "reviews": 4680,
+      "address": "39/38 Moo 1, Rawai，奈汉内陆街区",
+      "distance": "距The Shore约8–10公里／20–30分钟；射击场后约6–8公里／15–25分钟",
+      "hours": "官网每日08:00–18:00；适合12:30–14:00午餐",
+      "thb": "฿350–650",
+      "cny": "¥70–130",
+      "why": "更看重咖啡和轻盈主食时选它。菜品覆盖班尼迪克蛋、谷物碗与泰餐，近期Google与独立用餐评价均较好。需要向拉威多开一段，不是最近的一家。",
+      "menu": "班尼迪克蛋、Shakshuka番茄炖蛋、poke bowl、咖啡；可选泰式炒河粉。",
+      "group": "L",
+      "featured": false,
+      "route": "喂象 → 射击 → BOOST → 经奈汉方向回小卡塔",
+      "sources": [
+        {
+          "label": "官网菜单与时间",
+          "url": "https://www.boostcafethailand.com/"
+        },
+        {
+          "label": "Tripadvisor餐饮体验",
+          "url": "https://www.tripadvisor.com/Restaurant_Review-g297934-d19377842-Reviews-BOOST_Phuket-Rawai_Phuket.html"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=BOOST%20Caf%C3%A9%20%26%20Restaurant%20Phuket%2039/38%20Moo%201%2C%20Rawai",
+      "checkedAt": "2026-09-25"
+    },
+    {
+      "id": "L5",
+      "zh": "维咖啡查法店",
+      "en": "WeCafe – Chaofa",
+      "category": "沙拉 · 花园轻食餐厅",
+      "rating": 4.5,
+      "reviews": 2681,
+      "address": "530 Moo 3, Chao Fah Tawan Tok Road，My Front Yard Community Mall",
+      "distance": "距The Shore约13–16公里／35–45分钟；布吉大象营后约5–7公里／15–20分钟",
+      "hours": "每日10:00–22:00；21:30最后点单",
+      "thb": "฿300–550",
+      "cny": "¥60–110",
+      "why": "想吃蔬菜、沙拉和烤鱼的备选，有空调座位。菜品与休息舒适度不错，但位于主路线北侧，要增加折返；仅在当天特别想吃轻食时选。",
+      "menu": "自选沙拉、鸡肉牛油果沙拉、烤鱼、甜玉米汤。",
+      "group": "L",
+      "featured": false,
+      "route": "喂象 → 11:30 WeCafe → 13:15射击 → 酒店；增加北向绕行",
+      "sources": [
+        {
+          "label": "官方分店与菜单",
+          "url": "https://wecafephuket2012.com/en/"
+        },
+        {
+          "label": "独立菜单与点评汇总",
+          "url": "https://restaurantguru.com/We-Cafe-Chalong"
+        }
+      ],
+      "map": "https://www.google.com/maps/search/?api=1&query=WeCafe%20%E2%80%93%20Chaofa%20Phuket%20530%20Moo%203%2C%20Chao%20Fah%20Tawan%20Tok%20Road",
+      "checkedAt": "2026-09-25"
+    }
+  ],
+  "cafes": [
+    {
+      "id": "C1",
+      "zh": "桑摩尔海景花园咖啡馆",
+      "en": "Summore Day Cafe",
+      "kind": "海景咖啡 · 花园露台与室内座位",
+      "rating": 4.6,
+      "reviews": 1222,
+      "rank": "综合首选",
+      "price": "฿200–400 ≈ ¥40–80",
+      "distance": "距The Shore约10–13公里，25–35分钟",
+      "address": "94 Wiset Road，Promthep Cape / 神仙半岛与雅努伊海滩之间",
+      "hours": "10:00–20:00；咖啡与餐食建议19:00前点单",
+      "why": "海湾与小岛同框，座位层次丰富，可进室内避暑。景色、坐着休息的舒适度和饮品选择较均衡，愿意多坐一会车时最值得。",
+      "order": "冷萃咖啡、玫瑰茶；想加餐可选酸面包牛肉三明治。",
+      "when": "10/1午餐后14:30–15:30可选；咖啡后约16:00–16:30回酒店。只去这一家，取代部分酒店休息时间。",
+      "crowd": "10:00–12:00更安静；14:00后逐渐热闹。小红书评论明确提到日落露台排队，不安排17:00–18:30热门时段。",
+      "threshold": "Google符合原筛选；不承诺全天人少。",
+      "sources": [
+        {
+          "label": "Phuket101场地与餐饮",
+          "url": "https://www.phuket101.net/summore-day-cafe/"
+        },
+        {
+          "label": "Wongnai当地体验",
+          "url": "https://www.wongnai.com/restaurants/2141314DK-summore-day"
+        },
+        {
+          "label": "9月实访与日落排队评论",
+          "url": "https://www.xiaohongshu.com/explore/6aa27af80000000026017850"
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "zh": "毯子与枕头海景咖啡馆",
+      "en": "A Blanket & A Pillow",
+      "kind": "林荫海景咖啡 · 多层木平台",
+      "rating": 4.6,
+      "reviews": 1767,
+      "rank": "离酒店较近",
+      "price": "฿150–350 ≈ ¥30–70",
+      "distance": "距The Shore约4–6公里，15–20分钟",
+      "address": "10/1 Laemsai Road, Karon，卡塔与卡伦之间的海岬",
+      "hours": "周二至周日10:30–19:30；周一休息，咖啡与厨房保守按18:00前点单；不接受订座",
+      "why": "树荫、木平台和海面适合坐下来放空，往返成本低。树木会遮住部分海景，饮品评价有分歧，主要为自然环境而来。",
+      "order": "冰美式、泰奶或果汁，加一份薯条分享；饮品约฿100–150，最低消费以门口告示为准。",
+      "when": "9/29到卡塔后可用13:30–14:20替换入住前等待；行李留约好的等候车，或先到酒店寄存。",
+      "crowd": "上午开门后更松弛；下午与日落更忙。仅现场入座，热门秋千不排队，雨天木阶湿滑。",
+      "threshold": "Google符合原筛选；选择普通座位，不以拍照点为目标。",
+      "image": "cafe-blanket",
+      "sources": [
+        {
+          "label": "官网营业与菜单",
+          "url": "https://ablanketandapillow.com/"
+        },
+        {
+          "label": "泰国餐饮平台介绍",
+          "url": "https://www.ryoiireview.com/restaurant/view/18619"
+        },
+        {
+          "label": "两家实测：饮品、营业与环境",
+          "url": "https://www.xiaohongshu.com/explore/6a8e5459000000002503a966"
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "zh": "卡伦山上海景餐厅与咖啡馆",
+      "en": "On The Hill Karon Restaurant & Café",
+      "kind": "海景餐厅 · 咖啡与简餐",
+      "rating": 4.5,
+      "reviews": 898,
+      "rank": "换酒店途中最方便",
+      "price": "฿150–300 ≈ ¥30–60",
+      "distance": "距The Shore约7–9公里，20–30分钟；位于芭东往卡塔的沿海路上",
+      "address": "卡伦北端山坡，Patak Road / On The Hill Karon，使用餐厅地图点",
+      "hours": "Google地点07:00–19:30；咖啡用餐建议08:00后",
+      "why": "直接俯瞰卡伦海湾，普通餐桌也能看海。不需要为特定楼梯拍照位消费，适合换酒店路上短休息。店面朴素，出品与服务稳定性不如度假村餐饮。",
+      "order": "冰咖啡、茶、可颂；饿了可加泰式炒饭。",
+      "when": "9/29约12:00–12:40停一杯，再南下卡塔午餐；仅在愿意推迟午餐时使用，不与第二家咖啡连逛。",
+      "crowd": "小红书实访认可景色；外网有停车困难和拍照客增多反馈。约司机门口接送、避开日落高峰，看到排队就跳过。",
+      "threshold": "Google4.5分；Google为餐厅/住宿综合地点，评分并非纯咖啡评价。",
+      "sources": [
+        {
+          "label": "Wongnai餐厅介绍",
+          "url": "https://www.wongnai.com/restaurants/598441yY-on-the-hill-karon-restaurant-caf%C3%A9"
+        },
+        {
+          "label": "餐饮与拥挤评价",
+          "url": "https://restaurantguru.com/karon-on-the-hill-restaurant-Chalong"
+        },
+        {
+          "label": "三店实访：On The Hill海景",
+          "url": "https://www.xiaohongshu.com/explore/6aa4d59e000000002b01ca8a"
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "zh": "岩盐海滨餐厅与咖啡",
+      "en": "Rock Salt · The Nai Harn",
+      "kind": "酒店海滨餐厅 · 咖啡与甜品",
+      "rating": 4.3,
+      "reviews": 1003,
+      "rank": "重视座位与服务",
+      "price": "฿300–550 ≈ ¥60–110",
+      "distance": "距The Shore约8–10公里，20–30分钟",
+      "address": "23/3 Moo 1, Vises Road，The Nai Harn酒店前的奈汉海滩",
+      "hours": "早餐07:00–10:00；午晚餐12:30–22:00，最后点餐21:30；10:00–12:30不安排",
+      "why": "平视海湾、餐桌式入座，适合喝咖啡配甜点，也能升级成完整午餐。近期Tripadvisor与泰国实访对海景和餐食较积极，但Google仅4.3，保留为舒适海边休息的风格备选。",
+      "order": "卡布奇诺、当日甜点；早餐时段有烘焙点心，午后选择以当日甜点柜为准。",
+      "when": "10/1午餐后14:30–15:30，替代Summore二选一；坐约一小时后回酒店。",
+      "crowd": "白天下午早段优于日落；提前电话询问海边遮阴桌及仅咖啡甜点入座。服务评价有分歧，不保证无等待。",
+      "threshold": "Google4.3分；1,003条。属于供应咖啡的海滨餐厅。",
+      "image": "cafe-rocksalt",
+      "sources": [
+        {
+          "label": "官方开放时间与菜单",
+          "url": "https://www.thenaiharn.com/dining/rock-salt/"
+        },
+        {
+          "label": "Tripadvisor近期咖啡与用餐实访",
+          "url": "https://www.tripadvisor.co.uk/Restaurant_Review-g1231757-d10521879-Reviews-Rock_Salt-Nai_Harn_Rawai_Phuket.html"
+        },
+        {
+          "label": "Wongnai当地早午餐体验",
+          "url": "https://www.wongnai.com/reviews/7fa517e5470a432099f9b7886d1627ed"
+        },
+        {
+          "label": "奈汉海边早餐实访",
+          "url": "https://www.xiaohongshu.com/explore/6a2445d5000000003600344e"
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "zh": "海岬杯悬崖咖啡馆",
+      "en": "Laem Sai Cup Café",
+      "kind": "开放式竹木露台 · 海景咖啡",
+      "rating": 4.4,
+      "reviews": 720,
+      "rank": "开阔海景备选",
+      "price": "฿100–250 ≈ ¥20–50",
+      "distance": "距The Shore约4–6公里，15–20分钟",
+      "address": "8 Laem Sai / Karon，毯子与枕头咖啡馆旁的海岬",
+      "hours": "周一至周六09:00–19:00；周日休息",
+      "why": "视野比林荫平台更开阔，有直面海面的竹木座位。8月两店实访更喜欢这里的咖啡和泰奶；设施简朴、没有空调，适合短坐而非久留。",
+      "order": "冰咖啡、泰奶、果汁；简餐仅作配角。人均最低消费约฿100，以现场为准。",
+      "when": "9/29卡塔午餐后13:30–14:20，和毯子与枕头二选一；行李留等候车或酒店。",
+      "crowd": "09:00–11:00较合适；中午也有拍照排队记录。不要等第一排固定机位，日晒强或没有舒服座位就跳过。",
+      "threshold": "Google4.4分；720条。海景优先、设施和舒适度次于前列。",
+      "sources": [
+        {
+          "label": "Phuket101位置与营业",
+          "url": "https://www.phuket101.net/laem-sai-cup-cafe/"
+        },
+        {
+          "label": "两家实测：海景与饮品",
+          "url": "https://www.xiaohongshu.com/explore/6a8e5459000000002503a966"
+        },
+        {
+          "label": "卡塔海岬咖啡实测",
+          "url": "https://www.xiaohongshu.com/explore/6a676134000000000103280a"
+        }
+      ]
+    }
+  ],
+  "xiaohongshu": [
+    {
+      "label": "普吉三大夜市实访",
+      "url": "https://www.xiaohongshu.com/explore/68336098000000002100e44d"
+    },
+    {
+      "label": "双园区丛林飞跃实访",
+      "url": "https://www.xiaohongshu.com/explore/6a77c5b0000000002202ecae"
+    },
+    {
+      "label": "射击场体验与避坑",
+      "url": "https://www.xiaohongshu.com/explore/6a990c200000000027017c8a"
+    },
+    {
+      "label": "Bukit大象营体验",
+      "url": "https://www.xiaohongshu.com/explore/69a3e7410000000022039ddc"
+    },
+    {
+      "label": "Bukit等待与闷热体验",
+      "url": "https://www.xiaohongshu.com/explore/68e2a20b000000000303b63d"
+    },
+    {
+      "label": "大象营到访体验（园区身份不明，仅作阅读参考）",
+      "url": "https://www.xiaohongshu.com/explore/6a68e4ba000000000100d953"
+    },
+    {
+      "label": "卡塔海岬咖啡实测",
+      "url": "https://www.xiaohongshu.com/explore/6a676134000000000103280a"
+    },
+    {
+      "label": "Summore白天体验",
+      "url": "https://www.xiaohongshu.com/explore/6a65ab36000000000100d3cd"
+    },
+    {
+      "label": "EM商圈体验",
+      "url": "https://www.xiaohongshu.com/explore/6a634558000000000f03d75c"
+    },
+    {
+      "label": "曼谷强尼夜市体验",
+      "url": "https://www.xiaohongshu.com/explore/6a83f8bd000000002500e46b"
+    },
+    {
+      "label": "云石寺实拍",
+      "url": "https://www.xiaohongshu.com/explore/69ce52bd000000001f000119"
+    },
+    {
+      "label": "云石寺回廊参观",
+      "url": "https://www.xiaohongshu.com/explore/6a365e18000000001503d7cb"
+    },
+    {
+      "label": "四家飞跃比较（含商业推广，仅作产品背景）",
+      "url": "https://www.xiaohongshu.com/explore/6a84583400000000220145d2"
+    },
+    {
+      "label": "Summore实访及日落排队评论",
+      "url": "https://www.xiaohongshu.com/explore/6aa27af80000000026017850"
+    },
+    {
+      "label": "海景咖啡三店对比",
+      "url": "https://www.xiaohongshu.com/explore/6aa4d59e000000002b01ca8a"
+    },
+    {
+      "label": "毯子与枕头、海岬杯两店对比",
+      "url": "https://www.xiaohongshu.com/explore/6a8e5459000000002503a966"
+    },
+    {
+      "label": "Rock Salt海边早餐实访",
+      "url": "https://www.xiaohongshu.com/explore/6a2445d5000000003600344e"
+    },
+    {
+      "label": "Sundeck餐食与施工视野体验",
+      "url": "https://www.xiaohongshu.com/explore/69f8a5ba000000003700e093"
+    }
+  ]
+}

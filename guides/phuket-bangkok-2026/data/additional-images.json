@@ -1,0 +1,30 @@
+[
+  {
+    "name": "cafe-blanket",
+    "source": "https://ablanketandapillow.com/",
+    "original": "https://ablanketandapillow.com/wp-content/uploads/2022/03/82957-768x1024.jpg",
+    "path": "guides/phuket-bangkok-2026/assets/images/cafe-blanket.jpg",
+    "retrieved": "2026-09-25"
+  },
+  {
+    "name": "cafe-rocksalt",
+    "source": "https://www.thenaiharn.com/dining/rock-salt/",
+    "original": "https://www.thenaiharn.com/wp-content/uploads/2024/05/DJI_20260824172029_0773_D-HDR-scaled.jpg",
+    "path": "guides/phuket-bangkok-2026/assets/images/cafe-rocksalt.jpg",
+    "retrieved": "2026-09-25"
+  },
+  {
+    "name": "bukit-elephant",
+    "source": "https://bukitelephantpark.com/product/mini-elephant-nature-9-11/",
+    "original": "https://bukitelephantpark.com/wp-content/uploads/2024/02/bk32.webp",
+    "path": "guides/phuket-bangkok-2026/assets/images/bukit-elephant.webp",
+    "retrieved": "2026-09-25"
+  },
+  {
+    "name": "fresca-lunch",
+    "source": "https://stayphuketresort.com/best-restaurants-in-phuket-fresca/",
+    "original": "https://stayphuketresort.com/wp-content/uploads/2024/10/Dinner-1-1-768x512.jpg",
+    "path": "guides/phuket-bangkok-2026/assets/images/fresca-lunch.jpg",
+    "retrieved": "2026-09-25"
+  }
+]
